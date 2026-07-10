@@ -20,10 +20,9 @@ class LecturerSubjectController extends Controller
         return view('lecturer.subject.notes', compact('subject'));
     }
 
-    // 🔧 Placeholder until a LectureVideo model/table exists
     public function videos($id)
     {
-        $subject = Subject::findOrFail($id);
+        $subject = Subject::with('videos')->findOrFail($id);
         return view('lecturer.subject.videos', compact('subject'));
     }
 

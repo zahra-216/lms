@@ -40,8 +40,12 @@ class Subject extends Model
     {
         return $this->hasMany(Note::class);
     }
-     public function assignments()
+    public function assignments()
     {
         return $this->hasMany(Assignment::class);
+    }
+    public function videos()
+    {
+        return $this->hasMany(LectureVideo::class);
     }
 }

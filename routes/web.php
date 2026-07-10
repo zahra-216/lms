@@ -107,6 +107,38 @@ Route::prefix('lecturer')->middleware(['auth:lecturer'])->name('lecturer.')->gro
     Route::post('/marks/store', [App\Http\Controllers\Admin\MarkController::class, 'lecturerStore'])
         ->name('marks.store');
 
+    // ================= NOTES =================
+    Route::get('/subject/{subject}/notes/create', [App\Http\Controllers\LecturerNoteController::class, 'create'])
+        ->name('notes.create');
+    Route::post('/subject/{subject}/notes', [App\Http\Controllers\LecturerNoteController::class, 'store'])
+        ->name('notes.store');
+    Route::get('/subject/{subject}/notes/{note}/edit', [App\Http\Controllers\LecturerNoteController::class, 'edit'])
+        ->name('notes.edit');
+    Route::put('/subject/{subject}/notes/{note}', [App\Http\Controllers\LecturerNoteController::class, 'update'])
+        ->name('notes.update');
+    Route::delete('/subject/{subject}/notes/{note}', [App\Http\Controllers\LecturerNoteController::class, 'destroy'])
+        ->name('notes.destroy');
+    Route::get('/notes/{note}/download', [App\Http\Controllers\LecturerNoteController::class, 'download'])
+        ->name('notes.download');
+
+    // ================= VIDEOS =================
+    Route::get('/subject/{subject}/videos/create', [App\Http\Controllers\LecturerVideoController::class, 'create'])
+        ->name('videos.create');
+    Route::post('/subject/{subject}/videos', [App\Http\Controllers\LecturerVideoController::class, 'store'])
+        ->name('videos.store');
+    Route::get('/subject/{subject}/videos/{video}/edit', [App\Http\Controllers\LecturerVideoController::class, 'edit'])
+        ->name('videos.edit');
+    Route::put('/subject/{subject}/videos/{video}', [App\Http\Controllers\LecturerVideoController::class, 'update'])
+        ->name('videos.update');
+    Route::delete('/subject/{subject}/videos/{video}', [App\Http\Controllers\LecturerVideoController::class, 'destroy'])
+        ->name('videos.destroy');
+
+    // ================= ASSIGNMENT CREATION =================
+    Route::get('/subject/{subject}/assignments/create', [App\Http\Controllers\LecturerAssignmentController::class, 'create'])
+        ->name('assignments.create');
+    Route::post('/subject/{subject}/assignments', [App\Http\Controllers\LecturerAssignmentController::class, 'store'])
+        ->name('assignments.store');
+
 });
 
 // ADMIN LOGIN (🔥 FIXED)

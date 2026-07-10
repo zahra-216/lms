@@ -37,11 +37,26 @@ class AssignmentController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'subject_id' => 'required',
-            'title' => 'required',
-            'description' => 'required',
+            'subject_id' => 'required|exists:subjects,id',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
             'due_date' => 'required|date',
+            'total_points' => 'nullable|numeric|min:0',
+            'submission_type' => 'nullable|string',
+            'allow_late' => 'nullable|boolean',
+            'late_penalty' => 'nullable|numeric|min:0|max:100',
+            'is_published' => 'nullable|boolean',
+            'assignment_file' => 'nullable|file|max:10240',
         ]);
+
+        $data['allow_late'] = $request->boolean('allow_late');
+        $data['is_published'] = $request->boolean('is_published', true);
+
+        if ($request->hasFile('assignment_file')) {
+            $data['file_path'] = $request->file('assignment_file')->store('assignments', 'public');
+        }
+
+        unset($data['assignment_file']);
 
         $assignment = Assignment::create($data);
 
@@ -51,7 +66,7 @@ class AssignmentController extends Controller
 
         event(new AssignmentCreated($assignment, $studentIds));
 
-        return back()->with('success', 'Assignment created!');
+        return redirect()->route('admin.assignments.index')->with('success', 'Assignment created!');
     }
 
     // SUBMIT

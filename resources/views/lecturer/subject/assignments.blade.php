@@ -20,7 +20,10 @@
 <body>
 <div class="container">
     <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back</a>
-    <h2 class="mb-4">{{ $subject->code }} - {{ $subject->name }} — Assignments</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">{{ $subject->code }} - {{ $subject->name }} — Assignments</h2>
+        <a href="{{ route('lecturer.assignments.create', $subject->id) }}" class="btn btn-primary">+ Add Assignment</a>
+    </div>
 
     @if($subject->assignments && $subject->assignments->count())
 
@@ -38,6 +41,13 @@
 
             <div class="assignment-body">
                 <p class="mb-2">{{ $assignment->description ?? 'No description provided.' }}</p>
+                @if($assignment->file_path)
+                    <p class="mb-2">
+                        <a href="{{ asset('storage/' . $assignment->file_path) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+                            <i class="bi bi-paperclip"></i> View Attachment
+                        </a>
+                    </p>
+                @endif
 
                 <div class="mb-3">
                     <span class="badge bg-primary meta-badge">
@@ -74,18 +84,31 @@
                             <tbody>
                                 @foreach($assignment->submissions as $submission)
                                     @php
-                                        $isLate = $assignment->due_date && $submission->submitted_at
-                                            && $submission->submitted_at->gt($assignment->due_date);
+                                        $isLate = null;
+                                        $durationText = '—';
+
+                                        if ($assignment->due_date && $submission->submitted_at) {
+                                            $isLate = $submission->submitted_at->gt($assignment->due_date);
+                                            $diff = $submission->submitted_at->diff($assignment->due_date);
+
+                                            $parts = [];
+                                            if ($diff->d > 0) $parts[] = $diff->d . 'd';
+                                            if ($diff->h > 0) $parts[] = $diff->h . 'h';
+                                            if ($diff->i > 0) $parts[] = $diff->i . 'm';
+                                            $durationText = $parts ? implode(' ', $parts) : 'less than a minute';
+                                        }
                                     @endphp
                                     <tr>
                                         <td>{{ $submission->student->registration_no ?? 'N/A' }}</td>
                                         <td>{{ $submission->student->name ?? 'Unknown student' }}</td>
                                         <td>{{ $submission->submitted_at?->format('d M Y, h:i A') ?? '—' }}</td>
                                         <td>
-                                            @if($isLate)
-                                                <span class="badge late-badge">Late</span>
+                                            @if($isLate === null)
+                                                <span class="text-muted">—</span>
+                                            @elseif($isLate)
+                                                <span class="badge late-badge">Late by {{ $durationText }}</span>
                                             @else
-                                                <span class="badge ontime-badge">On time</span>
+                                                <span class="badge ontime-badge">Early by {{ $durationText }}</span>
                                             @endif
                                         </td>
                                         <td>{{ $submission->comment ?? '—' }}</td>

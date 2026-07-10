@@ -617,97 +617,107 @@ body{
             </div>
 
             <div class="mt-5">
-                            <h3>Faculty structure</h3>
-                            @foreach($faculty->courses as $course)
-                                <div class="card mb-4 p-3">
-                                    <div class="d-flex justify-content-between align-items-center mb-3">
-                                        <div>
-                                            <h4 class="mb-1">{{ $course->code }} - {{ $course->name }}</h4>
-                                            <small class="text-muted">{{ $course->description ?? 'No course description available.' }}</small>
-                                        </div>
-                                        <span class="badge bg-primary">{{ ucfirst($course->status) }}</span>
-                                    </div>
+                                        <h3>Faculty structure</h3>
+                                        @foreach($faculty->courses as $course)
+                                            @php $courseCollapseId = 'course-' . $course->id; @endphp
+                                            <div class="card mb-4 p-3">
+                                                <div class="d-flex justify-content-between align-items-center mb-3"
+                                                    style="cursor:pointer;"
+                                                    data-bs-toggle="collapse"
+                                                    data-bs-target="#{{ $courseCollapseId }}"
+                                                    aria-expanded="false">
+                                                    <div>
+                                                        <h4 class="mb-1">{{ $course->code }} - {{ $course->name }}</h4>
+                                                        <small class="text-muted">{{ $course->description ?? 'No course description available.' }}</small>
+                                                    </div>
+                                                    <div class="d-flex align-items-center gap-2">
+                                                        <span class="badge bg-primary">{{ ucfirst($course->status) }}</span>
+                                                        <i class="bi bi-chevron-down"></i>
+                                                    </div>
+                                                </div>
 
-                                    @if($course->levels->count())
-                                        @foreach($course->levels as $level)
-                                            @php
-                                                $levelName = strtolower(trim($level->name));
-                                                $semesterCount = match($levelName) {
-                                                    'hnd' => 4,
-                                                    'diploma' => 2,
-                                                    'degree' => 6,
-                                                    default => max($level->semesters->count(), 0),
-                                                };
-                                                $semesters = $level->semesters->values();
-                                            @endphp
-                                            <div class="mb-4">
-                                                <h5 class="mb-2">{{ $level->name }}</h5>
-                                                @if($semesterCount > 0)
-                                                    @for($i = 1; $i <= $semesterCount; $i++)
-                                                        @php
-                                                            $semester = $semesters->get($i - 1);
-                                                            $semesterName = $semester?->name ?? "Semester {$i}";
-                                                            $collapseId = 'semester-' . $course->id . '-' . $level->id . '-' . $i;
-                                                        @endphp
-                                                        <div class="mb-2 ps-3">
-                                                            <!-- 🔻 Semester header (dropdown toggle) -->
-                                                            <button class="btn btn-sm btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center"
-                                                                    type="button"
-                                                                    data-bs-toggle="collapse"
-                                                                    data-bs-target="#{{ $collapseId }}"
-                                                                    aria-expanded="false">
-                                                                <span>{{ $semesterName }}</span>
-                                                                <i class="bi bi-chevron-down"></i>
-                                                            </button>
+                                                <div class="collapse" id="{{ $courseCollapseId }}">
 
-                                                            <!-- 📦 Collapsed module list -->
-                                                            <div class="collapse mt-2" id="{{ $collapseId }}">
-                                                                @if($semester && $semester->subjects->count())
-                                                                    <ul class="list-group mb-2">
-                                                                        @foreach($semester->subjects as $subject)
-                                                                            <li class="list-group-item py-2">
-                                                                                <a href="{{ route('lecturer.subject.show', $subject->id) }}"
-                                                                                class="text-decoration-none d-flex justify-content-between align-items-center">
-                                                                                    <span>{{ $subject->code }} - {{ $subject->name }}</span>
-                                                                                    <i class="bi bi-chevron-right"></i>
-                                                                                </a>
-                                                                            </li>
-                                                                        @endforeach
-                                                                    </ul>
+                                                    @if($course->levels->count())
+                                                        @foreach($course->levels as $level)
+                                                            @php
+                                                                $levelName = strtolower(trim($level->name));
+                                                                $semesterCount = match($levelName) {
+                                                                    'hnd' => 4,
+                                                                    'diploma' => 2,
+                                                                    'degree' => 6,
+                                                                    default => max($level->semesters->count(), 0),
+                                                                };
+                                                                $semesters = $level->semesters->values();
+                                                            @endphp
+                                                            <div class="mb-4">
+                                                                <h5 class="mb-2">{{ $level->name }}</h5>
+                                                                @if($semesterCount > 0)
+                                                                    @for($i = 1; $i <= $semesterCount; $i++)
+                                                                        @php
+                                                                            $semester = $semesters->get($i - 1);
+                                                                            $semesterName = $semester?->name ?? "Semester {$i}";
+                                                                            $collapseId = 'semester-' . $course->id . '-' . $level->id . '-' . $i;
+                                                                        @endphp
+                                                                        <div class="mb-2 ps-3">
+                                                                            <button class="btn btn-sm btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center"
+                                                                                    type="button"
+                                                                                    data-bs-toggle="collapse"
+                                                                                    data-bs-target="#{{ $collapseId }}"
+                                                                                    aria-expanded="false">
+                                                                                <span>{{ $semesterName }}</span>
+                                                                                <i class="bi bi-chevron-down"></i>
+                                                                            </button>
+
+                                                                            <div class="collapse mt-2" id="{{ $collapseId }}">
+                                                                                @if($semester && $semester->subjects->count())
+                                                                                    <ul class="list-group mb-2">
+                                                                                        @foreach($semester->subjects as $subject)
+                                                                                            <li class="list-group-item py-2">
+                                                                                                <a href="{{ route('lecturer.subject.show', $subject->id) }}"
+                                                                                                class="text-decoration-none d-flex justify-content-between align-items-center">
+                                                                                                    <span>{{ $subject->code }} - {{ $subject->name }}</span>
+                                                                                                    <i class="bi bi-chevron-right"></i>
+                                                                                                </a>
+                                                                                            </li>
+                                                                                        @endforeach
+                                                                                    </ul>
+                                                                                @else
+                                                                                    <p class="text-muted ps-3">No subjects found for this semester.</p>
+                                                                                @endif
+                                                                            </div>
+                                                                        </div>
+                                                                    @endfor
                                                                 @else
-                                                                    <p class="text-muted ps-3">No subjects found for this semester.</p>
+                                                                    <p class="text-muted ps-3">No semesters available for this level.</p>
                                                                 @endif
                                                             </div>
-                                                        </div>
-                                                    @endfor
-                                                @else
-                                                    <p class="text-muted ps-3">No semesters available for this level.</p>
-                                                @endif
+                                                        @endforeach
+                                                    @else
+                                                        <p class="text-muted">No levels configured for this course.</p>
+                                                    @endif
+
+                                                </div>
                                             </div>
                                         @endforeach
+                                    </div>
                                     @else
-                                        <p class="text-muted">No levels configured for this course.</p>
+                                    <p>No courses available for this faculty.</p>
                                     @endif
                                 </div>
-                            @endforeach
-                        </div>
-                        @else
-                        <p>No courses available for this faculty.</p>
-                        @endif
-                    </div>
 
-                    <div class="col-md-3">
-                        <div class="card">
-                            <div class="card-header" style="color:#b22222;font-weight:bold;">Calendar</div>
-                            <div class="card-body">
-                                <div id="calendar"></div>
+                                <div class="col-md-3">
+                                    <div class="card">
+                                        <div class="card-header" style="color:#b22222;font-weight:bold;">Calendar</div>
+                                        <div class="card-body">
+                                            <div id="calendar"></div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-</div>
+            </div>
 
 <!-- Level Modal -->
 <div id="levelModal">
