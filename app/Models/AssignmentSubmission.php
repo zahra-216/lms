@@ -15,7 +15,10 @@ class AssignmentSubmission extends Model
         'comment',
         'submitted_at'
     ];
-    
+
+    protected $casts = [
+        'submitted_at' => 'datetime',
+    ];
 
     public function student()
     {

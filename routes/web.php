@@ -17,6 +17,7 @@ use App\Models\Admin;
 
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LecturerAuthController;
 use App\Http\Controllers\Student\StudentController as StudentStudentController;
 use App\Http\Controllers\Student\SubjectController as StudentSubjectController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -26,8 +27,7 @@ use App\Http\Controllers\Admin\{
     AuthController,
     ProfileController,
     NotificationController,
-    StudentController,
-    FacultyController,
+    StudentController,    LecturerController,    FacultyController,
     CourseController,
     LevelController,
     SemesterController,
@@ -75,6 +75,39 @@ Route::get('/course/{courseId}/levels', [FrontendController::class, 'courseLevel
 // LOGIN
 Route::get('/login', [FrontendController::class, 'loginPage'])->name('login');
 Route::post('/login', [FrontendController::class, 'login'])->name('login.submit');
+
+// LECTURER LOGIN
+Route::get('/lecturer/login', [LecturerAuthController::class, 'showLoginForm'])->name('lecturer.login');
+Route::post('/lecturer/login', [LecturerAuthController::class, 'login'])->name('lecturer.login.submit');
+Route::get('/lecturer/dashboard', [LecturerAuthController::class, 'dashboard'])
+    ->middleware('auth:lecturer')
+    ->name('lecturer.dashboard');
+Route::post('/lecturer/logout', [LecturerAuthController::class, 'logout'])->name('lecturer.logout');
+
+Route::prefix('lecturer')->middleware(['auth:lecturer'])->name('lecturer.')->group(function () {
+
+    Route::get('/subject/{id}', [App\Http\Controllers\LecturerSubjectController::class, 'show'])
+        ->name('subject.show');
+
+    Route::get('/subject/{id}/notes', [App\Http\Controllers\LecturerSubjectController::class, 'notes'])
+        ->name('subject.notes');
+
+    Route::get('/subject/{id}/videos', [App\Http\Controllers\LecturerSubjectController::class, 'videos'])
+        ->name('subject.videos');
+
+    Route::get('/subject/{id}/assignments', [App\Http\Controllers\LecturerSubjectController::class, 'assignments'])
+        ->name('subject.assignments');
+
+    Route::get('/subject/{id}/grades', [App\Http\Controllers\LecturerSubjectController::class, 'grades'])
+        ->name('subject.grades');
+
+    Route::get('/assignment/{assignment}/marks/create', [App\Http\Controllers\Admin\MarkController::class, 'lecturerCreate'])
+        ->name('marks.create');
+
+    Route::post('/marks/store', [App\Http\Controllers\Admin\MarkController::class, 'lecturerStore'])
+        ->name('marks.store');
+
+});
 
 // ADMIN LOGIN (🔥 FIXED)
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
@@ -127,6 +160,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     // ================= CRUD =================
     Route::resources([
         'students' => StudentController::class,
+        'lecturers' => LecturerController::class,
         'faculties' => FacultyController::class,
         'courses' => CourseController::class,
         'levels' => LevelController::class,
@@ -325,11 +359,18 @@ Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::post('/settings', [App\Http\Controllers\Admin\SettingsController::class, 'update'])
         ->name('admin.settings.update');
 });
-Route::post('/admin/notification/read', function(Request $request){
-    auth('admin')->user()
-        ->notifications()
-        ->where('id', $request->id)
-        ->update(['read_at' => now()]);
+Route::middleware(['auth:admin'])->prefix('admin')->name('admin.')->group(function () {
+
+    Route::post('/notification/read/{id}', function ($id) {
+        auth('admin')->user()->notifications()->where('id', $id)->update(['read_at' => now()]);
+        return response()->json(['success' => true]);
+    })->name('notification.read');
+
+    Route::post('/notification/read-all', function () {
+        auth('admin')->user()->unreadNotifications->markAsRead();
+        return response()->json(['success' => true]);
+    })->name('notification.readAll');
+
 });
 
 

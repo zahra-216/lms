@@ -86,8 +86,11 @@ class AssignmentController extends Controller
             'submitted_at' => now()
         ]);
 
+        $student = Student::find($studentId);
+        $assignment = Assignment::find($request->assignment_id);
+
         foreach (Admin::all() as $admin) {
-            $admin->notify(new AssignmentSubmitted());
+            $admin->notify(new AssignmentSubmitted($student, $assignment));
         }
 
         return back()->with('success', 'Submitted!');

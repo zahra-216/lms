@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="csrf-token" content="{{ csrf_token() }}">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TT Mentor Admin Dashboard</title>
 
@@ -223,6 +224,13 @@ body { font-family: 'Inter', sans-serif; background:#f4f6f9; margin:0; }
         <ul class="dropdown-menu dropdown-menu-end p-2" style="width:300px;">
 
             {{-- ✅ No Notification --}}
+            @if(auth('admin')->user()->unreadNotifications->count() > 0)
+                <li class="text-end p-2">
+                    <button class="btn btn-sm btn-link text-decoration-none" id="markAllReadBtn">
+                        Mark all as read
+                    </button>
+                </li>
+                @endif
             @if(auth('admin')->user()->unreadNotifications->count() == 0)
                 <li class="text-center text-muted p-2">
                     No new notifications
@@ -395,7 +403,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const notifCount = document.querySelector("#notifDropdown .badge");
     const notifList = document.querySelector(".dropdown-menu");
 
-    // 🔔 Mark as Read
+    // 🔔 Mark as Read (individual)
     document.querySelectorAll(".mark-read-btn").forEach(btn => {
         btn.addEventListener("click", function () {
 
@@ -436,6 +444,35 @@ document.addEventListener("DOMContentLoaded", function () {
 
         });
     });
+
+    // ✅ Mark all as Read
+    const markAllBtn = document.getElementById("markAllReadBtn");
+    if (markAllBtn) {
+        markAllBtn.addEventListener("click", function () {
+
+            fetch("/admin/notification/read-all", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                    "Accept": "application/json"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+
+                if (data.success) {
+                    notifList.innerHTML = `
+                        <li class="text-center text-muted p-3">
+                            No new notifications
+                        </li>
+                    `;
+                    notifCount.innerText = 0;
+                }
+
+            });
+
+        });
+    }
 
 });
 

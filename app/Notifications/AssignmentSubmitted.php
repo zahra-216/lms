@@ -3,14 +3,12 @@
 namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-
-use Illuminate\Notifications\Messages\DatabaseMessage;
 
 class AssignmentSubmitted extends Notification
 {
+    use Queueable;
+
     protected $student;
     protected $assignment;
 
@@ -22,7 +20,7 @@ class AssignmentSubmitted extends Notification
 
     public function via($notifiable)
     {
-        return ['database']; // important
+        return ['database'];
     }
 
     public function toDatabase($notifiable)
@@ -30,6 +28,7 @@ class AssignmentSubmitted extends Notification
         return [
             'title' => 'New Assignment Submission',
             'message' => $this->student->name . ' submitted ' . $this->assignment->title,
+            'link' => route('admin.assignments.submissions', $this->assignment->id),
         ];
     }
 }

@@ -110,10 +110,19 @@
         @endif
 
         
-        <form action="{{ route('admin.students.store') }}" method="POST">
+<form action="{{ route('admin.students.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
-    <input type="text" name="registration_no" placeholder="Registration No" required>
+    <input
+        type="text"
+        name="registration_no"
+        placeholder="e.g. TTMC/ML/UG/CSE-O/25/03"
+        pattern="TTMC/ML/[A-Za-z]{2,3}/[A-Za-z]{2,4}(-O)?/\d{2}/\d{2,4}"
+        title="Format: TTMC/ML/XXX/YYYY-O/YY/NNNN (e.g. TTMC/ML/UG/CSE-O/25/03)"
+        style="text-transform: uppercase;"
+        oninput="this.value = this.value.toUpperCase();"
+        required
+    >
 
     <input type="text" name="name" placeholder="Full Name" required>
 
@@ -128,14 +137,24 @@
         <option value="Nuwara Eliya Branch">Nuwara Eliya Branch</option>
     </select>
 
-    <!-- 🔥 ADD COURSE -->
     <input type="number" name="course_id" placeholder="Course ID" required>
 
-    <!-- 🔥 ADD LEVEL -->
     <input type="number" name="level_id" placeholder="Level ID" required>
 
-    <!-- 🔥 PASSWORD -->
-    <input type="password" name="password" placeholder="Password" required>
+    <!-- 🔥 NEW: optional photo -->
+    <label style="display:block; margin-bottom:6px; font-weight:600;">Photo (optional)</label>
+    <input type="file" name="photo" accept="image/png, image/jpeg">
+
+    <!-- 🔥 password field: prevent browser autofill -->
+    <input
+        type="password"
+        name="password"
+        placeholder="Password"
+        required
+        autocomplete="new-password"
+        readonly
+        onfocus="this.removeAttribute('readonly');"
+    >
 
     <button type="submit">
         <i class="fa fa-plus"></i> Add Student

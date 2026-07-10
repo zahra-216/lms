@@ -18,14 +18,17 @@ body{ font-family:'Segoe UI', sans-serif; background:#f4f7ff; margin:0; overflow
 .overlay.active{ opacity:1; visibility:visible; }
 
 /* Page content */
-.page-content{ transition:0.3s; margin-left:0; padding-top:120px; }
+.page-content{ transition:0.3s; margin-left:0; padding-top:90px; }
 .page-content.shifted{ margin-left:260px; }
 
 /* Topbar */
-.topbar{ position:fixed; top:0; left:0; width:100%; background:#012147; color:white; padding:8px 20px; font-size:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; z-index:4000; transition:0.3s; }
-.topbar-left{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
+.topbar{ position:fixed; top:0; left:0; width:100%; background:#012147; color:white; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; z-index:4000; }
+.topbar h1{ font-size:20px; margin:0; font-weight:600; }
+.topbar .actions{ display:flex; align-items:center; gap:12px; }
+.logout-btn{ background:#ff4d4f; border:none; color:#fff; padding:10px 16px; border-radius:10px; cursor:pointer; }
+.logout-btn:hover{ opacity:.9; }
+.topbar-right a{ color:white; text-decoration:none; }
 .menu-icon{ font-size:26px; cursor:pointer; }
-.topbar-right a{ color:white; text-decoration:none; margin-left:8px; }
 .topbar.shifted{ left:260px; width:calc(100% - 260px); }
 
 /* Header */
@@ -550,44 +553,34 @@ body{
 
 <div class="page-content" id="pageContent">
 
-<!-- Topbar -->
-<div class="topbar">
-    <div class="topbar-left">
-        <i class="bi bi-list menu-icon" onclick="openMenu()"></i>
-        <span><i class="bi bi-telephone"></i> Call : 011 4319 996 | 077 2270 348</span>
-        <span><i class="bi bi-envelope"></i> Email : Info.ttmcml@gmail.com</span>
-    </div>
-        <div class="topbar-right">
-
-@if(session()->has('student_id'))
-
-    Welcome {{ session('student_name') }}
-
-    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-        @csrf
-        <button class="btn btn-link text-white p-0">Logout</button>
-    </form>
-
-@else
-
-    You are not logged in.
-    <a href="{{ route('login') }}">(Log in)</a>
-
-@endif
-
-</div>
-</div>
-
-<!-- Header -->
-<div class="header">
-    <div class="logo-area">
-        <img src="{{ asset('images/logo.png.jpeg') }}">
-        <div>
-            <div class="campus-name">TT Metro Campus</div>
-            <div class="lms-name">Learning Management System</div>
+    <div class="topbar">
+        <div style="display:flex; align-items:center; gap:12px;">
+            <i class="bi bi-list menu-icon" onclick="openMenu()"></i>
+            <h1>{{ $faculty->name }} Faculty</h1>
+        </div>
+        <div class="actions">
+            @if(auth('lecturer')->check())
+                <span>Welcome, {{ auth('lecturer')->user()->name }}</span>
+                <form action="{{ route('lecturer.logout') }}" method="POST" style="margin:0;">
+                    @csrf
+                    <button type="submit" class="logout-btn">Logout</button>
+                </form>
+            @else
+                <a href="{{ route('lecturer.login') }}" class="logout-btn">Lecturer Login</a>
+            @endif
         </div>
     </div>
-</div>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo-area">
+            <img src="{{ asset('images/logo.png.jpeg') }}">
+            <div>
+                <div class="campus-name">TT Metro Campus</div>
+                <div class="lms-name">Learning Management System</div>
+            </div>
+        </div>
+    </div>
 
 <!-- Hero -->
 <section class="hero">
@@ -613,8 +606,7 @@ body{
                                : 'https://via.placeholder.com/300x250';
                 @endphp
                 <div class="col-md-3 mb-3 course-item">
-                    <div class="card" style="background-image: url('{{ asset($imgPath) }}'); background-size: cover; background-position: center;"
-                         onclick="fetchLevels({{ $course->id }}, '{{ $course->name }}')">
+                    <div class="card" style="background-image: url('{{ asset($imgPath) }}'); background-size: cover; background-position: center;">
                         <div class="card-body">
                             <h5>{{ $course->code }} - {{ $course->name }}</h5>
                             <span class="badge bg-success">{{ ucfirst($course->status) }}</span>
@@ -623,21 +615,97 @@ body{
                 </div>
                 @endforeach
             </div>
-            @else
-            <p>No courses available for this faculty.</p>
-            @endif
-        </div>
 
-        <div class="col-md-3">
-            <div class="card">
-                <div class="card-header" style="color:#b22222;font-weight:bold;">Calendar</div>
-                <div class="card-body">
-                    <div id="calendar"></div>
+            <div class="mt-5">
+                            <h3>Faculty structure</h3>
+                            @foreach($faculty->courses as $course)
+                                <div class="card mb-4 p-3">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <div>
+                                            <h4 class="mb-1">{{ $course->code }} - {{ $course->name }}</h4>
+                                            <small class="text-muted">{{ $course->description ?? 'No course description available.' }}</small>
+                                        </div>
+                                        <span class="badge bg-primary">{{ ucfirst($course->status) }}</span>
+                                    </div>
+
+                                    @if($course->levels->count())
+                                        @foreach($course->levels as $level)
+                                            @php
+                                                $levelName = strtolower(trim($level->name));
+                                                $semesterCount = match($levelName) {
+                                                    'hnd' => 4,
+                                                    'diploma' => 2,
+                                                    'degree' => 6,
+                                                    default => max($level->semesters->count(), 0),
+                                                };
+                                                $semesters = $level->semesters->values();
+                                            @endphp
+                                            <div class="mb-4">
+                                                <h5 class="mb-2">{{ $level->name }}</h5>
+                                                @if($semesterCount > 0)
+                                                    @for($i = 1; $i <= $semesterCount; $i++)
+                                                        @php
+                                                            $semester = $semesters->get($i - 1);
+                                                            $semesterName = $semester?->name ?? "Semester {$i}";
+                                                            $collapseId = 'semester-' . $course->id . '-' . $level->id . '-' . $i;
+                                                        @endphp
+                                                        <div class="mb-2 ps-3">
+                                                            <!-- 🔻 Semester header (dropdown toggle) -->
+                                                            <button class="btn btn-sm btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center"
+                                                                    type="button"
+                                                                    data-bs-toggle="collapse"
+                                                                    data-bs-target="#{{ $collapseId }}"
+                                                                    aria-expanded="false">
+                                                                <span>{{ $semesterName }}</span>
+                                                                <i class="bi bi-chevron-down"></i>
+                                                            </button>
+
+                                                            <!-- 📦 Collapsed module list -->
+                                                            <div class="collapse mt-2" id="{{ $collapseId }}">
+                                                                @if($semester && $semester->subjects->count())
+                                                                    <ul class="list-group mb-2">
+                                                                        @foreach($semester->subjects as $subject)
+                                                                            <li class="list-group-item py-2">
+                                                                                <a href="{{ route('lecturer.subject.show', $subject->id) }}"
+                                                                                class="text-decoration-none d-flex justify-content-between align-items-center">
+                                                                                    <span>{{ $subject->code }} - {{ $subject->name }}</span>
+                                                                                    <i class="bi bi-chevron-right"></i>
+                                                                                </a>
+                                                                            </li>
+                                                                        @endforeach
+                                                                    </ul>
+                                                                @else
+                                                                    <p class="text-muted ps-3">No subjects found for this semester.</p>
+                                                                @endif
+                                                            </div>
+                                                        </div>
+                                                    @endfor
+                                                @else
+                                                    <p class="text-muted ps-3">No semesters available for this level.</p>
+                                                @endif
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <p class="text-muted">No levels configured for this course.</p>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                        @else
+                        <p>No courses available for this faculty.</p>
+                        @endif
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="card">
+                            <div class="card-header" style="color:#b22222;font-weight:bold;">Calendar</div>
+                            <div class="card-body">
+                                <div id="calendar"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</div>
 
 </div>
 

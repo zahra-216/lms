@@ -20,7 +20,7 @@ class FrontendController extends Controller
 
     public function facultyCourses($id)
     {
-        $faculty = Faculty::with('courses')->findOrFail($id);
+        $faculty = Faculty::with(['courses.levels.semesters.subjects'])->findOrFail($id);
         return view('faculty.courses', compact('faculty'));
     }
 
@@ -43,6 +43,8 @@ public function loginPage(Request $request)
 
     return view('auth.login');
 }
+
+    // Note: student registration is disabled here. Students are created by admin.
     
 
     // ================= LOGIN =================
@@ -54,15 +56,17 @@ public function loginPage(Request $request)
             'password' => 'required',
         ]);
 
+        // Lookup only by registration number (admin-provisioned students)
         $student = Student::where('registration_no', $request->registration_no)->first();
 
-        if (!$student) {
+        if (! $student) {
             return back()->withErrors([
                 'registration_no' => 'Registration Number not found.'
             ]);
         }
 
-        if (!Hash::check($request->password, $student->password)) {
+        // Passwords are stored hashed. Verify with Hash::check against the stored hash.
+        if (! Hash::check($request->password, $student->password)) {
             return back()->withErrors([
                 'password' => 'Incorrect Password.'
             ]);

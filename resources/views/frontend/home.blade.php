@@ -31,7 +31,32 @@ body{
 .topbar-left{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
 .menu-icon{ font-size:26px; cursor:pointer; }
 .topbar-right a{ color:white; text-decoration:none; margin-left:8px; }
-.topbar.shifted{ left:260px; width:calc(100% - 260px); }
+    .topbar-right .dashboard-btn{
+        display:inline-flex !important;
+        align-items:center !important;
+        justify-content:center !important;
+        padding:10px 16px !important;
+        border-radius:10px !important;
+        font-size:14px !important;
+        font-weight:600 !important;
+        text-decoration:none !important;
+        transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease !important;
+    }
+    .topbar-right .dashboard-btn.btn-primary{
+        background:#012147 !important;
+        color:#fff !important;
+        border:1px solid #012147 !important;
+        box-shadow:0 12px 24px rgba(1,33,71,.16) !important;
+    }
+    .topbar-right .dashboard-btn.btn-ghost{
+        background:rgba(255,255,255,0.12) !important;
+        color:#012147 !important;
+        border:1px solid rgba(255,255,255,0.22) !important;
+    }
+    .topbar-right .dashboard-btn:hover{
+        transform:translateY(-1px) !important;
+        opacity:.95 !important;
+    }
 
 /* Header */
 .header{ position:fixed; top:50px; left:0; width:100%; background:#f3f3f3; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; z-index:3500; transition:0.3s; }
@@ -247,13 +272,36 @@ body{
 /* DASHBOARD BUTTON */
 
 .dashboard-btn{
-
-    font-size:12px;
-
-    padding:6px 8px;
-
+    font-size:14px;
+    padding:10px 14px;
+    border-radius:10px;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+    transition:all .25s ease;
 }
 
+.dashboard-btn i{
+    font-size:16px;
+}
+
+.dashboard-btn.btn-primary{
+    background:#012147;
+    color:#fff;
+    border:1px solid transparent;
+}
+
+.dashboard-btn.btn-ghost{
+    background:rgba(255,255,255,0.12);
+    color:#fff;
+    border:1px solid rgba(255,255,255,0.22);
+}
+
+.dashboard-btn:hover{
+    opacity:.94;
+    transform:translateY(-1px);
+}
 
 
 /* REMOVE SHIFT */
@@ -412,9 +460,31 @@ body{
 
 
 .dashboard-btn{
+    display:inline-flex;
+    text-decoration:none;
+    border-radius:10px;
+    padding:10px 16px;
+    font-size:14px;
+    font-weight:600;
+    transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
+}
 
-    display:none;
+.dashboard-btn.btn-primary{
+    background:#012147;
+    color:#fff;
+    border:1px solid #012147;
+    box-shadow:0 12px 24px rgba(1,33,71,.16);
+}
 
+.dashboard-btn.btn-ghost{
+    background:rgba(1,33,71,.06);
+    color:#012147;
+    border:1px solid rgba(1,33,71,.18);
+}
+
+.dashboard-btn:hover{
+    transform:translateY(-1px);
+    opacity:.95;
 }
 
 
@@ -480,24 +550,14 @@ body{
             <span><i class="bi bi-envelope"></i> Email : Info.ttmcml@gmail.com</span>
         </div>
         <div class="topbar-right">
-
-@if(session()->has('student_id'))
-
-    Welcome {{ session('student_name') }}
-
-    <form action="{{ route('logout') }}" method="POST" style="display:inline;">
-        @csrf
-        <button class="btn btn-link text-white p-0">Logout</button>
-    </form>
-
-@else
-
-    You are not logged in.
-    <a href="{{ route('login') }}">(Log in)</a>
-
-@endif
-
-</div>
+            @if(session()->has('student_id'))
+                Welcome {{ session('student_name') }}
+                <form action="{{ route('logout') }}" method="POST" style="display:inline; margin-left:12px;">
+                    @csrf
+                    <button class="btn btn-link text-white p-0">Logout</button>
+                </form>
+            @endif
+        </div>
     </div>
 
     <!-- HEADER -->
@@ -509,16 +569,29 @@ body{
                 <div class="lms-name">Learning Management System</div>
             </div>
         </div>
-        <a href="{{ route('admin.login') }}" class="dashboard-btn">
-            <i class="bi bi-speedometer2"></i> Dashboard
-        </a>
+        <div>
+            <a href="{{ route('lecturer.login') }}" class="dashboard-btn btn-ghost" style="margin-right:12px;">
+                <i class="bi bi-person-badge"></i> Lecturer Dashboard
+            </a>
+            <a href="{{ route('admin.login') }}" class="dashboard-btn btn-primary">
+                <i class="bi bi-speedometer2"></i> Admin Dashboard
+            </a>
+        </div>
     </div>
 
     <!-- HERO -->
     <section class="hero">
-        <div class="container">
+        <div class="container text-center">
+            <img src="{{ asset('images/ttmc.jpeg') }}"
+                alt="Campus"
+                style="max-width: 600px; width: 100%; border-radius: 16px; margin-bottom: 20px;">
+
             <h1>Start Your Learning Journey</h1>
             <p>Find courses, modules, and notes easily with TTMC LMS</p>
+
+            <a href="{{ route('login') }}" class="btn btn-primary btn-lg">
+                Login
+            </a>
         </div>
     </section>
 
