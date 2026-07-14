@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
+use Illuminate\Notifications\Messages\MailMessage;
 
 class AssignmentSubmitted extends Notification
 {
@@ -20,7 +21,7 @@ class AssignmentSubmitted extends Notification
 
     public function via($notifiable)
     {
-        return ['database'];
+        return ['database', 'mail'];
     }
 
     public function toDatabase($notifiable)
@@ -30,5 +31,17 @@ class AssignmentSubmitted extends Notification
             'message' => $this->student->name . ' submitted ' . $this->assignment->title,
             'link' => route('admin.assignments.submissions', $this->assignment->id),
         ];
+    }
+
+    public function toMail($notifiable)
+    {
+        return (new MailMessage)
+            ->subject('New Assignment Submission - ' . $this->assignment->title)
+            ->greeting('Hello ' . $notifiable->name . ',')
+            ->line($this->student->name . ' has submitted an assignment.')
+            ->line('Assignment: ' . $this->assignment->title)
+            ->line('Subject: ' . ($this->assignment->subject->name ?? 'N/A'))
+            ->action('View Submission', route('admin.assignments.submissions', $this->assignment->id))
+            ->line('Please review it at your earliest convenience.');
     }
 }

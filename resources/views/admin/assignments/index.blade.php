@@ -67,8 +67,8 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $a->title }}</td>
-                <td>{{ $a->course->name ?? '-' }}</td>
-                <td>{{ $a->level->name ?? '-' }}</td>
+                <td>{{ $a->subject->course->name ?? '-' }}</td>
+                <td>{{ $a->subject->level->name ?? '-' }}</td>
                 <td>{{ $a->subject->name ?? '-' }}</td>
                 <td>{{ $a->due_date }}</td>
 

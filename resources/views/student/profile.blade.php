@@ -335,11 +335,6 @@ footer.shift{
                 <li><a class="dropdown-item" href="{{ route('student.profile') }}">
     <i class="bi bi-person"></i> Profile
 </a></li>
-                <li>
-    <a class="dropdown-item" href="{{ route('student.grades') }}">
-        <i class="bi bi-bar-chart"></i> Grades
-    </a>
-</li>
          
 <form method="POST" action="{{ route('logout') }}">
     @csrf
@@ -500,9 +495,12 @@ footer.shift{
                 </div>
 
                 <div class="text-center mt-4">
-                    <button class="btn btn-primary px-4">
+                    <a href="{{ route('student.profile.edit') }}" class="btn btn-primary px-4">
                         <i class="bi bi-pencil"></i> Edit Profile
-                    </button>
+                    </a>
+                    <a href="{{ route('student.password.edit') }}" class="btn btn-outline-secondary px-4">
+                        <i class="bi bi-key"></i> Change Password
+                    </a>
                 </div>
 
             </div>

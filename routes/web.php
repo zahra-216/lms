@@ -141,6 +141,37 @@ Route::prefix('lecturer')->middleware(['auth:lecturer'])->name('lecturer.')->gro
 
 });
 
+Route::prefix('student')->name('student.')->group(function () {
+
+    Route::get('/subject/{id}/show', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'show'])
+        ->name('subject.portal.show');
+
+    Route::get('/subject/{id}/portal-notes', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'notes'])
+        ->name('subject.portal.notes');
+
+    Route::get('/subject/{id}/portal-videos', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'videos'])
+        ->name('subject.portal.videos');
+
+    Route::get('/subject/{id}/portal-assignments', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'assignments'])
+        ->name('subject.portal.assignments');
+
+    Route::get('/subject/{id}/portal-grades', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'grades'])
+        ->name('subject.portal.grades');
+
+    Route::get('/profile/edit', [App\Http\Controllers\Student\ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::post('/profile/update', [App\Http\Controllers\Student\ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::get('/password/edit', [App\Http\Controllers\Student\ProfileController::class, 'passwordEdit'])
+        ->name('password.edit');
+
+    Route::post('/password/update', [App\Http\Controllers\Student\ProfileController::class, 'passwordUpdate'])
+        ->name('password.update');
+
+});
+
 // ADMIN LOGIN (🔥 FIXED)
 Route::get('/admin/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
 Route::post('/admin/login', [AuthController::class, 'login'])->name('admin.login.submit');

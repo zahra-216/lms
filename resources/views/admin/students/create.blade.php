@@ -89,6 +89,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1> Add Student</h1>
@@ -137,9 +138,16 @@
         <option value="Nuwara Eliya Branch">Nuwara Eliya Branch</option>
     </select>
 
-    <input type="number" name="course_id" placeholder="Course ID" required>
+    <select name="course_id" id="course_id" class="form-select mb-3" required>
+        <option value="">Select Course</option>
+        @foreach($courses as $c)
+            <option value="{{ $c->id }}">{{ $c->code }} - {{ $c->name }}</option>
+        @endforeach
+    </select>
 
-    <input type="number" name="level_id" placeholder="Level ID" required>
+    <select name="level_id" id="level_id" class="form-select mb-3" required>
+        <option value="">Select Level</option>
+    </select>
 
     <!-- 🔥 NEW: optional photo -->
     <label style="display:block; margin-bottom:6px; font-weight:600;">Photo (optional)</label>
@@ -162,4 +170,32 @@
 </form>
     </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#course_id').on('change', function () {
+        let courseId = $(this).val();
+        $('#level_id').html('<option value="">Loading...</option>');
+
+        if (courseId) {
+            $.ajax({
+                url: '/admin/get-levels/' + courseId,
+                type: 'GET',
+                success: function (data) {
+                    $('#level_id').empty().append('<option value="">Select Level</option>');
+                    if (data.length === 0) {
+                        $('#level_id').append('<option>No levels found</option>');
+                        return;
+                    }
+                    data.forEach(function (l) {
+                        $('#level_id').append(`<option value="${l.id}">${l.name}</option>`);
+                    });
+                }
+            });
+        } else {
+            $('#level_id').html('<option value="">Select Level</option>');
+        }
+    });
+});
+</script>
 </html>

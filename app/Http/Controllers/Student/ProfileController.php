@@ -6,20 +6,19 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
     // SHOW PROFILE
     public function index()
     {
-        // 🔥 check login
         if (!session()->has('student_id')) {
             return redirect()->route('login');
         }
 
         $student = Student::find(session('student_id'));
 
-        // 🔥 prevent null error
         if (!$student) {
             return redirect()->route('login')->with('error', 'Student not found');
         }
@@ -40,12 +39,10 @@ class ProfileController extends Controller
             return back()->with('error', 'Student not found');
         }
 
-        // delete old photo
         if ($student->photo) {
             Storage::disk('public')->delete($student->photo);
         }
 
-        // upload new
         $path = $request->file('photo')->store('students', 'public');
 
         $student->update([
@@ -53,5 +50,75 @@ class ProfileController extends Controller
         ]);
 
         return back()->with('success', 'Profile photo updated!');
+    }
+
+    // EDIT PROFILE FORM
+    public function edit()
+    {
+        if (!session()->has('student_id')) {
+            return redirect()->route('login');
+        }
+
+        $student = Student::find(session('student_id'));
+
+        if (!$student) {
+            return redirect()->route('login');
+        }
+
+        return view('student.profile-edit', compact('student'));
+    }
+
+    // UPDATE PROFILE
+    public function update(Request $request)
+    {
+        $student = Student::find(session('student_id'));
+
+        if (!$student) {
+            return redirect()->route('login');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|max:255',
+        ]);
+
+        $student->update($validated);
+
+        return redirect()->route('student.profile')->with('success', 'Profile updated successfully!');
+    }
+
+    // CHANGE PASSWORD FORM
+    public function passwordEdit()
+    {
+        if (!session()->has('student_id')) {
+            return redirect()->route('login');
+        }
+
+        return view('student.password-edit');
+    }
+
+    // UPDATE PASSWORD
+    public function passwordUpdate(Request $request)
+    {
+        $student = Student::find(session('student_id'));
+
+        if (!$student) {
+            return redirect()->route('login');
+        }
+
+        $request->validate([
+            'current_password' => 'required',
+            'new_password' => 'required|string|min:4|confirmed',
+        ]);
+
+        if (!Hash::check($request->current_password, $student->password)) {
+            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
+        }
+
+        $student->update([
+            'password' => Hash::make($request->new_password),
+        ]);
+
+        return redirect()->route('student.profile')->with('success', 'Password changed successfully!');
     }
 }

@@ -387,11 +387,6 @@ footer{
                 <li><a class="dropdown-item" href="{{ route('student.profile') }}">
     <i class="bi bi-person"></i> Profile
 </a></li>
-                <li>
-    <a class="dropdown-item" href="{{ route('student.grades') }}">
-        <i class="bi bi-bar-chart"></i> Grades
-    </a>
-</li>
                 
 <form method="POST" action="{{ route('logout') }}">
     @csrf
@@ -647,8 +642,8 @@ function loadSubjects(semesterId){
 
                 html += `
                     <div class="list-group-item d-flex justify-content-between"
-                         onclick="openSubject(${sub.id})"
-                         style="cursor:pointer">
+                        onclick="openSubject(${sub.id}, ${sub.unlocked ? 'true' : 'false'})"
+                        style="cursor:pointer">
 
                         <div>
                             <b>${sub.code ?? ''}</b> ${sub.name}
@@ -670,7 +665,14 @@ function loadSubjects(semesterId){
 }
 
 // ================= SUBJECT MODAL =================
-function openSubject(subjectId){
+function openSubject(subjectId, unlocked){
+
+    if (unlocked) {
+        // already verified before — skip the modal entirely
+        window.location.href = '/student/subject/' + subjectId + '/show';
+        return;
+    }
+
     document.getElementById('subject_id').value = subjectId;
     var myModal = new bootstrap.Modal(document.getElementById('subjectModal'));
     myModal.show();
@@ -699,7 +701,7 @@ function checkSubject(){
             let modal = bootstrap.Modal.getInstance(document.getElementById('subjectModal'));
             modal.hide();
 
-            window.location.href = '/student/subject/' + data.subject_id + '/notes';
+            window.location.href = '/student/subject/' + data.subject_id + '/show';
         } else {
             document.getElementById('errorMsg').innerText = data.message;
         }

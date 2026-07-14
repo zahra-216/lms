@@ -41,8 +41,7 @@
             required
         >
         <input type="text" name="name" value="{{ $student->name }}" required>
-        <input type="email" name="email" value="{{ $student->email }}">
-
+        <input type="email" name="email" value="{{ $student->email }}" required>
         <select name="branch" required>
             <option value="">Select Branch</option>
             <option value="Head Office – Mount Lavinia" {{ $student->branch == 'Head Office – Mount Lavinia' ? 'selected' : '' }}>Head Office – Mount Lavinia</option>
@@ -52,8 +51,19 @@
             <option value="Nuwara Eliya Branch" {{ $student->branch == 'Nuwara Eliya Branch' ? 'selected' : '' }}>Nuwara Eliya Branch</option>
         </select>
 
-        <input type="number" name="course_id" placeholder="Course ID" value="{{ $student->course_id }}" required>
-        <input type="number" name="level_id" placeholder="Level ID" value="{{ $student->level_id }}" required>
+        <<select name="course_id" id="course_id" required>
+            <option value="">Select Course</option>
+            @foreach($courses as $c)
+                <option value="{{ $c->id }}" {{ $student->course_id == $c->id ? 'selected' : '' }}>{{ $c->code }} - {{ $c->name }}</option>
+            @endforeach
+        </select>
+
+        <select name="level_id" id="level_id" required>
+            <option value="">Select Level</option>
+            @foreach($levels as $l)
+                <option value="{{ $l->id }}" {{ $student->level_id == $l->id ? 'selected' : '' }}>{{ $l->name }}</option>
+            @endforeach
+        </select>
 
         {{-- password intentionally not shown/editable here --}}
 
@@ -61,4 +71,32 @@
     </form>
 </div>
 </body>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+$(document).ready(function () {
+    $('#course_id').on('change', function () {
+        let courseId = $(this).val();
+        $('#level_id').html('<option value="">Loading...</option>');
+
+        if (courseId) {
+            $.ajax({
+                url: '/admin/get-levels/' + courseId,
+                type: 'GET',
+                success: function (data) {
+                    $('#level_id').empty().append('<option value="">Select Level</option>');
+                    if (data.length === 0) {
+                        $('#level_id').append('<option>No levels found</option>');
+                        return;
+                    }
+                    data.forEach(function (l) {
+                        $('#level_id').append(`<option value="${l.id}">${l.name}</option>`);
+                    });
+                }
+            });
+        } else {
+            $('#level_id').html('<option value="">Select Level</option>');
+        }
+    });
+});
+</script>
 </html>

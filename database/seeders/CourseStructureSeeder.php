@@ -10,6 +10,27 @@ use App\Models\Subject;
 
 class CourseStructureSeeder extends Seeder
 {
+    // Short codes used as the first segment of every subject code
+    private array $courseShortCodes = [
+        1 => 'AI',
+        2 => 'CS',
+        3 => 'CFB',
+        4 => 'DS',
+        5 => 'MD',
+        6 => 'AC',
+        7 => 'BM',
+        8 => 'DM',
+        9 => 'HRM',
+        10 => 'HT',
+        11 => 'CE',
+        12 => 'AM',
+        13 => 'ID',
+        14 => 'QS',
+    ];
+
+    // Words ignored when generating the module code segment
+    private array $fillerWords = ['and', 'of', 'to', 'the', 'for', 'in', '&'];
+
     public function run(): void
     {
         $courses = [
@@ -18,11 +39,21 @@ class CourseStructureSeeder extends Seeder
             3 => $this->cyberSecurity(),
             4 => $this->dataScience(),
             5 => $this->mobileDevelopment(),
+            6 => $this->accounting(),
+            7 => $this->businessManagement(),
+            8 => $this->digitalMarketing(),
+            9 => $this->humanResourceManagement(),
+            10 => $this->hospitalityTourism(),
+            11 => $this->civilEngineering(),
+            12 => $this->autocadMep(),
+            13 => $this->interiorDesigning(),
+            14 => $this->quantitySurveying(),
         ];
 
         foreach ($courses as $courseId => $structure) {
 
             $course = Course::findOrFail($courseId);
+            $shortCode = $this->courseShortCodes[$courseId];
 
             foreach ($structure as $levelName => $semesters) {
 
@@ -30,8 +61,6 @@ class CourseStructureSeeder extends Seeder
                     'course_id' => $course->id,
                     'name' => $levelName,
                 ]);
-
-                $levelSlug = strtoupper(substr($levelName, 0, 3));
 
                 foreach ($semesters as $semesterName => $subjects) {
 
@@ -41,15 +70,14 @@ class CourseStructureSeeder extends Seeder
                         'name' => $semesterName,
                     ]);
 
-                    $semesterNumber = (int) preg_replace('/[^0-9]/', '', $semesterName);
-
                     foreach ($subjects as $index => $subjectName) {
 
+                        $moduleCode = $this->generateModuleCode($subjectName);
+
                         $subjectCode = sprintf(
-                            '%s-%s-S%d-%02d',
-                            $course->code,
-                            $levelSlug,
-                            $semesterNumber,
+                            '%s-%s-%02d',
+                            $shortCode,
+                            $moduleCode,
                             $index + 1
                         );
 
@@ -71,6 +99,31 @@ class CourseStructureSeeder extends Seeder
                 }
             }
         }
+    }
+
+    /**
+     * Strips filler words and takes the first letter of each remaining word.
+     * e.g. "Introduction to Business and Management" -> IBM
+     *      "Evolution of Management Thought" -> EMT
+     *      "Recruitment and Selection" -> RS
+     */
+    private function generateModuleCode(string $name): string
+    {
+        // Split on spaces, hyphens, slashes
+        $words = preg_split('/[\s\-\/]+/', $name);
+
+        $letters = '';
+
+        foreach ($words as $word) {
+            $clean = trim($word, "()–—.,");
+            if ($clean === '') continue;
+
+            if (in_array(strtolower($clean), $this->fillerWords)) continue;
+
+            $letters .= strtoupper($clean[0]);
+        }
+
+        return $letters !== '' ? $letters : 'GEN';
     }
 
     private function artificialIntelligence(): array
@@ -503,6 +556,670 @@ class CourseStructureSeeder extends Seeder
                     'Cloud Services for Mobile Apps (Firebase / AWS)',
                     'Emerging Mobile Technologies (AI, IoT, AR/VR)',
                     'Final Project / Internship',
+                ],
+            ],
+        ];
+    }
+
+    private function accounting(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Introduction to Accounting',
+                    'Financial Accounting',
+                    'Final Accounts Preparation',
+                    'Cost Accounting',
+                ],
+                'Semester 2' => [
+                    'Management Accounting',
+                    'Accounting Software & Computerized Accounting',
+                    'Taxation & Auditing Basics',
+                    'Accounting Project / Practical Training',
+                ],
+            ],
+            'HND' => [
+                'Semester 1' => [
+                    'Introduction to Accounting',
+                    'Principles of Financial Accounting',
+                    'Financial Accounting',
+                    'Management Accounting',
+                ],
+                'Semester 2' => [
+                    'Cost Accounting',
+                    'Business Mathematics & Statistics',
+                    'Accounting Software Applications',
+                    'Financial Reporting',
+                ],
+                'Semester 3' => [
+                    'Auditing Principles',
+                    'Taxation',
+                    'Business Economics',
+                    'Corporate & Business Law',
+                ],
+                'Semester 4' => [
+                    'Financial Management',
+                    'Ethics & Professional Practice',
+                    'Communication & IT Skills',
+                    'Final Project',
+                ],
+            ],
+            'Degree' => [
+                'Semester 1' => [
+                    'Introduction to Accounting & Finance',
+                    'Business Environment',
+                    'Quantitative Techniques for Business',
+                    'Principles of Economics',
+                ],
+                'Semester 2' => [
+                    'Business Communication & Presentation Skills',
+                    'Digital Literacy for Accountants',
+                    'Financial Accounting Fundamentals',
+                    'Intermediate Financial Reporting',
+                ],
+                'Semester 3' => [
+                    'Management Accounting Techniques',
+                    'Corporate Law for Accountants',
+                    'Principles of Taxation',
+                    'Accounting Software Applications (Tally / QuickBooks / SAP – Basics)',
+                ],
+                'Semester 4' => [
+                    'Internal Control & Risk Management',
+                    'Research & Analytical Skills',
+                    'International Financial Reporting Standards (IFRS)',
+                ],
+                'Semester 5' => [
+                    'Strategic Cost Management',
+                    'Advanced Auditing & Assurance',
+                    'Corporate Finance & Investment Analysis',
+                    'Public Sector & Non-Profit Accounting',
+                ],
+                'Semester 6' => [
+                    'Business Ethics & Corporate Governance',
+                    'Applied Accounting Project / Dissertation',
+                    'Final Project / Internship',
+                ],
+            ],
+        ];
+    }
+
+    private function businessManagement(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Introduction to Business and Management',
+                    'Evolution of Management Thought',
+                    'Recruitment and Selection',
+                ],
+                'Semester 2' => [
+                    'Motivation and Employee Management',
+                    'Introduction to Business Statistics',
+                    'Final Project',
+                ],
+            ],
+            'HND' => [
+                'Semester 1' => [
+                    'Principles of Management',
+                    'Business Communication',
+                    'Marketing Management',
+                    'Financial Accounting and Analysis',
+                    'Human Resource Management',
+                ],
+                'Semester 2' => [
+                    'Business Mathematics',
+                    'Information Technology for Business Management',
+                    'Business Law and Ethics',
+                    'Entrepreneurship and Small Business Management',
+                    'Operations and Supply Chain Management',
+                ],
+                'Semester 3' => [
+                    'Strategic Management and Economics',
+                    'Business Economics',
+                    'Management Information Systems',
+                    'Project Management',
+                ],
+                'Semester 4' => [
+                    'Financial Accounting',
+                    'Micro Economics',
+                    'Leadership and Organizational Behavior',
+                    'Global Business Environment',
+                    'Final Project',
+                ],
+            ],
+            'Degree' => [
+                'Semester 1' => [
+                    'Principles of Management',
+                    'Business Communication',
+                    'Microeconomics',
+                    'Financial Accounting – I',
+                ],
+                'Semester 2' => [
+                    'Business Mathematics & Statistics',
+                    'Principles of Marketing',
+                    'Business Environment',
+                    'Information Technology for Business',
+                ],
+                'Semester 3' => [
+                    'Organizational Behaviour',
+                    'Human Resource Management',
+                    'Financial Accounting – II',
+                    'Cost & Management Accounting',
+                ],
+                'Semester 4' => [
+                    'Business Law',
+                    'Marketing Management',
+                    'Operations Management',
+                    'Research Methods for Business',
+                ],
+                'Semester 5' => [
+                    'Strategic Management',
+                    'Financial Management',
+                    'Entrepreneurship & Small Business Management',
+                    'International Business Management',
+                ],
+                'Semester 6' => [
+                    'Project Management',
+                    'Business Ethics & Corporate Governance',
+                    'Management Information Systems',
+                    'Final Year Project',
+                ],
+            ],
+        ];
+    }
+
+    private function digitalMarketing(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Introduction to Digital Marketing',
+                    'Search Engine Optimization (SEO)',
+                    'Social Media Marketing (SMM)',
+                    'Search Engine Marketing (SEM / Google Ads)',
+                ],
+                'Semester 2' => [
+                    'Content Marketing',
+                    'Email Marketing',
+                    'Web Analytics & Reporting',
+                    'Digital Marketing Project / Practical',
+                ],
+            ],
+        ];
+    }
+
+    private function humanResourceManagement(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Fundamentals of Management',
+                    'Principles of Human Resource Management',
+                    'Organizational Behavior',
+                    'Performance Management',
+                    'Labour Law and Industrial Relations',
+                    'Strategic Human Resource Management',
+                ],
+                'Semester 2' => [
+                    'Leadership and Team Building',
+                    'Communication and Workplace Ethics',
+                    'Employee Health, Safety & Welfare',
+                    'HR Analytics and Information Systems',
+                    'Research Project / Internship',
+                ],
+            ],
+            'HND' => [
+                'Semester 1' => [
+                    'Introduction to Human Resource Management',
+                    'Principles of Management',
+                    'Organizational Behaviour',
+                    'Human Resource Planning',
+                ],
+                'Semester 2' => [
+                    'Recruitment & Selection',
+                    'Training & Development',
+                    'Performance Management',
+                    'Compensation & Benefits Management',
+                ],
+                'Semester 3' => [
+                    'Employee Relations',
+                    'Labour Law & Industrial Relations',
+                    'Strategic Human Resource Management',
+                    'Health, Safety & Welfare',
+                ],
+                'Semester 4' => [
+                    'Change Management',
+                    'HR Analytics (Basic)',
+                    'Professional Practice & Ethics',
+                    'Industrial Training / Final Project',
+                ],
+            ],
+            'Degree' => [
+                'Semester 1' => [
+                    'Introduction to Human Resource Management',
+                    'Principles of Management',
+                    'Business Economics',
+                    'Organizational Behaviour',
+                ],
+                'Semester 2' => [
+                    'Business Communication Skills',
+                    'Fundamentals of Accounting',
+                    'Information Technology for Business',
+                ],
+                'Semester 3' => [
+                    'Human Resource Planning & Development',
+                    'Recruitment & Selection',
+                    'Training & Development',
+                    'Performance Management',
+                ],
+                'Semester 4' => [
+                    'Employment Law & Industrial Relations',
+                    'Research Methods for Business',
+                    'Management Information Systems',
+                ],
+                'Semester 5' => [
+                    'Strategic Human Resource Management',
+                    'Talent Management & Leadership',
+                    'Compensation & Reward Management',
+                    'Employee Relations & Labour Law',
+                ],
+                'Semester 6' => [
+                    'Change Management & Organizational Development',
+                    'International Human Resource Management',
+                    'Final Project / Internship',
+                ],
+            ],
+        ];
+    }
+
+    private function hospitalityTourism(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Introduction to Tourism & Hospitality Industry',
+                    'Front Office Operations',
+                    'Housekeeping Management',
+                    'Food & Beverage Operations',
+                ],
+                'Semester 2' => [
+                    'Travel & Tour Operations',
+                    'Customer Service & Communication Skills',
+                    'Hotel Accounting & Cost Control',
+                    'Industrial Training / Project',
+                ],
+            ],
+            'HND' => [
+                'Semester 1' => [
+                    'Introduction to Hospitality & Tourism',
+                    'Hospitality Industry Structure',
+                    'Tourism Management',
+                    'Front Office Operations',
+                ],
+                'Semester 2' => [
+                    'Food & Beverage Operations',
+                    'Accommodation Operations',
+                    'Customer Service Management',
+                    'Travel & Tour Operations',
+                ],
+                'Semester 3' => [
+                    'Event Management',
+                    'Hospitality Marketing',
+                    'Tourism Economics',
+                    'Sustainable Tourism',
+                ],
+                'Semester 4' => [
+                    'Hospitality Law & Ethics',
+                    'Human Resource Management in Hospitality',
+                    'Communication & Professional Skills',
+                    'Industrial Training / Final Project',
+                ],
+            ],
+            'Degree' => [
+                'Semester 1' => [
+                    'Introduction to Hospitality & Tourism Industry',
+                    'Principles of Management',
+                    'Tourism Geography',
+                    'Food & Beverage Operations',
+                ],
+                'Semester 2' => [
+                    'Front Office Operations',
+                    'Business Communication Skills',
+                    'Information Technology for Hospitality',
+                ],
+                'Semester 3' => [
+                    'Hospitality Operations Management',
+                    'Tourism Marketing',
+                    'Housekeeping Management',
+                    'Customer Service & Relationship Management',
+                ],
+                'Semester 4' => [
+                    'Event Management',
+                    'Human Resource Management for Hospitality',
+                    'Research Methods for Business',
+                ],
+                'Semester 5' => [
+                    'Strategic Hospitality & Tourism Management',
+                    'Sustainable Tourism Development',
+                    'Revenue & Yield Management',
+                    'International Tourism Management',
+                ],
+                'Semester 6' => [
+                    'Hospitality Law & Ethics',
+                    'Entrepreneurship in Hospitality & Tourism',
+                    'Final Project / Internship',
+                ],
+            ],
+        ];
+    }
+
+    private function autocadMep(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Introduction to AutoCAD',
+                    '2D Drafting in AutoCAD',
+                    '3D Modeling in AutoCAD',
+                    'Introduction to MEP (Mechanical, Electrical, Plumbing)',
+                ],
+                'Semester 2' => [
+                    'MEP Coordination & Clash Detection',
+                    'MEP Documentation & Schedules',
+                    'Final Project',
+                ],
+            ],
+            'HND' => [
+                'Semester 1' => [
+                    'Introduction to AutoCAD & Drafting',
+                    'AutoCAD 2D Drafting Fundamentals',
+                    'AutoCAD 3D Modeling Basics',
+                    'Engineering Drawing Standards',
+                ],
+                'Semester 2' => [
+                    'Architectural Drafting (Plans, Sections, Elevations)',
+                    'Structural Drafting (RCC & Steel Drawings)',
+                    'Introduction to MEP Systems',
+                    'Mechanical Systems Drafting (HVAC Basics)',
+                ],
+                'Semester 3' => [
+                    'Electrical Systems Drafting',
+                    'Plumbing & Sanitary Systems Drafting',
+                    'Fire Fighting Systems Drafting',
+                    'MEP Coordination & Clash Detection',
+                ],
+                'Semester 4' => [
+                    'BOQ & Quantity Basics for MEP',
+                    'Building Codes & Standards (MEP)',
+                    'Project Documentation & As-Built Drawings',
+                    'Final Project / Industrial Training',
+                ],
+            ],
+            'Degree' => [
+                'Semester 1' => [
+                    'Fundamentals of Engineering Drawing',
+                    'Introduction to AutoCAD',
+                    'Basic Mathematics for Engineers',
+                    'Computer Applications & Drafting Tools',
+                ],
+                'Semester 2' => [
+                    'Advanced AutoCAD (2D Drafting)',
+                    'Engineering Drawing & Standards',
+                    'Electrical Systems – Basics',
+                    'Mechanical Systems – Basics',
+                ],
+                'Semester 3' => [
+                    'AutoCAD 3D Modeling',
+                    'Plumbing & Drainage Systems',
+                    'HVAC Systems – Fundamentals',
+                    'Building Construction Technology',
+                ],
+                'Semester 4' => [
+                    'Electrical Design & Layouts (MEP)',
+                    'HVAC Design & Load Calculations',
+                    'Fire Fighting Systems Design',
+                    'Building Services Coordination',
+                    'Advanced BIM for MEP (Revit / Navisworks)',
+                ],
+                'Semester 5' => [
+                    'MEP Quantity Take-Off & Estimation',
+                    'MEP Project Planning & Management',
+                    'BIM Concepts (Revit for MEP – Basics)',
+                ],
+                'Semester 6' => [
+                    'Health, Safety & Environment (HSE)',
+                    'Sustainable & Green Building Services',
+                    'Professional Practice & Ethics',
+                    'Final Project / Internship',
+                ],
+            ],
+        ];
+    }
+
+    private function civilEngineering(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Introduction to Civil Engineering',
+                    'Engineering Drawing & Basic AutoCAD',
+                    'Building Materials & Construction Technology',
+                ],
+                'Semester 2' => [
+                    'Surveying (Basic)',
+                    'Structural Engineering (Basic)',
+                    'Estimation, Costing & Site Practice',
+                    'Final Project',
+                ],
+            ],
+            'Degree' => [
+                'Semester 1' => [
+                    'Engineering Mathematics I',
+                    'Engineering Physics',
+                    'Engineering Chemistry',
+                    'Introduction to Civil Engineering',
+                    'Engineering Drawing & CAD',
+                ],
+                'Semester 2' => [
+                    'Engineering Mathematics II',
+                    'Strength of Materials',
+                    'Building Materials & Construction',
+                    'Surveying – I',
+                    'Environmental Engineering – I',
+                ],
+                'Semester 3' => [
+                    'Structural Mechanics',
+                    'Concrete Technology',
+                    'Surveying – II',
+                    'Geotechnical Engineering – I (Soil Mechanics)',
+                    'Fluid Mechanics',
+                ],
+                'Semester 4' => [
+                    'Structural Analysis',
+                    'Reinforced Concrete Design',
+                    'Transportation Engineering',
+                    'Environmental Engineering – II',
+                    'Hydrology & Irrigation Engineering',
+                ],
+                'Semester 5' => [
+                    'Steel Structure Design',
+                    'Geotechnical Engineering – II (Foundation Engineering)',
+                    'Construction Planning & Management',
+                    'Quantity Surveying & Cost Estimation',
+                ],
+                'Semester 6' => [
+                    'Advanced BIM for MEP (Revit / Navisworks)',
+                    'Sustainable & Green Building Services',
+                    'Professional Practice & Ethics',
+                    'Final Project / Internship',
+                ],
+            ],
+        ];
+    }
+
+    private function interiorDesigning(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Introduction to Interior Designing',
+                    'Principles of Interior Design & Space Planning',
+                    'AutoCAD for Interior Design',
+                    'Introduction to Revit Architecture',
+                ],
+                'Semester 2' => [
+                    'Revit Modeling for Interior Design',
+                    'Furniture, Lighting & Material Design in Revit',
+                    '3D Visualization & Rendering (Basics)',
+                    'Interior Design Project (Revit Based)',
+                ],
+            ],
+            'HND' => [
+                'Semester 1' => [
+                    'Introduction to Interior Design',
+                    'Elements & Principles of Design',
+                    'Color Theory & Materials',
+                    'Space Planning',
+                ],
+                'Semester 2' => [
+                    'Furniture Design',
+                    'Lighting Design',
+                    'Residential Interior Design',
+                    'Commercial Interior Design',
+                ],
+                'Semester 3' => [
+                    'AutoCAD for Interior Design',
+                    '3D Visualization (SketchUp / 3ds Max)',
+                    'Building Materials & Construction',
+                    'Interior Services (Electrical & Plumbing)',
+                ],
+                'Semester 4' => [
+                    'Sustainable Interior Design',
+                    'Cost Estimation & Project Management',
+                    'Professional Practice & Portfolio Development',
+                    'Final Project / Industrial Training',
+                ],
+            ],
+            'Degree' => [
+                'Semester 1' => [
+                    'Introduction to Interior Design',
+                    'Elements & Principles of Design',
+                    'Color Theory',
+                    'Drawing & Sketching Techniques',
+                ],
+                'Semester 2' => [
+                    'Design History & Theory',
+                    'Materials & Finishes – I',
+                    'Computer Applications for Design',
+                    'Communication & Study Skills',
+                ],
+                'Semester 3' => [
+                    'Space Planning & Ergonomics',
+                    'Furniture Design',
+                    'Materials & Finishes – II',
+                    'Lighting Design',
+                ],
+                'Semester 4' => [
+                    'Building Construction for Interiors',
+                    'CAD for Interior Design (AutoCAD)',
+                    'Sustainable Interior Design',
+                    'Professional Practice & Ethics',
+                ],
+                'Semester 5' => [
+                    'Advanced Interior Design Studio',
+                    '3D Visualization (SketchUp / 3ds Max)',
+                    'Building Services for Interiors',
+                    'Project Management for Interior Design',
+                ],
+                'Semester 6' => [
+                    'Interior Detailing & Working Drawings',
+                    'Cost Estimation & Budgeting',
+                    'Research Methods for Design',
+                    'Final Year Project',
+                ],
+            ],
+        ];
+    }
+
+    private function quantitySurveying(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Introduction to Quantity Surveying',
+                    'Building Materials & Construction Technology',
+                    'Construction Drawings & Basic AutoCAD',
+                ],
+                'Semester 2' => [
+                    'Building Measurement & Estimation',
+                    'Cost Control & Tendering Basics',
+                    'Contracts, Site Practice & Professional Skills',
+                    'Final Project',
+                ],
+            ],
+            'HND' => [
+                'Semester 1' => [
+                    'Introduction to Construction Technology & Quantity Surveying',
+                    'Preparation of Bills of Quantities (BoQ) for Construction Works',
+                    'Site Surveying & Levelling',
+                    'Material & Construction Technology',
+                ],
+                'Semester 2' => [
+                    'Estimating & Tendering / Bidding Process',
+                    'Post Contract Management & Quantity Surveying Activities',
+                    'Select Procurement Methods',
+                    'Prepare Bidding Documents & Bids Submittals on behalf of Contractors',
+                ],
+                'Semester 3' => [
+                    'Measurement Building Service & Civil Engineering',
+                    'Prepare Preliminary Project Cost Estimates',
+                    'Quantities in Roads & Highways',
+                    'Application of Information Technology in Construction',
+                ],
+                'Semester 4' => [
+                    'Business Statistics in QS',
+                    'MEP Quantity Surveying',
+                    'Civil Engineering Construction & Technology',
+                    'Manage Workplace Information & Communication',
+                    'Final Project / Industrial Training',
+                ],
+            ],
+            'Degree' => [
+                'Semester 1' => [
+                    'Introduction to Quantity Surveying',
+                    'Construction Technology – I',
+                    'Construction Materials',
+                    'Measurement & Quantification – I',
+                ],
+                'Semester 2' => [
+                    'Mathematics for Construction',
+                    'Construction Drawing & CAD',
+                    'Building Services Basics',
+                    'Communication & Study Skills',
+                ],
+                'Semester 3' => [
+                    'Measurement & Quantification – II',
+                    'Construction Technology – II',
+                    'Contract Law & Procurement',
+                    'Estimating & Cost Planning',
+                ],
+                'Semester 4' => [
+                    'Building Economics',
+                    'Project Management Fundamentals',
+                    'Building Services – Advanced',
+                    'Health, Safety & Environmental Management',
+                ],
+                'Semester 5' => [
+                    'Advanced Measurement & Estimating',
+                    'Contract Administration & Practice',
+                    'Construction Law & Dispute Resolution',
+                    'Cost Control & Value Engineering',
+                ],
+                'Semester 6' => [
+                    'Sustainable Construction',
+                    'Risk Management in Construction',
+                    'Research Methods for QS',
+                    'Final Year Project',
                 ],
             ],
         ];

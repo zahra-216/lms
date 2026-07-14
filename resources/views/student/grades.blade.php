@@ -943,12 +943,7 @@ footer.shift{
                 <li><a class="dropdown-item" href="{{ route('student.profile') }}">
     <i class="bi bi-person"></i> Profile
 </a></li>
-                <li>
-    <a class="dropdown-item" href="{{ route('student.grades') }}">
-        <i class="bi bi-bar-chart"></i> Grades
-    </a>
-</li>
-         
+ 
 <form method="POST" action="{{ route('logout') }}">
     @csrf
     <button type="submit" class="dropdown-item text-danger">

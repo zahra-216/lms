@@ -107,11 +107,54 @@ public function getSubjects($id)
 {
     $semester = Semester::findOrFail($id);
 
-    $subjects = Subject::where('semester_id', $id)->get();
+    $studentId = session('student_id');
+
+    $unlockedIds = \App\Models\SubjectUnlock::where('student_id', $studentId)
+        ->pluck('subject_id')
+        ->toArray();
+
+    $subjects = Subject::where('semester_id', $id)->get()->map(function ($subject) use ($unlockedIds) {
+        $subject->unlocked = in_array($subject->id, $unlockedIds);
+        return $subject;
+    });
 
     return response()->json([
         'semester' => $semester->name,
         'subjects' => $subjects
+    ]);
+}
+public function verifySubject(Request $request)
+{
+    $subject = Subject::find($request->subject_id);
+
+    if(!$subject){
+        return response()->json([
+            'status' => false,
+            'message' => 'Subject not found'
+        ]);
+    }
+
+    if($subject->code != $request->code){
+        return response()->json([
+            'status' => false,
+            'message' => 'Wrong subject code'
+        ]);
+    }
+
+    // 🔥 record the unlock so this student never has to re-enter the code
+    \App\Models\SubjectUnlock::firstOrCreate(
+        [
+            'student_id' => session('student_id'),
+            'subject_id' => $subject->id,
+        ],
+        [
+            'unlocked_at' => now(),
+        ]
+    );
+
+    return response()->json([
+        'status' => true,
+        'subject_id' => $subject->id
     ]);
 }
 }

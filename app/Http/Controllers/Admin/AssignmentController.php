@@ -105,7 +105,11 @@ class AssignmentController extends Controller
         $assignment = Assignment::find($request->assignment_id);
 
         foreach (Admin::all() as $admin) {
-            $admin->notify(new AssignmentSubmitted($student, $assignment));
+            try {
+                $admin->notify(new AssignmentSubmitted($student, $assignment));
+            } catch (\Exception $e) {
+                \Log::error('Failed to notify admin #' . $admin->id . ' (' . $admin->email . '): ' . $e->getMessage());
+            }
         }
 
         return back()->with('success', 'Submitted!');

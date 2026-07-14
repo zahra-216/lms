@@ -8,6 +8,8 @@ use App\Models\Student;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\Mark;
+use App\Models\Course;
+use App\Models\Level;
 
 class StudentController extends Controller
 {
@@ -19,7 +21,8 @@ class StudentController extends Controller
 
     public function create()
     {
-        return view('admin.students.create');
+        $courses = Course::all();
+        return view('admin.students.create', compact('courses'));
     }
 
     public function store(Request $request)
@@ -34,7 +37,7 @@ class StudentController extends Controller
                 'regex:/^TTMC\/ML\/[A-Za-z]{2,3}\/[A-Za-z]{2,4}(-O)?\/\d{2}\/\d{2,4}$/',
             ],
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'required|email|max:255',
             'branch' => 'required|string|max:255',
             'course_id' => 'required|integer',
             'level_id' => 'required|integer',
@@ -69,7 +72,9 @@ class StudentController extends Controller
     public function edit($id)
     {
         $student = Student::findOrFail($id);
-        return view('admin.students.edit', compact('student'));
+        $courses = Course::all();
+        $levels = Level::where('course_id', $student->course_id)->get();
+        return view('admin.students.edit', compact('student', 'courses', 'levels'));
     }
 
     public function update(Request $request, $id)
@@ -87,7 +92,7 @@ class StudentController extends Controller
                 'regex:/^TTMC\/ML\/[A-Za-z]{2,3}\/[A-Za-z]{2,4}(-O)?\/\d{2}\/\d{2,4}$/',
             ],
             'name' => 'required|string|max:255',
-            'email' => 'nullable|email|max:255',
+            'email' => 'required|email|max:255',
             'branch' => 'required|string|max:255',
             'course_id' => 'required|integer',
             'level_id' => 'required|integer',
