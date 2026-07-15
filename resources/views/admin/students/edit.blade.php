@@ -40,7 +40,7 @@
             required
         >
         <input type="text" name="name" value="{{ $student->name }}" required>
-        <input type="email" name="email" value="{{ $student->email }}" required>
+        <input type="email" name="email" value="{{ $student->email }}">
         <select name="branch" required>
             <option value="">Select Branch</option>
             <option value="Head Office – Mount Lavinia" {{ $student->branch == 'Head Office – Mount Lavinia' ? 'selected' : '' }}>Head Office – Mount Lavinia</option>

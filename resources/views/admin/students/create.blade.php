@@ -125,7 +125,7 @@
 
     <input type="text" name="name" placeholder="Full Name" required>
 
-    <input type="email" name="email" placeholder="Email (optional)">
+    <input type="email" name="email" placeholder="Email">
 
     <select name="branch" required>
         <option value="">Select Branch</option>
