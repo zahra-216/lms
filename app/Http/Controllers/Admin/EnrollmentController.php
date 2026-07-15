@@ -77,6 +77,15 @@ class EnrollmentController extends Controller
     return $pdf->download('enrollments-report.pdf');
 }
 
+    // ➕ CREATE FORM
+    public function create()
+    {
+        $students = Student::all();
+        $courses = Course::all();
+
+        return view('admin.enrollments.create', compact('students', 'courses'));
+    }
+
     // 💾 STORE
     public function store(Request $request)
     {

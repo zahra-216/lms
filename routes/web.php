@@ -272,6 +272,36 @@ Route::get('/online-users', function () {
 
 /*
 |--------------------------------------------------------------------------
+| STUDENT NOTIFICATIONS
+|--------------------------------------------------------------------------
+*/
+
+Route::post('/student/notification/read/{id}', function ($id) {
+
+    $studentId = session('student_id');
+    $student = \App\Models\Student::find($studentId);
+
+    if ($student) {
+        $student->notifications()->where('id', $id)->update(['read_at' => now()]);
+    }
+
+    return response()->json(['success' => true]);
+})->name('student.notification.read');
+
+Route::post('/student/notification/read-all', function () {
+
+    $studentId = session('student_id');
+    $student = \App\Models\Student::find($studentId);
+
+    if ($student) {
+        $student->unreadNotifications->markAsRead();
+    }
+
+    return response()->json(['success' => true]);
+})->name('student.notification.readAll');
+
+/*
+|--------------------------------------------------------------------------
 | STUDENT FLOW
 |--------------------------------------------------------------------------
 */

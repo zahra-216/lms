@@ -353,15 +353,37 @@ footer{
        <div class="dropdown notif-wrapper">
     <a class="icon-btn position-relative" data-bs-toggle="dropdown">
         <i class="bi bi-bell"></i>
-        <span id="notif-count" class="notif-badge">0</span>
+        @if($student->unreadNotifications->count() > 0)
+            <span class="notif-badge">{{ $student->unreadNotifications->count() }}</span>
+        @endif
     </a>
 
-    <ul class="dropdown-menu dropdown-menu-end">
-        <li class="p-2 text-muted">No notifications</li>
+    <ul class="dropdown-menu dropdown-menu-end" style="width:300px;">
+
+        @if($student->unreadNotifications->count() > 0)
+            <li class="text-end p-2">
+                <button class="btn btn-sm btn-link text-decoration-none" id="markAllReadBtn">
+                    Mark all as read
+                </button>
+            </li>
+        @endif
+
+        @forelse($student->unreadNotifications->sortByDesc('created_at') as $notif)
+            <li class="dropdown-item d-flex justify-content-between align-items-start">
+                <a href="{{ $notif->data['link'] ?? '#' }}" class="text-decoration-none text-dark flex-grow-1">
+                    <strong>{{ $notif->data['title'] ?? '' }}</strong><br>
+                    <small>{{ $notif->data['message'] ?? '' }}</small>
+                </a>
+                <button class="btn btn-sm btn-outline-secondary mark-read-btn ms-2" data-id="{{ $notif->id }}">
+                    ✓
+                </button>
+            </li>
+        @empty
+            <li class="p-2 text-muted text-center">No notifications</li>
+        @endforelse
+
     </ul>
 </div>
-
-<ul id="notif-list" class="dropdown-menu"></ul>
         <i class="bi bi-chat icon-btn"></i>
 
         <div class="small text-white">
@@ -603,12 +625,53 @@ footer{
     </div>
 </footer>
 
-
-
-<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/laravel-echo/dist/echo.iife.js"></script>
-
 <script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    document.querySelectorAll(".mark-read-btn").forEach(btn => {
+        btn.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            let id = this.getAttribute("data-id");
+            let item = this.closest("li");
+
+            fetch("/student/notification/read/" + id, {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                    "Accept": "application/json"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    item.remove();
+                }
+            });
+        });
+    });
+
+    const markAllBtn = document.getElementById("markAllReadBtn");
+    if (markAllBtn) {
+        markAllBtn.addEventListener("click", function () {
+            fetch("/student/notification/read-all", {
+                method: "POST",
+                headers: {
+                    "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute("content"),
+                    "Accept": "application/json"
+                }
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    location.reload();
+                }
+            });
+        });
+    }
+
+});
 
 // ================= SIDEBAR =================
 function toggleSidebar(){
@@ -791,104 +854,6 @@ function loadOnlineUsers(){
 
 // auto refresh
 setInterval(loadOnlineUsers, 5000);
-
-// ================= 🔥 PUSHER NOTIFICATION =================
-
-// IMPORTANT
-
-
-// ================= NOTIFICATION LOAD =================
-function loadNotifications() {
-    fetch('/notifications')
-        .then(res => res.json())
-        .then(data => {
-
-            let list = document.getElementById('notif-list');
-            let count = document.getElementById('notif-count');
-
-            // COUNT update
-            count.innerText = data.length;
-
-            // EMPTY state
-            if (data.length === 0) {
-                list.innerHTML = `
-                    <li class="text-center text-muted p-2">
-                        No notifications
-                    </li>`;
-                return;
-            }
-
-            // BUILD LIST
-            let html = '';
-
-            data.forEach(notif => {
-                html += `
-                    <li>
-                        <a href="${notif.url ?? '#'}"
-                           class="dropdown-item">
-                            ${notif.message}
-                            <br>
-                            <small class="text-muted">${notif.time ?? ''}</small>
-                        </a>
-                    </li>
-                `;
-            });
-
-            list.innerHTML = html;
-        })
-        .catch(() => {
-            console.log("Notification load error");
-        });
-}
-
-// ================= AUTO REFRESH =================
-setInterval(loadNotifications, 5000);
-loadNotifications();
-
-
-// ================= PUSHER REALTIME =================
-window.Pusher = Pusher;
-
-const studentId = @json(auth()->guard('student')->id());
-
-window.Echo = new Echo({
-    broadcaster: 'pusher',
-    key: "{{ env('PUSHER_APP_KEY') }}",
-    cluster: "{{ env('PUSHER_APP_CLUSTER') }}",
-    forceTLS: true
-});
-
-// REALTIME EVENT
-window.Echo.private('student.' + studentId)
-.listen('.assignment.created', (data) => {
-
-    console.log("New Notification:", data);
-
-    // 1. Increase count
-    let count = document.getElementById('notif-count');
-    count.innerText = parseInt(count.innerText) + 1;
-
-    // 2. Add new item at top
-    let list = document.getElementById('notif-list');
-
-    let newItem = document.createElement('li');
-    newItem.innerHTML = `
-        <a href="#" class="dropdown-item">
-            ${data.message}
-        </a>
-    `;
-
-    // remove "No notifications"
-    if (list.querySelector('.text-muted')) {
-        list.innerHTML = '';
-    }
-
-    list.prepend(newItem);
-
-    // 3. small alert (optional)
-    // alert(data.message);
-});
-
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

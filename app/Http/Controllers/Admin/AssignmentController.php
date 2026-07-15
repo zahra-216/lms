@@ -60,11 +60,28 @@ class AssignmentController extends Controller
 
         $assignment = Assignment::create($data);
 
-        $studentIds = Student::whereHas('subjects', function ($q) use ($data) {
-            $q->where('subjects.id', $data['subject_id']);
-        })->pluck('id')->toArray();
+        // match students by course + level (subject-level enrollment pivot is unused/empty)
+        $studentIds = Student::where('course_id', $assignment->subject->course_id)
+            ->where('level_id', $assignment->subject->level_id)
+            ->pluck('id')
+            ->toArray();
 
         event(new AssignmentCreated($assignment, $studentIds));
+
+        // Save a database notification too (event above only broadcasts live, doesn't persist)
+        $students = Student::whereIn('id', $studentIds)->get();
+
+        foreach ($students as $student) {
+            try {
+                $student->notify(new \App\Notifications\StudentNotification(
+                    'New Assignment: ' . $assignment->title,
+                    'A new assignment "' . $assignment->title . '" has been posted for ' . $assignment->subject->name,
+                    route('student.subject.portal.assignments', $assignment->subject_id)
+                ));
+            } catch (\Exception $e) {
+                \Log::error('Failed to notify student #' . $student->id . ': ' . $e->getMessage());
+            }
+        }
 
         return redirect()->route('admin.assignments.index')->with('success', 'Assignment created!');
     }
