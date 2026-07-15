@@ -41,7 +41,7 @@ class StudentController extends Controller
             'branch' => 'required|string|max:255',
             'course_id' => 'required|integer',
             'level_id' => 'required|integer',
-            'password' => 'required|string|min:4',
+            'password' => 'required|string|min:15',
 
             // 🔥 NEW: optional photo
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',

@@ -164,12 +164,6 @@ Route::prefix('student')->name('student.')->group(function () {
     Route::post('/profile/update', [App\Http\Controllers\Student\ProfileController::class, 'update'])
         ->name('profile.update');
 
-    Route::get('/password/edit', [App\Http\Controllers\Student\ProfileController::class, 'passwordEdit'])
-        ->name('password.edit');
-
-    Route::post('/password/update', [App\Http\Controllers\Student\ProfileController::class, 'passwordUpdate'])
-        ->name('password.update');
-
 });
 
 // ADMIN LOGIN (🔥 FIXED)

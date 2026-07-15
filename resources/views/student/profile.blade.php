@@ -498,9 +498,6 @@ footer.shift{
                     <a href="{{ route('student.profile.edit') }}" class="btn btn-primary px-4">
                         <i class="bi bi-pencil"></i> Edit Profile
                     </a>
-                    <a href="{{ route('student.password.edit') }}" class="btn btn-outline-secondary px-4">
-                        <i class="bi bi-key"></i> Change Password
-                    </a>
                 </div>
 
             </div>

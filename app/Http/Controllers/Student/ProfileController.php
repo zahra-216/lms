@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Student;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Hash;
 
 class ProfileController extends Controller
 {
@@ -85,40 +84,5 @@ class ProfileController extends Controller
         $student->update($validated);
 
         return redirect()->route('student.profile')->with('success', 'Profile updated successfully!');
-    }
-
-    // CHANGE PASSWORD FORM
-    public function passwordEdit()
-    {
-        if (!session()->has('student_id')) {
-            return redirect()->route('login');
-        }
-
-        return view('student.password-edit');
-    }
-
-    // UPDATE PASSWORD
-    public function passwordUpdate(Request $request)
-    {
-        $student = Student::find(session('student_id'));
-
-        if (!$student) {
-            return redirect()->route('login');
-        }
-
-        $request->validate([
-            'current_password' => 'required',
-            'new_password' => 'required|string|min:4|confirmed',
-        ]);
-
-        if (!Hash::check($request->current_password, $student->password)) {
-            return back()->withErrors(['current_password' => 'Current password is incorrect.']);
-        }
-
-        $student->update([
-            'password' => Hash::make($request->new_password),
-        ]);
-
-        return redirect()->route('student.profile')->with('success', 'Password changed successfully!');
     }
 }

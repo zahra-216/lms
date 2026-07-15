@@ -159,6 +159,7 @@
         name="password"
         placeholder="Password"
         required
+        minlength="15"
         autocomplete="new-password"
         readonly
         onfocus="this.removeAttribute('readonly');"
