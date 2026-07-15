@@ -136,7 +136,7 @@ h3{
 
         <div class="mb-3 text-start">
          
-            <input type="text" name="registration_no" class="form-control" placeholder="Enter Registration No">
+            <input type="text" name="registration_no" class="form-control">
         </div>
 
         <div class="mb-3 text-start">
