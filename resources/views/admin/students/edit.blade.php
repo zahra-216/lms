@@ -34,8 +34,7 @@
             type="text"
             name="registration_no"
             value="{{ $student->registration_no }}"
-            pattern="TTMC/ML/[A-Za-z]{2,3}/[A-Za-z]{2,4}(-O)?/\d{2}/\d{2,4}"
-            title="Format: TTMC/ML/XXX/YYYY-O/YY/NNNN (e.g. TTMC/ML/UG/CSE-O/25/03)"
+            placeholder="Enter registration number"
             style="text-transform: uppercase;"
             oninput="this.value = this.value.toUpperCase();"
             required

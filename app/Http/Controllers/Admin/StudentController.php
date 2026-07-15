@@ -34,7 +34,6 @@ class StudentController extends Controller
             'registration_no' => [
                 'required',
                 'unique:students,registration_no',
-                'regex:/^TTMC\/ML\/[A-Za-z]{2,3}\/[A-Za-z]{2,4}(-O)?\/\d{2}\/\d{2,4}$/',
             ],
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -45,8 +44,6 @@ class StudentController extends Controller
 
             // 🔥 NEW: optional photo
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-        ], [
-            'registration_no.regex' => 'Registration No must match format: TTMC/ML/XX/CSE-O or CSE/YY/NN (e.g. TTMC/ML/UG/CSE-O/25/03)',
         ]);
         $data = [
             'registration_no' => $request->registration_no,
@@ -89,7 +86,6 @@ class StudentController extends Controller
             'registration_no' => [
                 'required',
                 'unique:students,registration_no,' . $student->id,
-                'regex:/^TTMC\/ML\/[A-Za-z]{2,3}\/[A-Za-z]{2,4}(-O)?\/\d{2}\/\d{2,4}$/',
             ],
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
@@ -98,8 +94,6 @@ class StudentController extends Controller
             'level_id' => 'required|integer',
 
             // 🔥 password removed from validation entirely — not editable here
-        ], [
-            'registration_no.regex' => 'Registration No must match format: TTMC/ML/XX/CSE-O or CSE/YY/NN (e.g. TTMC/ML/UG/CSE-O/25/03)',
         ]);
 
         $student->update([
