@@ -13,10 +13,44 @@ use App\Models\Level;
 
 class StudentController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $students = Student::all();
-        return view('admin.students.index', compact('students'));
+        $search = $request->input('search');
+
+        $students = Student::with(['course.faculty', 'level'])
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                      ->orWhere('registration_no', 'like', "%{$search}%")
+                      ->orWhere('email', 'like', "%{$search}%");
+                });
+            })
+            ->get();
+
+        $levelOrder = ['Diploma', 'HND', 'Top-up', 'Degree'];
+
+        $grouped = [];
+
+        foreach ($levelOrder as $levelName) {
+            $levelStudents = $students->filter(function ($student) use ($levelName) {
+                return $student->level && $student->level->name === $levelName;
+            });
+
+            $grouped[$levelName] = $levelStudents
+                ->groupBy(function ($student) {
+                    return optional(optional($student->course)->faculty)->name ?? 'Unassigned Faculty';
+                })
+                ->map(function ($facultyStudents) {
+                    return $facultyStudents->groupBy(function ($student) {
+                        return optional($student->course)->name ?? 'Unassigned Course';
+                    });
+                });
+        }
+
+        return view('admin.students.index', [
+            'grouped' => $grouped,
+            'search' => $search,
+        ]);
     }
 
     public function create()
