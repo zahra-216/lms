@@ -26,7 +26,6 @@ use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\{
     AuthController,
     ProfileController,
-    NotificationController,
     StudentController,    LecturerController,    FacultyController,
     CourseController,
     LevelController,
