@@ -223,7 +223,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         'semesters' => SemesterController::class,
         'subjects' => SubjectController::class,
         'enrollments' => EnrollmentController::class,
-        'assignments' => AssignmentController::class,
     ]);
 
     // ================= AJAX =================
