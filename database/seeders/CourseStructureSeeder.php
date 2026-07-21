@@ -26,6 +26,7 @@ class CourseStructureSeeder extends Seeder
         12 => 'AM',
         13 => 'ID',
         14 => 'QS',
+        15 => 'EN',
     ];
 
     // Words ignored when generating the module code segment
@@ -48,6 +49,7 @@ class CourseStructureSeeder extends Seeder
             12 => $this->autocadMep(),
             13 => $this->interiorDesigning(),
             14 => $this->quantitySurveying(),
+            15 => $this->english(),
         ];
 
         foreach ($courses as $courseId => $structure) {
@@ -1220,6 +1222,63 @@ class CourseStructureSeeder extends Seeder
                     'Risk Management in Construction',
                     'Research Methods for QS',
                     'Final Year Project',
+                ],
+            ],
+        ];
+    }
+    private function english(): array
+    {
+        return [
+            'Diploma' => [
+                'Semester 1' => [
+                    'Fundamentals of English Language',
+                    'Reading Skills & Vocabulary Development',
+                    'Writing Skills',
+                    'Speaking & Pronunciation Skills',
+                ],
+                'Semester 2' => [
+                    'Listening Skills & Communication',
+                    'Functional & Professional English',
+                    'Literature Appreciation',
+                    'Final Project',
+                ],
+            ],
+            'Degree' => [
+                'Semester 1' => [
+                    'Introduction to English Language Studies',
+                    'Fundamentals of Linguistics',
+                    'Grammar & Usage in English',
+                    'Academic Reading & Writing',
+                ],
+                'Semester 2' => [
+                    'Phonetics & Phonology',
+                    'Morphology & Syntax',
+                    'Listening & Speaking Skills',
+                    'Study Skills & Academic Communication',
+                ],
+                'Semester 3' => [
+                    'Semantics & Pragmatics',
+                    'Discourse Analysis',
+                    'English Literature – Introduction',
+                    'Research Skills in Linguistics',
+                ],
+                'Semester 4' => [
+                    'Sociolinguistics',
+                    'Psycholinguistics',
+                    'English Language Teaching – Basics',
+                    'Professional Communication',
+                ],
+                'Semester 5' => [
+                    'Applied Linguistics',
+                    'English for Specific Purposes (ESP)',
+                    'Language Assessment & Evaluation',
+                    'Translation Studies',
+                ],
+                'Semester 6' => [
+                    'Stylistics',
+                    'Corpus Linguistics (Introductory)',
+                    'Research Methodology',
+                    'Final Year Project / Internship',
                 ],
             ],
         ];

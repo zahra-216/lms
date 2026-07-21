@@ -34,12 +34,18 @@
             </div>
         @endif
 
-        <form action="{{ route('admin.lecturers.store') }}" method="POST">
+        <form action="{{ route('admin.lecturers.store') }}" method="POST" autocomplete="off">
             @csrf
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="text" name="name" placeholder="Full Name" required>
-            <input type="email" name="email" placeholder="Email (optional)">
-            <input type="password" name="password" placeholder="Password" required>
+
+            <!-- Dummy hidden fields to absorb Chrome's autofill -->
+            <input type="text" name="fake_username" style="display:none">
+            <input type="password" name="fake_password" style="display:none">
+
+            <input type="text" name="username" placeholder="Username" required autocomplete="off" readonly onfocus="this.removeAttribute('readonly')">
+            <input type="text" name="name" placeholder="Full Name" required autocomplete="off">
+            <input type="email" name="email" placeholder="Email (optional)" autocomplete="off">
+            <input type="password" name="password" placeholder="Password" required autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly')">
+
             <button type="submit">Save Lecturer</button>
         </form>
     </div>
