@@ -123,38 +123,4 @@ public function getSubjects($id)
         'subjects' => $subjects
     ]);
 }
-public function verifySubject(Request $request)
-{
-    $subject = Subject::find($request->subject_id);
-
-    if(!$subject){
-        return response()->json([
-            'status' => false,
-            'message' => 'Subject not found'
-        ]);
-    }
-
-    if($subject->code != $request->code){
-        return response()->json([
-            'status' => false,
-            'message' => 'Wrong subject code'
-        ]);
-    }
-
-    // 🔥 record the unlock so this student never has to re-enter the code
-    \App\Models\SubjectUnlock::firstOrCreate(
-        [
-            'student_id' => session('student_id'),
-            'subject_id' => $subject->id,
-        ],
-        [
-            'unlocked_at' => now(),
-        ]
-    );
-
-    return response()->json([
-        'status' => true,
-        'subject_id' => $subject->id
-    ]);
-}
 }

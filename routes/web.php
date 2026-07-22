@@ -141,6 +141,12 @@ Route::prefix('lecturer')->middleware(['auth:lecturer'])->name('lecturer.')->gro
     Route::post('/subject/{subject}/assignments', [App\Http\Controllers\LecturerAssignmentController::class, 'store'])
         ->name('assignments.store');
 
+    Route::get('/subject/{id}/attendance', [App\Http\Controllers\LecturerAttendanceController::class, 'show'])
+    ->name('subject.attendance');
+
+    Route::post('/subject/{id}/attendance', [App\Http\Controllers\LecturerAttendanceController::class, 'store'])
+    ->name('subject.attendance.store');
+
 });
 
 Route::prefix('student')->name('student.')->group(function () {
@@ -251,18 +257,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     });
 
 });
-/*
-|--------------------------------------------------------------------------
-| ONLINE USERS
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/online-users', function () {
-
-    return Student::whereNotNull('last_seen_at')
-        ->where('last_seen_at', '>=', now()->subMinutes(5))
-        ->get(['id', 'name', 'registration_no']);
-});
 
 /*
 |--------------------------------------------------------------------------
@@ -330,8 +324,6 @@ Route::get('/student/profile', function () {
 /* ================= PHOTO UPLOAD ================= */
 Route::post('/student/photo-update', [App\Http\Controllers\Admin\StudentController::class, 'updatePhoto'])
 ->name('student.photo.update');
-    Route::get('/student/my-courses', [DashboardController::class, 'myCourses'])
-    ->name('student.my.courses');
 
 Route::prefix('admin')->group(function () {
 

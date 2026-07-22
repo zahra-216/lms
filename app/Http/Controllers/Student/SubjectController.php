@@ -33,23 +33,19 @@ class SubjectController extends Controller
         $subject = Subject::find($request->subject_id);
 
         if(!$subject){
-            return response()->json([
-                'status' => false,
-                'message' => 'Subject not found'
-            ]);
+            return response()->json(['status' => false, 'message' => 'Subject not found']);
         }
 
         if($subject->code != $request->code){
-            return response()->json([
-                'status' => false,
-                'message' => 'Wrong subject code'
-            ]);
+            return response()->json(['status' => false, 'message' => 'Wrong subject code']);
         }
 
-        return response()->json([
-            'status' => true,
-            'subject_id' => $subject->id
-        ]);
+        \App\Models\SubjectUnlock::firstOrCreate(
+            ['student_id' => session('student_id'), 'subject_id' => $subject->id],
+            ['unlocked_at' => now()]
+        );
+
+        return response()->json(['status' => true, 'subject_id' => $subject->id]);
     }
 
     /* NOTES PAGE - FIXED */

@@ -26,7 +26,7 @@
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('student.my.courses') }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back</a>
+    <a href="{{ route('dashboard') }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back</a>
     <h2>{{ $subject->code }} - {{ $subject->name }}</h2>
 
     <div class="row g-4">

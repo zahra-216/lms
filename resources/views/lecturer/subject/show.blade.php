@@ -49,6 +49,11 @@
                 <i class="bi bi-clipboard-data"></i> Grades
             </a>
         </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ route('lecturer.subject.attendance', $subject->id) }}" class="module-card">
+                <i class="bi bi-calendar-check"></i> Attendance
+            </a>
+        </div>
     </div>
 </div>
 </body>

@@ -124,36 +124,6 @@
             border-radius:8px;
         }
 
-        /* SIDEBAR */
-        .sidebar{
-            width:230px;
-            background:white;
-            position:fixed;
-            top:125px;
-            left:-230px; /* hidden */
-            bottom:0;
-            padding-top:10px;
-            box-shadow:2px 0 10px rgba(0,0,0,0.05);
-            transition:0.3s;
-            z-index:999;
-        }
-
-        .sidebar.show{
-            left:0;
-        }
-
-        .sidebar a{
-            display:block;
-            padding:12px 18px;
-            text-decoration:none;
-            color:#333;
-        }
-
-        .sidebar a:hover{
-            background:#f0f4ff;
-            color:#0d6efd;
-        }
-
         /* MAIN */
         .main{
             margin-left:0;
@@ -259,10 +229,6 @@ footer{
 
 /* Tablet */
 @media (max-width: 992px) {
-    .sidebar {
-        width: 220px;
-        left: -220px;
-    }
 
     .main.shift {
         margin-left: 220px;
@@ -285,20 +251,6 @@ footer{
     .logo-area img {
         width: 38px;
         height: 38px;
-    }
-
-    /* Sidebar becomes full overlay */
-    .sidebar {
-        width: 80%;
-        max-width: 280px;
-        left: -100%;
-        top: 0;
-        height: 100vh;
-        z-index: 2000;
-    }
-
-    .sidebar.show {
-        left: 0;
     }
 
     /* MAIN remove shifting on mobile */
@@ -331,9 +283,6 @@ footer{
         padding: 10px;
     }
 
-    .sidebar {
-        width: 100%;
-    }
 }
 
     </style>
@@ -345,7 +294,6 @@ footer{
 <div class="topbar">
 
     <div class="left-top">
-        <i class="bi bi-list icon-btn" onclick="toggleSidebar()"></i>
         <b>LMS Portal</b>
     </div>
 
@@ -434,25 +382,8 @@ footer{
     </div>
 </div>
 
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-
-  
-    <li>
-    <a class="dropdown-item" href="{{ route('dashboard') }}">
-        <i class="bi bi-speedometer2"></i> Dashboard
-    </a>
-</li>
-    <a href="{{ route('home') }}"><i class="bi bi-house"></i> Site Home</a>
-    <a href="#"><i class="bi bi-calendar"></i> Calendar</a>
-   <a href="{{ route('student.my.courses') }}">
-    <i class="bi bi-book"></i> My Courses
-</a>
-
-</div>
-
 <!-- MAIN -->
-<div class="main" id="main">
+<div class="main">
 
     <div class="card-box mb-4">
         <h4>Welcome Back, {{ $student->name }}! 👋</h4>
@@ -558,24 +489,7 @@ footer{
             <div class="card-box">
                 <div id="calendar"></div>
             </div>
-            
-<div class="card-box mt-4" id="onlinePanel">
-    <h5>Online Users (Last 5 Minutes)</h5>
 
-    <div id="onlineList">
-        @forelse($onlineUsers as $user)
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <div>
-                    <span style="color:green;">●</span>
-                    <b>{{ $user->name }}</b><br>
-                    <small>{{ $user->registration_no }}</small>
-                </div>
-            </div>
-        @empty
-            <p>No users online</p>
-        @endforelse
-    </div>
-</div>
 </div>
 
     <!-- FOOTER (YOUR DESIGN) -->
@@ -672,17 +586,6 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 });
-
-// ================= SIDEBAR =================
-function toggleSidebar(){
-
-    document.getElementById("sidebar").classList.toggle("show");
-
-    if (window.innerWidth > 768) {
-        document.getElementById("main").classList.toggle("shift");
-        document.getElementById("footer").classList.toggle("shift");
-    }
-}
 
 // ================= SUBJECT LOAD =================
 function loadSubjects(semesterId){
@@ -822,38 +725,6 @@ function generateCalendar(){
 }
 
 generateCalendar();
-
-// ================= ONLINE USERS =================
-function loadOnlineUsers(){
-
-    fetch('/online-users')
-    .then(res => res.json())
-    .then(data => {
-
-        let html = '';
-
-        if(data.length === 0){
-            html = "<p>No users online</p>";
-        }
-
-        data.forEach(user => {
-            html += `
-                <div class="d-flex justify-content-between align-items-center mb-2">
-                    <div>
-                        <span style="color:green;">●</span>
-                        <b>${user.name}</b><br>
-                        <small>${user.registration_no}</small>
-                    </div>
-                </div>
-            `;
-        });
-
-        document.getElementById('onlineList').innerHTML = html;
-    });
-}
-
-// auto refresh
-setInterval(loadOnlineUsers, 5000);
 
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
