@@ -105,6 +105,9 @@ Route::prefix('lecturer')->middleware(['auth:lecturer'])->name('lecturer.')->gro
 
     Route::post('/marks/store', [App\Http\Controllers\Admin\MarkController::class, 'lecturerStore'])
         ->name('marks.store');
+    
+    Route::post('/subject/{id}/marks/update', [App\Http\Controllers\LecturerSubjectController::class, 'updateMarks'])
+    ->name('subject.marks.update');
 
     // ================= NOTES =================
     Route::get('/subject/{subject}/notes/create', [App\Http\Controllers\LecturerNoteController::class, 'create'])
@@ -310,9 +313,6 @@ Route::get('/student/subject/{id}/notes', [StudentSubjectController::class, 'not
 Route::get('/student/download/{id}', [StudentSubjectController::class, 'download'])
     ->name('student.note.download');
 
-
-
-
 /* ================= STUDENT PROFILE ================= */
 Route::get('/student/profile', function () {
 
@@ -332,10 +332,6 @@ Route::post('/student/photo-update', [App\Http\Controllers\Admin\StudentControll
 ->name('student.photo.update');
     Route::get('/student/my-courses', [DashboardController::class, 'myCourses'])
     ->name('student.my.courses');
-
-
-
-
 
 Route::prefix('admin')->group(function () {
 
@@ -389,9 +385,6 @@ Route::prefix('admin')->group(function () {
     Route::delete('enrollments/{id}', [EnrollmentController::class, 'destroy'])
         ->name('admin.enrollments.delete');
 });
-
-
-
 
 /*
 |--------------------------------------------------------------------------

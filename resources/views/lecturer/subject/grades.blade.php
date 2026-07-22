@@ -43,35 +43,80 @@
 
     <h5 class="mt-5 mb-3">All Marks</h5>
 
-    @php
-        $allMarks = $subject->assignments->flatMap->marks;
-    @endphp
-
-    @if($allMarks->count())
-        <table class="table table-bordered bg-white">
+    @if($students->count())
+    <form method="POST" action="{{ route('lecturer.subject.marks.update', $subject->id) }}">
+        @csrf
+        <table class="table table-bordered bg-white align-middle">
             <thead>
                 <tr>
-                    <th>Student</th>
                     <th>Reg No</th>
-                    <th>Assignment</th>
-                    <th>Marks</th>
-                    <th>Grade</th>
+                    <th>Student Name</th>
+                    <th>Assignment Marks</th>
+                    <th>Mid Marks</th>
+                    <th>Final Exam</th>
+                    <th>Final Mark</th>
+                    <th>Final Grade</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($allMarks as $mark)
-                <tr>
-                    <td>{{ $mark->student->name ?? '—' }}</td>
-                    <td>{{ $mark->student->registration_no ?? '—' }}</td>
-                    <td>{{ $mark->assignment->title ?? '—' }}</td>
-                    <td>{{ $mark->marks }}</td>
-                    <td><span class="badge bg-primary">{{ $mark->grade }}</span></td>
-                </tr>
+                @foreach($students as $student)
+                    @php $sm = $subjectMarks->get($student->id); @endphp
+                    <tr>
+                        <td>{{ $student->registration_no }}</td>
+                        <td>{{ $student->name }}</td>
+                        <td>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm"
+                                name="marks[{{ $student->id }}][assignment_marks]"
+                                value="{{ $sm->assignment_marks ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm"
+                                name="marks[{{ $student->id }}][mid_marks]"
+                                value="{{ $sm->mid_marks ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm"
+                                name="marks[{{ $student->id }}][final_exam_marks]"
+                                value="{{ $sm->final_exam_marks ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm final-mark-input"
+                                name="marks[{{ $student->id }}][final_marks]"
+                                value="{{ $sm->final_marks ?? '' }}"
+                                oninput="updateGradePreview(this)">
+                        </td>
+                        <td>
+                            <span class="badge bg-primary grade-badge">{{ $sm->final_grade ?? '—' }}</span>
+                        </td>
+                    </tr>
                 @endforeach
             </tbody>
         </table>
+        <button type="submit" class="btn btn-primary">Save Marks</button>
+    </form>
+
+    <script>
+    function updateGradePreview(input) {
+        const row = input.closest('tr');
+        const badge = row.querySelector('.grade-badge');
+        const val = parseFloat(input.value);
+
+        if (isNaN(val) || input.value === '') {
+            badge.textContent = '—';
+            return;
+        }
+
+        let grade;
+        if (val >= 80) grade = 'A';
+        else if (val >= 60) grade = 'B';
+        else if (val >= 40) grade = 'C';
+        else grade = 'F';
+
+        badge.textContent = grade;
+    }
+    </script>
     @else
-        <p class="text-muted">No marks entered yet for this subject.</p>
+        <p class="text-muted">No students found for this subject.</p>
     @endif
 </div>
 </body>
