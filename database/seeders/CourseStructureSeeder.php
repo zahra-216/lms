@@ -14,7 +14,7 @@ class CourseStructureSeeder extends Seeder
     private array $courseShortCodes = [
         1 => 'AI',
         2 => 'CS',
-        3 => 'CFB',
+        3 => 'CSE',
         4 => 'DS',
         5 => 'MD',
         6 => 'AC',
