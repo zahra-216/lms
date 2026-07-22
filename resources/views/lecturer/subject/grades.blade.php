@@ -41,7 +41,11 @@
         <p class="text-muted">No assignments found for this subject.</p>
     @endif
 
+
     <h5 class="mt-5 mb-3">All Marks</h5>
+    <div class="mb-3">
+        <input type="text" id="studentSearch" class="form-control" placeholder="Search by name or reg no...">
+    </div>
 
     @if($students->count())
     <form method="POST" action="{{ route('lecturer.subject.marks.update', $subject->id) }}">
@@ -58,7 +62,7 @@
                     <th>Final Grade</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody id="marksTableBody">
                 @foreach($students as $student)
                     @php $sm = $subjectMarks->get($student->id); @endphp
                     <tr>
@@ -114,6 +118,17 @@
 
         badge.textContent = grade;
     }
+    document.getElementById('studentSearch').addEventListener('input', function () {
+        const query = this.value.toLowerCase().trim();
+        const rows = document.querySelectorAll('#marksTableBody tr');
+
+        rows.forEach(row => {
+            const regNo = row.children[0].textContent.toLowerCase();
+            const name = row.children[1].textContent.toLowerCase();
+
+            row.style.display = (regNo.includes(query) || name.includes(query)) ? '' : 'none';
+        });
+    });
     </script>
     @else
         <p class="text-muted">No students found for this subject.</p>
