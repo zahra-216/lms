@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $subject->name }} - Notes</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -11,6 +12,7 @@
     <h2>{{ $subject->code }} - {{ $subject->name }} — Notes</h2>
 
     @if($subject->notes && $subject->notes->count())
+        <div class="table-responsive">
         <table class="table table-bordered bg-white mt-3">
             <thead>
                 <tr><th>Title</th><th>File / Link</th></tr>
@@ -34,6 +36,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
     @else
         <p class="text-muted mt-3">No notes uploaded yet for this subject.</p>
     @endif

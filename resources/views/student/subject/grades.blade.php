@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $subject->name }} - Grades</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -14,6 +15,7 @@
         $total = 0; $count = 0;
     @endphp
 
+    <div class="table-responsive">
     <table class="table table-bordered bg-white mt-3">
         <thead>
             <tr><th>Assignment</th><th>Marks</th><th>Grade</th></tr>
@@ -34,6 +36,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
     @php
         $avg = $count ? $total / $count : 0;

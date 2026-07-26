@@ -8,20 +8,12 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Hash;
 use App\Models\Admin;
 
-
-/*
-|--------------------------------------------------------------------------
-| CONTROLLERS
-|--------------------------------------------------------------------------
-*/
-
 use App\Http\Controllers\FrontendController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LecturerAuthController;
 use App\Http\Controllers\Student\StudentController as StudentStudentController;
 use App\Http\Controllers\Student\SubjectController as StudentSubjectController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-
 
 use App\Http\Controllers\Admin\{
     AuthController,
@@ -34,17 +26,12 @@ use App\Http\Controllers\Admin\{
     NoteController,
     EnrollmentController,
     AssignmentController,
-    
     SubmissionController
 };
 
 use App\Http\Controllers\Admin\AjaxController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\MarkController;
-
-
-
-
 
 Route::prefix('student')->group(function () {
 
@@ -54,12 +41,6 @@ Route::prefix('student')->group(function () {
     Route::get('/subject/{id}/grades', [StudentStudentController::class, 'subjectGrades'])
         ->name('student.subject.grades');
 });
-
-/*
-|--------------------------------------------------------------------------
-| FRONTEND
-|--------------------------------------------------------------------------
-*/
 
 // HOME
 Route::get('/', [FrontendController::class, 'home'])->name('home');
@@ -197,17 +178,6 @@ Route::get('/student/subject/{id}/assignments',
 Route::post('/assignment/submit', [AssignmentController::class, 'submit'])
     ->name('assignment.submit');
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN ROUTES
-|--------------------------------------------------------------------------
-*/
-/*
-|--------------------------------------------------------------------------
-| ADMIN ROUTES
-|--------------------------------------------------------------------------
-*/
-
 Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(function () {
 
     // ================= DASHBOARD =================
@@ -258,12 +228,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
 
 });
 
-/*
-|--------------------------------------------------------------------------
-| STUDENT NOTIFICATIONS
-|--------------------------------------------------------------------------
-*/
-
 Route::post('/student/notification/read/{id}', function ($id) {
 
     $studentId = session('student_id');
@@ -287,12 +251,6 @@ Route::post('/student/notification/read-all', function () {
 
     return response()->json(['success' => true]);
 })->name('student.notification.readAll');
-
-/*
-|--------------------------------------------------------------------------
-| STUDENT FLOW
-|--------------------------------------------------------------------------
-*/
 
 // VERIFY SUBJECT
 Route::post('/student/verify-subject', [StudentSubjectController::class, 'verifySubject']);
@@ -378,21 +336,9 @@ Route::prefix('admin')->group(function () {
         ->name('admin.enrollments.delete');
 });
 
-/*
-|--------------------------------------------------------------------------
-| ADMIN AUTH (PUBLIC ROUTES - NO MIDDLEWARE)
-|--------------------------------------------------------------------------
-*/
-
 // CREATE ADMIN
 Route::get('/admin/create', [AdminController::class, 'create'])->name('admin.create');
 Route::post('/admin/create', [AdminController::class, 'store'])->name('admin.store');
-
-/*
-|--------------------------------------------------------------------------
-| ADMIN FORGOT PASSWORD (PUBLIC - IMPORTANT)
-|--------------------------------------------------------------------------
-*/
 
 Route::prefix('admin')->group(function () {
 

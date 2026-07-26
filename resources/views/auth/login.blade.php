@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Student Login</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -10,17 +11,20 @@
 <style>
 body{
     margin:0;
-    height:100vh;
+    min-height:100vh;
     display:flex;
     justify-content:center;
     align-items:center;
     background: linear-gradient(135deg,#012147,#0353a4);
     font-family: 'Segoe UI', sans-serif;
+    padding:20px;
+    box-sizing:border-box;
 }
 
 /* LOGIN CARD */
 .login-card{
-    width:420px;
+    width:100%;
+    max-width:420px;
     background:#fff;
     border-radius:18px;
     padding:35px;
@@ -40,6 +44,10 @@ body{
     background:#012147;
     border-top-left-radius:18px;
     border-top-right-radius:18px;
+}
+
+.form-control::placeholder{
+    color:#adb5bd;
 }
 
 /* LOGO STYLE */
@@ -135,12 +143,12 @@ h3{
     @csrf
 
         <div class="mb-3 text-start">
-         
-            <input type="text" name="registration_no" class="form-control">
+            <label class="form-label">Registration Number</label>
+            <input type="text" name="registration_no" class="form-control" placeholder="e.g. TTMC/ML/UG/CSE/25/006">
         </div>
 
         <div class="mb-3 text-start">
-          
+            <label class="form-label">Password</label>
             <input type="password" name="password" class="form-control" placeholder="Enter Password">
         </div>
 

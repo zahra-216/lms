@@ -357,6 +357,10 @@ footer{
         font-size: 14px;
     }
 
+    .topbar-name{
+        display:none;
+    }
+
     .subject-title {
         font-size: 18px;
     }
@@ -452,7 +456,7 @@ footer{
         <i class="bi bi-bell icon-btn"></i>
         <i class="bi bi-chat icon-btn"></i>
 
-        <div class="small text-white">
+        <div class="small text-white topbar-name">
             {{ $student->name }} ({{ $student->registration_no }})
         </div>
 
@@ -465,17 +469,17 @@ footer{
     data-bs-toggle="dropdown"
 >
 
-             <ul class="dropdown-menu dropdown-menu-end">
+    <ul class="dropdown-menu dropdown-menu-end">
 
-                <li>
     <li>
-    <a class="dropdown-item" href="{{ route('dashboard') }}">
-        <i class="bi bi-speedometer2"></i> Dashboard
-    </a>
-</li>
-                <li><a class="dropdown-item" href="{{ route('student.profile') }}">
-    <i class="bi bi-person"></i> Profile
-</a></li>
+        <a class="dropdown-item" href="{{ route('dashboard') }}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+        </a>
+    </li>
+
+    <li><a class="dropdown-item" href="{{ route('student.profile') }}">
+        <i class="bi bi-person"></i> Profile
+    </a></li>
          
 <form method="POST" action="{{ route('logout') }}">
     @csrf

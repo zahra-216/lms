@@ -17,148 +17,6 @@ body{
     background:linear-gradient(120deg,#eef2f7,#f8fafc);
 }
 
-/* ===== TOPBAR ===== */
-.topbar{
-    height:60px;
-    background:linear-gradient(90deg,#1f2a44,#2c3e70);
-    color:white;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:0 20px;
-    position:fixed;
-    top:0; left:0; right:0;
-    z-index:1000;
-}
-
-.icon-btn{
-    cursor:pointer;
-    font-size:18px;
-    margin-right:10px;
-}
-
-.topbar-profile{
-    width:40px;
-    height:40px;
-    border-radius:50%;
-    object-fit:cover;
-}
-
-/* ===== HEADER ===== */
-.header{
-    height:70px;
-    background:white;
-    display:flex;
-    align-items:center;
-    padding-left:20px;
-    position:fixed;
-    top:60px;
-    left:0; right:0;
-    z-index:900;
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
-}
-
-.logo-area{
-    display:flex;
-    align-items:center;
-    gap:12px;
-}
-
-.logo-area img{
-    width:45px;
-    height:45px;
-    border-radius:8px;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar{
-    width:260px;
-    background:#012147;
-    position:fixed;
-    top:130px;
-    left:-260px;
-    bottom:0;
-    padding-top:10px;
-    transition:0.3s;
-    color:white;
-    z-index:999;
-}
-
-.sidebar.show{ left:0; }
-
-.sidebar a{
-    display:block;
-    padding:12px 18px;
-    color:#dbeafe;
-    text-decoration:none;
-}
-
-.sidebar a:hover{
-    background:rgba(255,255,255,0.1);
-}
-
-/* ===== MAIN ===== */
-.main{
-    padding:160px 25px 80px;
-    transition:0.3s;
-}
-
-.main.shift{
-    margin-left:260px;
-}
-
-/* ===== CARD ===== */
-.course-card{
-    background:white;
-    padding:20px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.06);
-    margin-bottom:20px;
-}
-
-/* SUBJECT CARD */
-.subject-box{
-    background:#f1f5f9;
-    padding:10px;
-    border-radius:10px;
-    margin-top:8px;
-    cursor:pointer;
-}
-
-.subject-box:hover{
-    background:#3b82f6;
-    color:white;
-}
-
-/* ===== FOOTER ===== */
-footer{
-    background:#012147;
-    color:white;
-}
-
-.footer-container{
-    padding:60px 25px;
-    max-width:1200px;
-    margin:auto;
-}
-
-.footer-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:30px;
-}
-
-.footer-bottom{
-    text-align:center;
-    padding:15px;
-    background:#050a14;
-}
-
-/* RESPONSIVE */
-@media(max-width:768px){
-    .sidebar{width:80%;}
-    .footer-grid{grid-template-columns:1fr;}
-}
 .topbar{
     height:60px;
     background:linear-gradient(90deg,#1f2a44,#2c3e70);
@@ -423,6 +281,9 @@ footer.shift{
 }
 
 @media (max-width:768px){
+    .topbar-name{
+        display:none;
+    }
 
     .sidebar{
         width:80%;
@@ -468,8 +329,8 @@ footer.shift{
         <i class="bi bi-bell icon-btn"></i>
         <i class="bi bi-chat icon-btn"></i>
 
-        <div class="small text-white">
-           {{ $student->name }} ({{ $student->registration_no }})
+        <div class="small text-white topbar-name">
+            {{ $student->name }} ({{ $student->registration_no }})
         </div>
 
         <div class="dropdown">
@@ -554,6 +415,7 @@ $total = 0;
 $count = 0;
 @endphp
 
+<div class="table-responsive">
 <table class="table table-bordered mt-3 bg-white">
 
 <thead class="table-dark">
@@ -589,6 +451,7 @@ if($mark){
 
 </tbody>
 </table>
+</div>
 
 @php
 $avg = $count ? $total / $count : 0;
@@ -662,7 +525,5 @@ function toggleSidebar(){
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
 </body>
 </html>

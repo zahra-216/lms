@@ -24,6 +24,31 @@
         .faculty-card-link { display: block; color: inherit; text-decoration: none; }
         .faculty-card-link:hover .faculty-card { transform: translateY(-6px); }
         .logout-btn { background: #ff4d4f; border: none; color: white; padding: 10px 18px; border-radius: 10px; text-decoration: none; }
+        @media (max-width:576px){
+        .topbar{
+            flex-direction:column;
+            align-items:flex-start;
+            gap:10px;
+            padding:14px 16px;
+        }
+
+        .topbar .actions{
+            width:100%;
+            justify-content:space-between;
+        }
+
+        .hero{
+            padding:80px 16px 40px;
+        }
+
+        .hero h2{
+            font-size:28px;
+        }
+
+        .hero p{
+            font-size:15px;
+        }
+    }
     </style>
 </head>
 <body>

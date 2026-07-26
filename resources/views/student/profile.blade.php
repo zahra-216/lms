@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Student Profile</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -104,7 +105,7 @@ body{
     margin-left:260px;
 }
 
-/.profile-card{
+.profile-card{
     border-radius:20px;
     overflow:hidden;
 }
@@ -271,12 +272,25 @@ footer.shift{
 }
 
 @media (max-width:768px){
+    .header{
+        height:60px;
+        padding-left:10px;
+    }
+
+    .logo-area img{
+        width:38px;
+        height:38px;
+    }
 
     .sidebar{
         width:80%;
         top:0;
         height:100vh;
         left:-100%;
+    }
+
+    .topbar-name{
+        display:none;
     }
 
     .main.shift,
@@ -294,7 +308,7 @@ footer.shift{
     }
 
     .main{
-        padding:150px 15px 80px;
+        padding:140px 15px 80px;
     }
 }
 </style>
@@ -314,8 +328,8 @@ footer.shift{
         <i class="bi bi-bell icon-btn"></i>
         <i class="bi bi-chat icon-btn"></i>
 
-        <div class="small text-white">
-          {{ $student->name ?? '' }} ({{ $student->registration_no ?? '' }})
+        <div class="small text-white topbar-name">
+            {{ $student->name ?? '' }} ({{ $student->registration_no ?? '' }})
         </div>
 
         <div class="dropdown">
@@ -326,7 +340,6 @@ footer.shift{
 >
              <ul class="dropdown-menu dropdown-menu-end">
 
-                <li>
     <li>
     <a class="dropdown-item" href="{{ route('dashboard') }}">
         <i class="bi bi-speedometer2"></i> Dashboard

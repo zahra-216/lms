@@ -31,32 +31,6 @@ body{
 .topbar-left{ display:flex; align-items:center; gap:20px; flex-wrap:wrap; }
 .menu-icon{ font-size:26px; cursor:pointer; }
 .topbar-right a{ color:white; text-decoration:none; margin-left:8px; }
-    .topbar-right .dashboard-btn{
-        display:inline-flex !important;
-        align-items:center !important;
-        justify-content:center !important;
-        padding:10px 16px !important;
-        border-radius:10px !important;
-        font-size:14px !important;
-        font-weight:600 !important;
-        text-decoration:none !important;
-        transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease !important;
-    }
-    .topbar-right .dashboard-btn.btn-primary{
-        background:#012147 !important;
-        color:#fff !important;
-        border:1px solid #012147 !important;
-        box-shadow:0 12px 24px rgba(1,33,71,.16) !important;
-    }
-    .topbar-right .dashboard-btn.btn-ghost{
-        background:rgba(255,255,255,0.12) !important;
-        color:#012147 !important;
-        border:1px solid rgba(255,255,255,0.22) !important;
-    }
-    .topbar-right .dashboard-btn:hover{
-        transform:translateY(-1px) !important;
-        opacity:.95 !important;
-    }
 
 /* Header */
 .header{ position:fixed; top:50px; left:0; width:100%; background:#f3f3f3; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; z-index:3500; transition:0.3s; }
@@ -65,6 +39,31 @@ body{
 .logo-area img{ width:70px; }
 .campus-name{ font-family:'Georgia', serif; font-size:24px; font-weight:bold; color:#012147; }
 .lms-name{ font-family:'Georgia', serif; font-size:18px; color:#012147; }
+.dashboard-btn{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    text-decoration:none;
+    border-radius:10px;
+    padding:10px 16px;
+    font-size:14px;
+    font-weight:600;
+    transition:transform .2s ease, opacity .2s ease;
+}
+.dashboard-btn.btn-primary{
+    background:#012147;
+    color:#fff;
+    border:1px solid #012147;
+}
+.dashboard-btn.btn-ghost{
+    background:rgba(1,33,71,.06);
+    color:#012147;
+    border:1px solid rgba(1,33,71,.18);
+}
+.dashboard-btn:hover{
+    transform:translateY(-1px);
+    opacity:.95;
+}
 /* HERO */
 .hero{ color:white; padding:200px 20px; text-align:center; background:linear-gradient(rgba(1,33,71,0.7),rgba(1,33,71,0.9)), url("{{ asset('images/ttmc.jpeg') }}") center/cover no-repeat; }
 .hero h1{ font-size:42px; font-weight:bold; margin-bottom:15px; }
@@ -152,7 +151,6 @@ footer{
     color:#94a3b8;
     border-top:1px solid #1f2937;
 }
-/* ===== RESPONSIVE FIX ===== */
 
 /* Tablet */
 @media (max-width: 992px) {
@@ -166,10 +164,6 @@ footer{
     }
 }
 
-/* ==============================
-   FINAL MOBILE RESPONSIVE FIX
-============================== */
-
 *{
     box-sizing:border-box;
 }
@@ -178,162 +172,92 @@ body{
     overflow-x:hidden;
 }
 
-
 /* MOBILE */
 @media(max-width:768px){
 
-
 /* TOP BAR */
-
 .topbar{
-
     position:fixed;
     height:auto;
     min-height:45px;
     padding:8px 10px;
     flex-direction:row;
-
 }
-
 
 .topbar-left{
-
     gap:8px;
-
 }
-
 
 .topbar-left span{
-
     display:none;
-
 }
-
 
 .menu-icon{
-
     font-size:28px;
-
 }
-
 
 /* LOGIN AREA */
-
 .topbar-right{
-
     font-size:12px;
-
 }
-
-
 
 /* HEADER */
-
 .header{
-
     top:45px;
-    height:75px;
-    padding:10px 12px;
-
+    height:auto;
+    padding:18px 12px 10px;
+    flex-direction:column;
+    align-items:flex-start;
+    gap:10px;
 }
 
+.header-actions{
+    display:flex;
+    width:100%;
+    gap:8px;
+}
 
+.header-actions .dashboard-btn{
+    flex:1;
+    justify-content:center;
+    font-size:12px;
+    padding:8px 6px;
+    margin-right:0 !important;
+}
 
 .logo-area{
-
     gap:8px;
-
 }
-
 
 .logo-area img{
-
     width:45px;
     height:45px;
-
 }
-
-
 
 .campus-name{
-
     font-size:16px;
-
 }
-
 
 .lms-name{
-
     font-size:11px;
-
 }
-
-
-/* DASHBOARD BUTTON */
-
-.dashboard-btn{
-    font-size:14px;
-    padding:10px 14px;
-    border-radius:10px;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    text-decoration:none;
-    transition:all .25s ease;
-}
-
-.dashboard-btn i{
-    font-size:16px;
-}
-
-.dashboard-btn.btn-primary{
-    background:#012147;
-    color:#fff;
-    border:1px solid transparent;
-}
-
-.dashboard-btn.btn-ghost{
-    background:rgba(255,255,255,0.12);
-    color:#fff;
-    border:1px solid rgba(255,255,255,0.22);
-}
-
-.dashboard-btn:hover{
-    opacity:.94;
-    transform:translateY(-1px);
-}
-
 
 /* REMOVE SHIFT */
-
 .page-content.shifted{
-
     margin-left:0 !important;
-
 }
-
 
 .topbar.shifted{
-
     left:0 !important;
-
     width:100% !important;
-
 }
-
 
 .header.shifted{
-
     left:0 !important;
-
     width:100% !important;
-
 }
 
-
-
 /* SIDEBAR */
-
 .sidebar{
  position:fixed;
  top:0;
@@ -347,174 +271,77 @@ body{
  z-index:5000;
 }
 
-
-
 .sidebar.active{
-
     left:0;
-
 }
-
-
 
 /* HERO */
-
 .hero{
-
-    padding:160px 15px 80px;
-
+    padding:230px 15px 80px;
 }
-
-
 
 .hero h1{
-
     font-size:30px;
-
 }
-
 
 .hero p{
-
     font-size:15px;
-
 }
-
-
 
 /* FACULTY */
-
 .faculty-card{
-
     height:210px;
-
 }
-
 
 .swiper-slide{
-
     width:230px !important;
-
 }
-
-
 
 /* FOOTER */
-
 .footer-container{
-
     padding:40px 15px;
-
 }
-
 
 .footer-grid{
-
     grid-template-columns:1fr;
-
     text-align:center;
-
 }
-
 
 .footer-box h5{
-
     border-left:none;
-
     border-bottom:2px solid #3b82f6;
-
     padding-bottom:8px;
-
 }
-
-
-
 }
-
 
 /* SMALL PHONE */
-
 @media(max-width:480px){
-
-
 .header{
-
     height:70px;
-
 }
-
 
 .campus-name{
-
     font-size:14px;
-
 }
-
 
 .lms-name{
-
     display:none;
-
 }
-
-
-
-.dashboard-btn{
-    display:inline-flex;
-    text-decoration:none;
-    border-radius:10px;
-    padding:10px 16px;
-    font-size:14px;
-    font-weight:600;
-    transition:transform .2s ease, box-shadow .2s ease, opacity .2s ease;
-}
-
-.dashboard-btn.btn-primary{
-    background:#012147;
-    color:#fff;
-    border:1px solid #012147;
-    box-shadow:0 12px 24px rgba(1,33,71,.16);
-}
-
-.dashboard-btn.btn-ghost{
-    background:rgba(1,33,71,.06);
-    color:#012147;
-    border:1px solid rgba(1,33,71,.18);
-}
-
-.dashboard-btn:hover{
-    transform:translateY(-1px);
-    opacity:.95;
-}
-
-
 
 .hero h1{
-
     font-size:25px;
-
 }
-
 
 .hero p{
-
     font-size:14px;
-
 }
-
-
 
 .sidebar{
-
     width:100%;
-
 }
 
-
 .footer-desc{
-
     font-size:13px;
-
 }
 
 
@@ -569,7 +396,7 @@ body{
                 <div class="lms-name">Learning Management System</div>
             </div>
         </div>
-        <div>
+        <div class="header-actions">
             <a href="{{ route('lecturer.login') }}" class="dashboard-btn btn-ghost" style="margin-right:12px;">
                 <i class="bi bi-person-badge"></i> Lecturer Dashboard
             </a>

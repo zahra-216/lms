@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Enter Marks</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -33,6 +34,7 @@
         @csrf
         <input type="hidden" name="assignment_id" value="{{ $assignment->id }}">
 
+        <div class="table-responsive">
         <table class="table table-bordered mt-3">
             <thead>
                 <tr>
@@ -66,7 +68,7 @@
                 @endforeach
             </tbody>
         </table>
-
+    
         <button class="btn btn-primary w-100">Save Marks</button>
     </form>
     @else

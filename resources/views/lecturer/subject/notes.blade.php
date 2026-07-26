@@ -2,8 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $subject->name }} - Notes</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+@media (max-width:576px){
+    .d-flex.justify-content-between.align-items-center.mb-3{
+        flex-direction:column;
+        align-items:flex-start !important;
+        gap:12px;
+    }
+
+    .d-flex.justify-content-between.align-items-center.mb-3 a{
+        width:100%;
+        text-align:center;
+    }
+}
+</style>
 </head>
 <body>
 <div class="container mt-5">
@@ -19,6 +34,7 @@
     @endif
 
     @if($subject->notes && $subject->notes->count())
+    <div class="table-responsive">
         <table class="table table-bordered bg-white">
             <thead>
                 <tr>
@@ -60,6 +76,7 @@
                 @endforeach
             </tbody>
         </table>
+    </div>
     @else
         <p class="text-muted mt-3">No notes uploaded yet for this subject.</p>
     @endif

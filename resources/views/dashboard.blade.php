@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Student Dashboard</title>
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -283,6 +284,18 @@ footer{
         padding: 10px;
     }
 
+    .topbar-name {
+        display: none;
+    }
+
+    #calendar td {
+        padding: 4px 2px;
+        font-size: 12px;
+    }
+
+    #calendar th {
+        font-size: 12px;
+    }
 }
 
     </style>
@@ -334,7 +347,7 @@ footer{
 </div>
         <i class="bi bi-chat icon-btn"></i>
 
-        <div class="small text-white">
+        <div class="small text-white topbar-name">
           {{ $student->name }} ({{ $student->registration_no }})
         </div>
 

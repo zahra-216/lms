@@ -2,10 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $subject->name }} - Grades</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px; }
+    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
+
+    @media (max-width:576px){
+        body { padding:20px 12px; }
+
+        .assignment-row{
+            flex-direction:column;
+            align-items:flex-start !important;
+            gap:10px;
+        }
+
+        .assignment-row a{
+            width:100%;
+            text-align:center;
+        }
+    }
     .container { max-width:1000px; margin:auto; }
     h2 { color:#012147; }
     .assignment-row { display:flex; justify-content:space-between; align-items:center; padding:14px 18px; border:1px solid #e5e7eb; border-radius:10px; margin-bottom:10px; background:#fff; }
@@ -50,6 +66,7 @@
     @if($students->count())
     <form method="POST" action="{{ route('lecturer.subject.marks.update', $subject->id) }}">
         @csrf
+        <div class="table-responsive">
         <table class="table table-bordered bg-white align-middle">
             <thead>
                 <tr>
@@ -96,6 +113,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
         <button type="submit" class="btn btn-primary">Save Marks</button>
     </form>
 

@@ -2,11 +2,38 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $subject->name }} - Assignments</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px; }
+    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
+
+    @media (max-width:576px){
+        body { padding:20px 12px; }
+
+        .d-flex.justify-content-between.align-items-center.mb-4{
+            flex-direction:column;
+            align-items:flex-start !important;
+            gap:12px;
+        }
+
+        .d-flex.justify-content-between.align-items-center.mb-4 a{
+            width:100%;
+            text-align:center;
+        }
+
+        .assignment-header{
+            flex-direction:column;
+            align-items:flex-start !important;
+            gap:8px;
+            padding:15px 16px;
+        }
+
+        .assignment-body{
+            padding:16px;
+        }
+    }
     .container { max-width:1000px; margin:auto; }
     h2 { color:#012147; }
     .assignment-card { border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08); margin-bottom:25px; }

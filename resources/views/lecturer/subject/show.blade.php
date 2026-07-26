@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $subject->name }} - Module</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px; }
+    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
+
+    @media (max-width: 480px){
+        body { padding:20px 12px; }
+        .module-card { padding:25px 15px; }
+    }
     .container { max-width:900px; margin:auto; }
     h2 { color:#012147; margin-bottom:30px; }
     .module-card {

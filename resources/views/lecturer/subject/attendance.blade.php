@@ -2,11 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{{ $subject->name }} - Attendance</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px; }
+    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
+
+    @media (max-width:576px){
+        body { padding:20px 12px; }
+    }
     .container { max-width:900px; margin:auto; }
 </style>
 </head>
@@ -41,6 +46,7 @@
             </div>
         </div>
 
+        <div class="table-responsive">
         <table class="table table-bordered bg-white align-middle">
             <thead>
                 <tr>
@@ -69,6 +75,7 @@
                 @endforeach
             </tbody>
         </table>
+        </div>
 
         <button type="submit" class="btn btn-primary">Save Attendance</button>
     </form>

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Grade Scale</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
@@ -198,6 +199,13 @@ footer{
 /* ===== CONTAINER ===== */
 .container{
     margin-top:180px;
+    padding:0 15px;
+}
+
+@media (max-width:768px){
+    .container{
+        margin-top:150px;
+    }
 }
 
 /* ===== TITLE ===== */
@@ -369,18 +377,18 @@ footer{
 
         <tbody>
 
-            <tr><td>85 - 100</td><td>A+</td><td>4.0</td><td>Distinction</td></tr>
-            <tr><td>75 - 84</td><td>A</td><td>4.0</td><td>Distinction</td></tr>
-            <tr><td>70 - 74</td><td>A-</td><td>3.7</td><td>Merit</td></tr>
-            <tr><td>65 - 69</td><td>B+</td><td>3.3</td><td>Merit</td></tr>
-            <tr><td>60 - 64</td><td>B</td><td>3.0</td><td>Merit</td></tr>
-            <tr><td>55 - 59</td><td>B-</td><td>2.7</td><td>Pass</td></tr>
-            <tr><td>50 - 54</td><td>C+</td><td>2.3</td><td>Pass</td></tr>
-            <tr><td>45 - 49</td><td>C</td><td>2.0</td><td>Pass</td></tr>
-            <tr><td>40 - 44</td><td>C-</td><td>1.7</td><td>Fail</td></tr>
-            <tr><td>35 - 39</td><td>D+</td><td>1.3</td><td>Fail</td></tr>
-            <tr><td>30 - 34</td><td>D</td><td>1.0</td><td>Fail</td></tr>
-            <tr><td>0 - 29</td><td>F</td><td>0.0</td><td>Fail</td></tr>
+            <tr><td data-label="Marks (%)">85 - 100</td><td data-label="Grade">A+</td><td data-label="GPA">4.0</td><td data-label="Classification">Distinction</td></tr>
+            <tr><td data-label="Marks (%)">75 - 84</td><td data-label="Grade">A</td><td data-label="GPA">4.0</td><td data-label="Classification">Distinction</td></tr>
+            <tr><td data-label="Marks (%)">70 - 74</td><td data-label="Grade">A-</td><td data-label="GPA">3.7</td><td data-label="Classification">Merit</td></tr>
+            <tr><td data-label="Marks (%)">65 - 69</td><td data-label="Grade">B+</td><td data-label="GPA">3.3</td><td data-label="Classification">Merit</td></tr>
+            <tr><td data-label="Marks (%)">60 - 64</td><td data-label="Grade">B</td><td data-label="GPA">3.0</td><td data-label="Classification">Merit</td></tr>
+            <tr><td data-label="Marks (%)">55 - 59</td><td data-label="Grade">B-</td><td data-label="GPA">2.7</td><td data-label="Classification">Pass</td></tr>
+            <tr><td data-label="Marks (%)">50 - 54</td><td data-label="Grade">C+</td><td data-label="GPA">2.3</td><td data-label="Classification">Pass</td></tr>
+            <tr><td data-label="Marks (%)">45 - 49</td><td data-label="Grade">C</td><td data-label="GPA">2.0</td><td data-label="Classification">Pass</td></tr>
+            <tr><td data-label="Marks (%)">40 - 44</td><td data-label="Grade">C-</td><td data-label="GPA">1.7</td><td data-label="Classification">Fail</td></tr>
+            <tr><td data-label="Marks (%)">35 - 39</td><td data-label="Grade">D+</td><td data-label="GPA">1.3</td><td data-label="Classification">Fail</td></tr>
+            <tr><td data-label="Marks (%)">30 - 34</td><td data-label="Grade">D</td><td data-label="GPA">1.0</td><td data-label="Classification">Fail</td></tr>
+            <tr><td data-label="Marks (%)">0 - 29</td><td data-label="Grade">F</td><td data-label="GPA">0.0</td><td data-label="Classification">Fail</td></tr>
 
         </tbody>
 

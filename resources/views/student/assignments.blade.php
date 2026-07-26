@@ -340,6 +340,12 @@ footer{
         font-size: 14px;
     }
 
+    .assignment-card{
+        flex-direction:column;
+        align-items:flex-start !important;
+        gap:10px;
+    }
+
     .header {
         padding-left: 10px;
         height: 60px;
@@ -380,9 +386,12 @@ footer{
 
 /* Small mobile */
 @media (max-width: 480px) {
-
     .topbar b {
         font-size: 14px;
+    }
+
+    .topbar-name{
+        display:none;
     }
 
     .subject-title {
@@ -441,7 +450,7 @@ footer.shift{
         <i class="bi bi-bell icon-btn"></i>
         <i class="bi bi-chat icon-btn"></i>
 
-        <div class="small text-white">
+        <div class="small text-white topbar-name">
             {{ $student->name }} ({{ $student->registration_no }})
         </div>
 
