@@ -27,7 +27,20 @@ class DashboardController extends Controller
         $course = $student->course;
         $level  = $student->level;
 
-        $semesters = Semester::where('level_id', $student->level_id)->get();
+        $currentSemester = Semester::find($student->semester_id);
+        $currentNumber = $currentSemester
+            ? (int) filter_var($currentSemester->name, FILTER_SANITIZE_NUMBER_INT)
+            : null;
+
+        $semesters = Semester::where('course_id', $student->course_id)
+            ->where('level_id', $student->level_id)
+            ->get()
+            ->filter(function ($sem) use ($currentNumber) {
+                if (!$currentNumber) return true;
+                $num = (int) filter_var($sem->name, FILTER_SANITIZE_NUMBER_INT);
+                return $num <= $currentNumber;
+            })
+            ->values();
 
         return view('dashboard', compact(
             'student',
