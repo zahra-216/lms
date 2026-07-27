@@ -401,3 +401,10 @@ Route::get('/admin/marks', [MarkController::class, 'index'])
 Route::get('/student-grade', function () {
     return view('student-grade');
 });
+
+Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(function () {
+    Route::get('/attendance', [App\Http\Controllers\Admin\AttendanceController::class, 'index'])->name('attendance.index');
+    Route::get('/attendance/{id}', [App\Http\Controllers\Admin\AttendanceController::class, 'show'])->name('attendance.show');
+    Route::get('/attendance/{id}/pdf', [App\Http\Controllers\Admin\AttendanceController::class, 'exportPdf'])->name('attendance.pdf');
+    Route::get('/attendance/{id}/summary-pdf', [App\Http\Controllers\Admin\AttendanceController::class, 'exportSummaryPdf'])->name('attendance.summary.pdf');
+});

@@ -200,6 +200,9 @@ body { font-family: 'Inter', sans-serif; background:#f4f6f9; margin:0; }
 <a href="{{ route('admin.marks.index') }}">
     <i class="bi bi-clipboard-data me-2"></i> Marks
 </a>
+<a href="{{ route('admin.attendance.index') }}">
+    <i class="bi bi-calendar-check me-2"></i> Attendance
+</a>
 </div>
  
 
