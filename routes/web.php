@@ -414,4 +414,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/payments/payment/{id}/edit', [App\Http\Controllers\Admin\PaymentController::class, 'editPayment'])->name('payments.payment.edit');
     Route::put('/payments/payment/{id}', [App\Http\Controllers\Admin\PaymentController::class, 'updatePayment'])->name('payments.payment.update');
     Route::delete('/payments/payment/{id}', [App\Http\Controllers\Admin\PaymentController::class, 'destroyPayment'])->name('payments.payment.destroy');
+    Route::get('/lecturer-payments', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'index'])->name('lecturer-payments.index');
+    Route::get('/lecturer-payments/{lecturerId}', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'show'])->name('lecturer-payments.show');
+    Route::post('/lecturer-payments/{lecturerId}', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'store'])->name('lecturer-payments.store');
+    Route::get('/lecturer-payments/payment/{id}/edit', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'edit'])->name('lecturer-payments.edit');
+    Route::put('/lecturer-payments/payment/{id}', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'update'])->name('lecturer-payments.update');
+    Route::delete('/lecturer-payments/payment/{id}', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'destroy'])->name('lecturer-payments.destroy');
 });

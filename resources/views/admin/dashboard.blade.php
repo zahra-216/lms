@@ -206,6 +206,9 @@ body { font-family: 'Inter', sans-serif; background:#f4f6f9; margin:0; }
 <a href="{{ route('admin.payments.index') }}">
     <i class="bi bi-cash-coin me-2"></i> Student Payments
 </a>
+<a href="{{ route('admin.lecturer-payments.index') }}">
+    <i class="bi bi-wallet2 me-2"></i> Lecturer Payments
+</a>
 </div>
  
 
