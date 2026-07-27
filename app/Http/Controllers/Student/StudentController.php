@@ -21,29 +21,40 @@ class StudentController extends Controller
         $currentSemester = \App\Models\Semester::find($student->semester_id);
 
         if (!$currentSemester) {
-            $subjects = collect();
-            return view('student.grades', compact('subjects', 'student'));
+            $semesterGroups = collect();
+            return view('student.grades', compact('semesterGroups', 'student'));
         }
 
         // extract the number from "Semester 3" -> 3
         $currentNumber = (int) filter_var($currentSemester->name, FILTER_SANITIZE_NUMBER_INT);
 
-        $semesterIds = \App\Models\Semester::where('course_id', $student->course_id)
+        $semesters = \App\Models\Semester::where('course_id', $student->course_id)
             ->where('level_id', $student->level_id)
             ->get()
             ->filter(function ($sem) use ($currentNumber) {
                 $num = (int) filter_var($sem->name, FILTER_SANITIZE_NUMBER_INT);
                 return $num <= $currentNumber;
             })
-            ->pluck('id');
+            ->sortByDesc(function ($sem) {
+                return (int) filter_var($sem->name, FILTER_SANITIZE_NUMBER_INT);
+            });
 
         $subjects = Subject::with(['subjectMarks' => function ($q) use ($studentId) {
             $q->where('student_id', $studentId);
         }])
-        ->whereIn('semester_id', $semesterIds)
-        ->get();
+        ->whereIn('semester_id', $semesters->pluck('id'))
+        ->get()
+        ->groupBy('semester_id');
 
-        return view('student.grades', compact('subjects', 'student'));
+        // build an ordered collection: semester object + its subjects
+        $semesterGroups = $semesters->map(function ($sem) use ($subjects) {
+            return [
+                'semester' => $sem,
+                'subjects' => $subjects->get($sem->id, collect()),
+            ];
+        });
+
+        return view('student.grades', compact('semesterGroups', 'student'));
     }
 
    public function subjectGrades($id)

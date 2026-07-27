@@ -33,13 +33,52 @@
     .welcome-pill{ background:rgba(255,255,255,0.15); padding:6px 14px; border-radius:20px; font-size:13px; }
     .welcome-icon{ font-size:44px; opacity:0.85; }
 
-    .card-box{ background:white; padding:24px; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
-    .section-title{ font-weight:700; color:#012147; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
+    .semester-card{
+        background:white; border-radius:16px; box-shadow:0 6px 20px rgba(0,0,0,0.06);
+        margin-bottom:22px; overflow:hidden;
+    }
+
+    .semester-card-header{
+        display:flex; align-items:center; justify-content:space-between;
+        padding:16px 22px; background:#eef2f9; border-bottom:1px solid #e2e8f0;
+    }
+
+    .semester-card-header .semester-name{
+        font-weight:700; color:#012147; font-size:16px;
+        display:flex; align-items:center; gap:10px;
+    }
+
+    .semester-card-header .current-tag{
+        background:#3b82f6; color:#fff; font-size:11px; font-weight:600;
+        padding:3px 10px; border-radius:12px; letter-spacing:0.3px;
+    }
+
+    .semester-card-body{ padding:6px 0; }
 
     table { width:100%; border-collapse:collapse; }
-    th, td { padding:12px; border-bottom:1px solid #eef0f4; }
-    th { background:#012147; color:#fff; text-align:left; }
+    th, td { padding:12px 22px; border-bottom:1px solid #eef0f4; }
+    th { background:#012147; color:#fff; text-align:left; font-size:13px; text-transform:uppercase; letter-spacing:0.5px; }
+    tbody tr:last-child td{ border-bottom:none; }
     tr:hover td { background:#f8fafc; }
+
+    .subject-link{
+        text-decoration:none; font-weight:600; color:#012147;
+        display:flex; align-items:center; gap:8px;
+        transition:0.2s;
+    }
+    .subject-link:hover{ color:#3b82f6; }
+
+    .grade-badge{
+        display:inline-block; min-width:34px; text-align:center;
+        padding:5px 12px; border-radius:20px; font-weight:700; font-size:13px;
+    }
+    .grade-A{ background:#dcfce7; color:#15803d; }
+    .grade-B{ background:#dbeafe; color:#1d4ed8; }
+    .grade-C{ background:#fef3c7; color:#b45309; }
+    .grade-F{ background:#fee2e2; color:#b91c1c; }
+    .grade-none{ background:#e2e8f0; color:#64748b; }
+
+    .empty-state{ text-align:center; color:#94a3b8; padding:36px 0; }
 </style>
 </head>
 <body>
@@ -84,34 +123,51 @@
         <i class="bi bi-clipboard-data welcome-icon"></i>
     </div>
 
-    <div class="card-box">
-        <div class="section-title"><i class="bi bi-journal-bookmark"></i> Modules This Semester</div>
+    @forelse($semesterGroups as $index => $group)
+        <div class="semester-card">
+            <div class="semester-card-header">
+                <div class="semester-name">
+                    <i class="bi bi-journal-bookmark"></i> {{ $group['semester']->name }}
+                </div>
+                @if($index === 0)
+                    <span class="current-tag">CURRENT</span>
+                @endif
+            </div>
 
-        <table>
-            <thead><tr><th>Subject</th><th>Final Grade</th></tr></thead>
-            <tbody>
-                @forelse($subjects as $subject)
-                    @php $sm = $subject->subjectMarks->first(); @endphp
-                    <tr>
-                        <td>
-                            <a href="{{ route('student.subject.grades', $subject->id) }}" style="text-decoration:none; font-weight:600; color:#012147;">
-                                📘 {{ $subject->name }}
-                            </a>
-                        </td>
-                        <td>
-                            @if($sm && $sm->final_grade)
-                                <span class="badge bg-primary">{{ $sm->final_grade }}</span>
-                            @else
-                                <span class="badge bg-secondary">Not Graded</span>
-                            @endif
-                        </td>
-                    </tr>
-                @empty
-                    <tr><td colspan="2" class="text-center text-muted py-3">No modules found for your current semester.</td></tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
+            <div class="semester-card-body">
+                <table>
+                    <thead><tr><th>Subject</th><th>Final Grade</th></tr></thead>
+                    <tbody>
+                        @forelse($group['subjects'] as $subject)
+                            @php $sm = $subject->subjectMarks->first(); @endphp
+                            <tr>
+                                <td>
+                                    <a href="{{ route('student.subject.grades', $subject->id) }}" class="subject-link">
+                                        📘 {{ $subject->name }}
+                                    </a>
+                                </td>
+                                <td>
+                                    @if($sm && $sm->final_grade)
+                                        <span class="grade-badge grade-{{ $sm->final_grade }}">{{ $sm->final_grade }}</span>
+                                    @else
+                                        <span class="grade-badge grade-none">Not Graded</span>
+                                    @endif
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="2" class="empty-state">No modules found for this semester.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    @empty
+        <div class="semester-card">
+            <div class="semester-card-body">
+                <div class="empty-state">No semesters found for your enrollment.</div>
+            </div>
+        </div>
+    @endforelse
 </div>
 
 </body>
