@@ -47,4 +47,9 @@ public function marks()
 {
     return $this->hasMany(\App\Models\Mark::class);
 }
+public function getIntakeAttribute()
+{
+    $parts = explode('/', $this->registration_no);
+    return $parts[count($parts) - 2] ?? null;
+}
 }

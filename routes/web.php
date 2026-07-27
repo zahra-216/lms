@@ -407,4 +407,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/attendance/{id}', [App\Http\Controllers\Admin\AttendanceController::class, 'show'])->name('attendance.show');
     Route::get('/attendance/{id}/pdf', [App\Http\Controllers\Admin\AttendanceController::class, 'exportPdf'])->name('attendance.pdf');
     Route::get('/attendance/{id}/summary-pdf', [App\Http\Controllers\Admin\AttendanceController::class, 'exportSummaryPdf'])->name('attendance.summary.pdf');
+    Route::get('/payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/{studentId}', [App\Http\Controllers\Admin\PaymentController::class, 'show'])->name('payments.show');
+    Route::post('/payments/{studentId}/plan', [App\Http\Controllers\Admin\PaymentController::class, 'storePlan'])->name('payments.plan.store');
+    Route::post('/payments/{studentId}/payment', [App\Http\Controllers\Admin\PaymentController::class, 'storePayment'])->name('payments.payment.store');
+    Route::get('/payments/payment/{id}/edit', [App\Http\Controllers\Admin\PaymentController::class, 'editPayment'])->name('payments.payment.edit');
+    Route::put('/payments/payment/{id}', [App\Http\Controllers\Admin\PaymentController::class, 'updatePayment'])->name('payments.payment.update');
+    Route::delete('/payments/payment/{id}', [App\Http\Controllers\Admin\PaymentController::class, 'destroyPayment'])->name('payments.payment.destroy');
 });

@@ -203,6 +203,9 @@ body { font-family: 'Inter', sans-serif; background:#f4f6f9; margin:0; }
 <a href="{{ route('admin.attendance.index') }}">
     <i class="bi bi-calendar-check me-2"></i> Attendance
 </a>
+<a href="{{ route('admin.payments.index') }}">
+    <i class="bi bi-cash-coin me-2"></i> Student Payments
+</a>
 </div>
  
 
