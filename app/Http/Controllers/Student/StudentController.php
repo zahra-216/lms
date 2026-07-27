@@ -18,11 +18,29 @@ class StudentController extends Controller
         }
 
         $student = \App\Models\Student::find($studentId);
+        $currentSemester = \App\Models\Semester::find($student->semester_id);
+
+        if (!$currentSemester) {
+            $subjects = collect();
+            return view('student.grades', compact('subjects', 'student'));
+        }
+
+        // extract the number from "Semester 3" -> 3
+        $currentNumber = (int) filter_var($currentSemester->name, FILTER_SANITIZE_NUMBER_INT);
+
+        $semesterIds = \App\Models\Semester::where('course_id', $student->course_id)
+            ->where('level_id', $student->level_id)
+            ->get()
+            ->filter(function ($sem) use ($currentNumber) {
+                $num = (int) filter_var($sem->name, FILTER_SANITIZE_NUMBER_INT);
+                return $num <= $currentNumber;
+            })
+            ->pluck('id');
 
         $subjects = Subject::with(['subjectMarks' => function ($q) use ($studentId) {
             $q->where('student_id', $studentId);
         }])
-        ->where('semester_id', $student->semester_id)
+        ->whereIn('semester_id', $semesterIds)
         ->get();
 
         return view('student.grades', compact('subjects', 'student'));
