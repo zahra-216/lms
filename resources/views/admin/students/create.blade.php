@@ -147,11 +147,13 @@
         <option value="">Select Level</option>
     </select>
 
-    <!-- 🔥 NEW: optional photo -->
+    <select name="semester_id" id="semester_id" class="form-select mb-3" required>
+        <option value="">Select Semester</option>
+    </select>
+
     <label style="display:block; margin-bottom:6px; font-weight:600;">Photo (optional)</label>
     <input type="file" name="photo" accept="image/png, image/jpeg">
 
-    <!-- 🔥 password field: prevent browser autofill -->
     <input
         type="password"
         name="password"
@@ -195,6 +197,30 @@ $(document).ready(function () {
             $('#level_id').html('<option value="">Select Level</option>');
         }
     });
+});
+
+$('#level_id').on('change', function () {
+    let levelId = $(this).val();
+    $('#semester_id').html('<option value="">Loading...</option>');
+
+    if (levelId) {
+        $.ajax({
+            url: '/admin/get-semesters/' + levelId,
+            type: 'GET',
+            success: function (data) {
+                $('#semester_id').empty().append('<option value="">Select Semester</option>');
+                if (data.length === 0) {
+                    $('#semester_id').append('<option>No semesters found</option>');
+                    return;
+                }
+                data.forEach(function (s) {
+                    $('#semester_id').append(`<option value="${s.id}">${s.name}</option>`);
+                });
+            }
+        });
+    } else {
+        $('#semester_id').html('<option value="">Select Semester</option>');
+    }
 });
 </script>
 </html>

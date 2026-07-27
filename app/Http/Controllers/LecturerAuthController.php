@@ -47,4 +47,16 @@ class LecturerAuthController extends Controller
         $request->session()->regenerateToken();
         return redirect()->route('lecturer.login');
     }
+
+    public function myPayments()
+    {
+        $lecturer = Auth::guard('lecturer')->user();
+
+        $payments = \App\Models\LecturerPayment::with('courses')
+            ->where('lecturer_id', $lecturer->id)
+            ->latest('date')
+            ->get();
+
+        return view('lecturer.my-payments', compact('lecturer', 'payments'));
+    }
 }

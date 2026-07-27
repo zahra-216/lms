@@ -40,6 +40,8 @@ Route::prefix('student')->group(function () {
 
     Route::get('/subject/{id}/grades', [StudentStudentController::class, 'subjectGrades'])
         ->name('student.subject.grades');
+
+    Route::get('/my-payments', [StudentStudentController::class, 'myPayments'])->name('student.my.payments');
 });
 
 // HOME
@@ -65,6 +67,8 @@ Route::get('/lecturer/dashboard', [LecturerAuthController::class, 'dashboard'])
 Route::post('/lecturer/logout', [LecturerAuthController::class, 'logout'])->name('lecturer.logout');
 
 Route::prefix('lecturer')->middleware(['auth:lecturer'])->name('lecturer.')->group(function () {
+
+    Route::get('/my-payments', [App\Http\Controllers\LecturerAuthController::class, 'myPayments'])->name('my.payments');
 
     Route::get('/subject/{id}', [App\Http\Controllers\LecturerSubjectController::class, 'show'])
         ->name('subject.show');
@@ -420,4 +424,5 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/lecturer-payments/payment/{id}/edit', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'edit'])->name('lecturer-payments.edit');
     Route::put('/lecturer-payments/payment/{id}', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'update'])->name('lecturer-payments.update');
     Route::delete('/lecturer-payments/payment/{id}', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'destroy'])->name('lecturer-payments.destroy');
+    Route::post('/students/bulk-semester-update', [App\Http\Controllers\Admin\StudentController::class, 'bulkUpdateSemester'])->name('students.bulk.semester.update');
 });

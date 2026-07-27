@@ -64,6 +64,13 @@
             @endforeach
         </select>
 
+        <select name="semester_id" id="semester_id" required>
+            <option value="">Select Semester</option>
+            @foreach($semesters as $s)
+                <option value="{{ $s->id }}" {{ $student->semester_id == $s->id ? 'selected' : '' }}>{{ $s->name }}</option>
+            @endforeach
+        </select>
+
         {{-- password intentionally not shown/editable here --}}
 
         <button type="submit"><i class="fa fa-edit"></i> Update Student</button>
@@ -72,30 +79,54 @@
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function () {
-    $('#course_id').on('change', function () {
-        let courseId = $(this).val();
-        $('#level_id').html('<option value="">Loading...</option>');
+    $(document).ready(function () {
+        $('#course_id').on('change', function () {
+            let courseId = $(this).val();
+            $('#level_id').html('<option value="">Loading...</option>');
 
-        if (courseId) {
+            if (courseId) {
+                $.ajax({
+                    url: '/admin/get-levels/' + courseId,
+                    type: 'GET',
+                    success: function (data) {
+                        $('#level_id').empty().append('<option value="">Select Level</option>');
+                        if (data.length === 0) {
+                            $('#level_id').append('<option>No levels found</option>');
+                            return;
+                        }
+                        data.forEach(function (l) {
+                            $('#level_id').append(`<option value="${l.id}">${l.name}</option>`);
+                        });
+                    }
+                });
+            } else {
+                $('#level_id').html('<option value="">Select Level</option>');
+            }
+        });
+    });
+
+    $('#level_id').on('change', function () {
+        let levelId = $(this).val();
+        $('#semester_id').html('<option value="">Loading...</option>');
+
+        if (levelId) {
             $.ajax({
-                url: '/admin/get-levels/' + courseId,
+                url: '/admin/get-semesters/' + levelId,
                 type: 'GET',
                 success: function (data) {
-                    $('#level_id').empty().append('<option value="">Select Level</option>');
+                    $('#semester_id').empty().append('<option value="">Select Semester</option>');
                     if (data.length === 0) {
-                        $('#level_id').append('<option>No levels found</option>');
+                        $('#semester_id').append('<option>No semesters found</option>');
                         return;
                     }
-                    data.forEach(function (l) {
-                        $('#level_id').append(`<option value="${l.id}">${l.name}</option>`);
+                    data.forEach(function (s) {
+                        $('#semester_id').append(`<option value="${s.id}">${s.name}</option>`);
                     });
                 }
             });
         } else {
-            $('#level_id').html('<option value="">Select Level</option>');
+            $('#semester_id').html('<option value="">Select Semester</option>');
         }
     });
-});
 </script>
 </html>

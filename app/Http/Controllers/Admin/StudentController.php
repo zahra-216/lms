@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Mark;
 use App\Models\Course;
 use App\Models\Level;
+use App\Models\Semester;
 
 class StudentController extends Controller
 {
@@ -50,6 +51,7 @@ class StudentController extends Controller
         return view('admin.students.index', [
             'grouped' => $grouped,
             'search' => $search,
+            'allSemesters' => Semester::all(),
         ]);
     }
 
@@ -74,9 +76,8 @@ class StudentController extends Controller
             'branch' => 'required|string|max:255',
             'course_id' => 'required|integer',
             'level_id' => 'required|integer',
+            'semester_id' => 'required|integer',
             'password' => 'required|string|min:15',
-
-            // 🔥 NEW: optional photo
             'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
         ]);
         $data = [
@@ -86,10 +87,11 @@ class StudentController extends Controller
             'branch' => $request->branch,
             'course_id' => $request->course_id,
             'level_id' => $request->level_id,
+            'semester_id' => $request->semester_id,
             'password' => Hash::make($request->password),
+
         ];
 
-        // 🔥 NEW: handle optional photo upload
         if ($request->hasFile('photo')) {
             $data['photo'] = $request->file('photo')->store('students', 'public');
         }
@@ -105,7 +107,8 @@ class StudentController extends Controller
         $student = Student::findOrFail($id);
         $courses = Course::all();
         $levels = Level::where('course_id', $student->course_id)->get();
-        return view('admin.students.edit', compact('student', 'courses', 'levels'));
+        $semesters = Semester::where('level_id', $student->level_id)->get();
+        return view('admin.students.edit', compact('student', 'courses', 'levels', 'semesters'));
     }
 
     public function update(Request $request, $id)
@@ -126,8 +129,7 @@ class StudentController extends Controller
             'branch' => 'required|string|max:255',
             'course_id' => 'required|integer',
             'level_id' => 'required|integer',
-
-            // 🔥 password removed from validation entirely — not editable here
+            'semester_id' => 'required|integer',
         ]);
 
         $student->update([
@@ -137,8 +139,7 @@ class StudentController extends Controller
             'branch' => $request->branch,
             'course_id' => $request->course_id,
             'level_id' => $request->level_id,
-
-            // 🔥 password intentionally NOT touched here
+            'semester_id' => $request->semester_id,
         ]);
 
         return redirect()->route('admin.students.index')
@@ -151,6 +152,19 @@ class StudentController extends Controller
 
         return redirect()->route('admin.students.index')
             ->with('success', 'Student deleted!');
+    }
+
+    public function bulkUpdateSemester(Request $request)
+    {
+        $request->validate([
+            'student_ids' => 'required|array',
+            'student_ids.*' => 'exists:students,id',
+            'semester_id' => 'required|exists:semesters,id',
+        ]);
+
+        Student::whereIn('id', $request->student_ids)->update(['semester_id' => $request->semester_id]);
+
+        return back()->with('success', 'Semester updated for selected students!');
     }
 
     public function notes($id)

@@ -47,6 +47,8 @@
         .edit-btn:hover { background:#e0a800; color:#fff; }
         .delete-btn { background:#dc3545; color:#fff; }
         .delete-btn:hover { background:#a71d2a; }
+        .change-sem-btn { background:#0d6efd; color:#fff; border:none; }
+        .change-sem-btn:hover { background:#0b5ed7; color:#fff; }
 
         .empty-note { text-align:center; color:#6b7280; padding:10px; }
         .chevron { transition:.2s; }
@@ -96,22 +98,39 @@
                         </div>
                         <div class="faculty-body" id="faculty-{{ $facultyId }}">
                             @foreach($courses as $courseName => $students)
+                                @php
+                                    $courseSlug = $levelId.'-'.$facultyId.'-'.\Illuminate\Support\Str::slug($courseName);
+                                    $firstStudent = $students->first();
+                                    $courseSemesters = $allSemesters
+                                        ->where('course_id', $firstStudent->course_id)
+                                        ->where('level_id', $firstStudent->level_id);
+                                @endphp
                                 <div class="course-block">
-                                    <div class="course-title"><i class="fa fa-book"></i> {{ $courseName }}</div>
-                                    <table>
+                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                        <div class="course-title"><i class="fa fa-book"></i> {{ $courseName }}</div>
+                                        <button type="button" class="btn change-sem-btn open-sem-modal" data-course="{{ $courseSlug }}">
+                                            <i class="fa fa-calendar"></i> Change Semester
+                                        </button>
+                                    </div>
+
+                                    <table class="course-table" data-course="{{ $courseSlug }}">
                                         <tr>
+                                            <th><input type="checkbox" class="select-all" onclick="toggleAll(this)"></th>
                                             <th>Reg No</th>
                                             <th>Full Name</th>
                                             <th>Email</th>
                                             <th>Branch</th>
+                                            <th>Semester</th>
                                             <th>Action</th>
                                         </tr>
                                         @foreach($students as $student)
                                             <tr>
+                                                <td><input type="checkbox" class="student-check" value="{{ $student->id }}"></td>
                                                 <td>{{ $student->registration_no }}</td>
                                                 <td>{{ $student->name }}</td>
                                                 <td>{{ $student->email }}</td>
                                                 <td>{{ $student->branch }}</td>
+                                                <td>{{ $student->semester->name ?? '—' }}</td>
                                                 <td>
                                                     <a href="{{ route('admin.students.edit', $student->id) }}" class="btn edit-btn">
                                                         <i class="fa fa-edit"></i>
@@ -129,6 +148,34 @@
                                             </tr>
                                         @endforeach
                                     </table>
+
+                                    <!-- CHANGE SEMESTER MODAL -->
+                                    <div class="modal fade" id="semModal-{{ $courseSlug }}" tabindex="-1">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <form method="POST" action="{{ route('admin.students.bulk.semester.update') }}" class="bulk-sem-form" data-course="{{ $courseSlug }}">
+                                                    @csrf
+                                                    <div class="modal-header">
+                                                        <h5>Change Semester — {{ $courseName }}</h5>
+                                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="text-muted selected-count-{{ $courseSlug }}"></p>
+                                                        <select name="semester_id" class="form-select" required>
+                                                            <option value="">Select Semester</option>
+                                                            @foreach($courseSemesters as $s)
+                                                                <option value="{{ $s->id }}">{{ $s->name }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                        <div class="hidden-student-ids"></div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="submit" class="btn btn-primary">Update Semester</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
@@ -150,7 +197,43 @@ function toggleBlock(id, headerEl) {
     chevron.classList.toggle('rotate');
 }
 
-// Auto-expand everything when a search is active, so results aren't hidden inside collapsed cards
+function toggleAll(checkbox) {
+    const table = checkbox.closest('table');
+    table.querySelectorAll('.student-check').forEach(cb => cb.checked = checkbox.checked);
+}
+
+document.querySelectorAll('.open-sem-modal').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const courseSlug = this.getAttribute('data-course');
+        const table = document.querySelector(`table[data-course="${courseSlug}"]`);
+        const checked = Array.from(table.querySelectorAll('.student-check:checked')).map(cb => cb.value);
+
+        if (checked.length === 0) {
+            alert('Please select at least one student first.');
+            return;
+        }
+
+        const modalEl = document.getElementById('semModal-' + courseSlug);
+        const form = modalEl.querySelector('.bulk-sem-form');
+        const hiddenContainer = form.querySelector('.hidden-student-ids');
+        hiddenContainer.innerHTML = '';
+
+        checked.forEach(id => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            input.name = 'student_ids[]';
+            input.value = id;
+            hiddenContainer.appendChild(input);
+        });
+
+        const countEl = modalEl.querySelector('.selected-count-' + courseSlug);
+        if (countEl) countEl.innerText = checked.length + ' student(s) selected';
+
+        new bootstrap.Modal(modalEl).show();
+    });
+});
+
+// Auto-expand everything when a search is active
 @if($search)
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.level-body, .faculty-body').forEach(el => el.classList.add('show'));
@@ -158,5 +241,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 @endif
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -388,7 +388,7 @@ footer.shift{
     <a href="{{ route('home') }}"><i class="bi bi-house"></i> Site Home</a>
     <a href="#"><i class="bi bi-calendar"></i> Calendar</a>
     <a href="#"><i class="bi bi-folder"></i> Private Files</a>
-   <a href="{{ route('student.my.courses') }}">
+   <a href="{{ route('dashboard') }}">
     <i class="bi bi-book"></i> My Courses
 </a>
 </div>

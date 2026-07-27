@@ -56,6 +56,9 @@
         <h1>Lecturer Dashboard</h1>
         <div class="actions">
             <span>Welcome, {{ $lecturer->name }}</span>
+            <a href="{{ route('lecturer.my.payments') }}" class="btn btn-outline-light btn-sm">
+                <i class="bi bi-wallet2"></i> My Payments
+            </a>
             <form method="POST" action="{{ route('lecturer.logout') }}">
                 @csrf
                 <button type="submit" class="logout-btn">Logout</button>

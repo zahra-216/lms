@@ -16,12 +16,11 @@ class Student extends Authenticatable
         'email',
         'branch',
         'password',
-
-        // 🔥 IMPORTANT LMS FIELDS
+        'semester_id',
         'course_id',
         'level_id',
         'last_seen_at',
-        'photo' // ✅ ADD THIS
+        'photo' 
     ];
 
     protected $hidden = [
@@ -40,16 +39,20 @@ class Student extends Authenticatable
         return $this->belongsTo(Level::class);
     }
     public function subjects()
-{
-    return $this->belongsToMany(Subject::class);
-}
-public function marks()
-{
-    return $this->hasMany(\App\Models\Mark::class);
-}
-public function getIntakeAttribute()
-{
-    $parts = explode('/', $this->registration_no);
-    return $parts[count($parts) - 2] ?? null;
-}
+    {
+        return $this->belongsToMany(Subject::class);
+    }
+    public function marks()
+    {
+        return $this->hasMany(\App\Models\Mark::class);
+    }
+    public function getIntakeAttribute()
+    {
+        $parts = explode('/', $this->registration_no);
+        return $parts[count($parts) - 2] ?? null;
+    }
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class);
+    }
 }
