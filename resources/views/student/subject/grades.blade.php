@@ -11,12 +11,9 @@
     <a href="{{ route('student.subject.portal.show', $subject->id) }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back</a>
     <h2>{{ $subject->code }} - {{ $subject->name }} — Grades</h2>
 
-    @php
-        $total = 0; $count = 0;
-    @endphp
-
+    <h5 class="mt-4">Assignments</h5>
     <div class="table-responsive">
-    <table class="table table-bordered bg-white mt-3">
+    <table class="table table-bordered bg-white mt-2">
         <thead>
             <tr><th>Assignment</th><th>Marks</th><th>Grade</th></tr>
         </thead>
@@ -28,9 +25,6 @@
                     <td>{{ $mark->marks ?? 'Not graded yet' }}</td>
                     <td>{{ $mark->grade ?? '-' }}</td>
                 </tr>
-                @php
-                    if ($mark) { $total += $mark->marks; $count++; }
-                @endphp
             @empty
                 <tr><td colspan="3" class="text-muted text-center">No assignments for this subject yet.</td></tr>
             @endforelse
@@ -38,25 +32,37 @@
     </table>
     </div>
 
-    @php
-        $avg = $count ? $total / $count : 0;
-        $finalGrade = match(true) {
-            $avg >= 80 => 'A',
-            $avg >= 60 => 'B',
-            $avg >= 40 => 'C',
-            default => 'F',
-        };
-    @endphp
-
-    <div class="alert alert-info">
-        <strong>Assignment Average:</strong> {{ $count ? round($avg, 2) : 'N/A' }}
-        &nbsp;|&nbsp;
-        <strong>Overall Grade:</strong> {{ $count ? $finalGrade : 'N/A' }}
+    <h5 class="mt-4">Overall Subject Marks</h5>
+    <div class="table-responsive">
+    <table class="table table-bordered bg-white mt-2">
+        <thead>
+            <tr>
+                <th>Assignment Marks</th>
+                <th>Mid Marks</th>
+                <th>Final Exam</th>
+                <th>Final Mark</th>
+                <th>Final Grade</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if($subjectMark)
+            <tr>
+                <td>{{ $subjectMark->assignment_marks }}</td>
+                <td>{{ $subjectMark->mid_marks }}</td>
+                <td>{{ $subjectMark->final_exam_marks }}</td>
+                <td>{{ $subjectMark->final_marks }}</td>
+                <td><strong>{{ $subjectMark->final_grade }}</strong></td>
+            </tr>
+            @else
+            <tr><td colspan="5" class="text-muted text-center">No marks recorded yet for this subject.</td></tr>
+            @endif
+        </tbody>
+    </table>
     </div>
 
-    <p class="text-muted small">
-        Note: this reflects assignment marks only — exam marks aren't tracked in the system yet.
-    </p>
+    <div class="alert alert-info">
+        <strong>Overall Grade:</strong> {{ $subjectMark->final_grade ?? 'N/A' }}
+    </div>
 </div>
 </body>
 </html>

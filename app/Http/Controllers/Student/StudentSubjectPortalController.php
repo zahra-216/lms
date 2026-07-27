@@ -7,6 +7,7 @@ use App\Models\Subject;
 use App\Models\Student;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
+use App\Models\SubjectMark;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 
@@ -67,10 +68,12 @@ class StudentSubjectPortalController extends Controller
         $student = $this->currentStudent();
         if (!$student) return redirect()->route('login');
 
-        $subject = Subject::with(['assignments.marks' => function ($q) use ($student) {
-            $q->where('student_id', $student->id);
-        }])->findOrFail($id);
+        $subject = Subject::findOrFail($id);
 
-        return view('student.subject.grades', compact('subject', 'student'));
+        $subjectMark = \App\Models\SubjectMark::where('student_id', $student->id)
+            ->where('subject_id', $id)
+            ->first();
+
+        return view('student.subject.grades', compact('subject', 'student', 'subjectMark'));
     }
 }
