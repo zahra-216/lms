@@ -66,7 +66,6 @@
         display:flex; align-items:center; gap:8px;
         transition:0.2s;
     }
-    .subject-link:hover{ color:#3b82f6; }
 
     .grade-badge{
         display:inline-block; min-width:34px; text-align:center;
