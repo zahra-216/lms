@@ -123,13 +123,13 @@
         <i class="bi bi-clipboard-data welcome-icon"></i>
     </div>
 
-    @forelse($semesterGroups as $index => $group)
+    @forelse($semesterGroups as $group)
         <div class="semester-card">
             <div class="semester-card-header">
                 <div class="semester-name">
                     <i class="bi bi-journal-bookmark"></i> {{ $group['semester']->name }}
                 </div>
-                @if($index === 0)
+                @if($loop->first)
                     <span class="current-tag">CURRENT</span>
                 @endif
             </div>
