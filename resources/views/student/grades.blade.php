@@ -142,9 +142,9 @@
                             @php $sm = $subject->subjectMarks->first(); @endphp
                             <tr>
                                 <td>
-                                    <a href="{{ route('student.subject.grades', $subject->id) }}" class="subject-link">
+                                    <span class="subject-link">
                                         📘 {{ $subject->name }}
-                                    </a>
+                                    </span>
                                 </td>
                                 <td>
                                     @if($sm && $sm->final_grade)
