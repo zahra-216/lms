@@ -7,49 +7,67 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
+    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
 
     @media (max-width:576px){
         body { padding:20px 12px; }
-
-        .d-flex.justify-content-between.align-items-center.mb-4{
-            flex-direction:column;
-            align-items:flex-start !important;
-            gap:12px;
-        }
-
-        .d-flex.justify-content-between.align-items-center.mb-4 a{
-            width:100%;
-            text-align:center;
-        }
-
-        .assignment-header{
-            flex-direction:column;
-            align-items:flex-start !important;
-            gap:8px;
-            padding:15px 16px;
-        }
-
-        .assignment-body{
-            padding:16px;
-        }
+        .page-header{ flex-direction:column; align-items:flex-start !important; gap:14px; }
+        .page-header .add-btn{ width:100%; text-align:center; }
+        .assignment-header{ flex-direction:column; align-items:flex-start !important; gap:8px; padding:15px 16px; }
+        .assignment-body{ padding:16px; }
     }
+
     .container { max-width:1000px; margin:auto; }
-    h2 { color:#012147; }
-    .assignment-card { border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08); margin-bottom:25px; }
-    .assignment-header { background:#012147; color:#fff; border-radius:12px 12px 0 0; padding:18px 22px; }
-    .assignment-body { padding:20px 22px; }
-    .meta-badge { font-size:0.8rem; margin-right:6px; }
-    .late-badge { background:#dc3545; }
-    .ontime-badge { background:#198754; }
+
+    .back-btn{
+        border:none; background:#fff; color:#012147; font-weight:600;
+        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
+        text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+    }
+    .back-btn:hover{ background:#012147; color:#fff; }
+
+    .page-header{
+        background:linear-gradient(120deg,#012147,#1e3a6e);
+        color:#fff; border-radius:18px; padding:26px 30px; margin:18px 0 26px;
+        box-shadow:0 10px 30px rgba(1,33,71,0.25);
+        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+    }
+    .page-header h2{ margin:0; font-weight:700; font-size:22px; }
+
+    .add-btn{
+        background:#fff; color:#012147; font-weight:600; border:none;
+        padding:10px 18px; border-radius:10px; text-decoration:none;
+        display:inline-flex; align-items:center; gap:6px; transition:0.2s;
+    }
+    .add-btn:hover{ background:#e2e8f0; color:#012147; }
+
+    .assignment-card { border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:25px; border:none; overflow:hidden; }
+    .assignment-header { background:#012147; color:#fff; padding:18px 22px; }
+    .assignment-body { padding:20px 22px; background:#fff; }
+    .meta-badge { font-size:0.8rem; margin-right:6px; padding:6px 12px; border-radius:20px; }
+    .late-badge { background:#fee2e2; color:#b91c1c; }
+    .ontime-badge { background:#dcfce7; color:#15803d; }
+
+    table.sub-table{ border-collapse:separate; border-spacing:0; }
+    table.sub-table thead th{
+        background:#f1f5f9; color:#012147; font-weight:600; border:none; padding:10px;
+    }
+    table.sub-table tbody td{ vertical-align:middle; padding:10px; }
+    table.sub-table tbody tr:nth-child(even){ background:#f8fafc; }
+    table.sub-table tbody tr:hover{ background:#eef2f9; }
 </style>
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back</a>
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 class="mb-0">{{ $subject->code }} - {{ $subject->name }} — Assignments</h2>
-        <a href="{{ route('lecturer.assignments.create', $subject->id) }}" class="btn btn-primary">+ Add Assignment</a>
+    <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+
+    <div class="page-header">
+        <h2><i class="bi bi-journal-text"></i> {{ $subject->code }} - {{ $subject->name }} — Assignments</h2>
+        <a href="{{ route('lecturer.assignments.create', $subject->id) }}" class="add-btn">
+            <i class="bi bi-plus-circle"></i> Add Assignment
+        </a>
     </div>
 
     @if($subject->assignments && $subject->assignments->count())
@@ -59,7 +77,7 @@
             <div class="assignment-header d-flex justify-content-between align-items-center">
                 <div>
                     <h5 class="mb-1">{{ $assignment->title }}</h5>
-                    <small>Due: {{ $assignment->due_date?->format('d M Y, h:i A') ?? 'No due date set' }}</small>
+                    <small><i class="bi bi-clock"></i> Due: {{ $assignment->due_date?->format('d M Y, h:i A') ?? 'No due date set' }}</small>
                 </div>
                 <span class="badge bg-{{ $assignment->is_published ? 'success' : 'secondary' }}">
                     {{ $assignment->is_published ? 'Published' : 'Draft' }}
@@ -93,12 +111,12 @@
                     @endif
                 </div>
 
-                <h6 class="mt-4 mb-2">Student Submissions ({{ $assignment->submissions->count() }})</h6>
+                <h6 class="mt-4 mb-2"><i class="bi bi-people"></i> Student Submissions ({{ $assignment->submissions->count() }})</h6>
 
                 @if($assignment->submissions->count())
                     <div class="table-responsive">
-                        <table class="table table-bordered table-sm align-middle">
-                            <thead class="table-light">
+                        <table class="table sub-table table-sm align-middle">
+                            <thead>
                                 <tr>
                                     <th>Reg No</th>
                                     <th>Student Name</th>

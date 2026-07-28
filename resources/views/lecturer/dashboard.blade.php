@@ -8,75 +8,110 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <style>
-        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f7ff; }
-        .topbar { background: #012147; color: #fff; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 10; }
-        .topbar h1 { font-size: 20px; margin: 0; }
-        .topbar .actions { display: flex; align-items: center; gap: 12px; }
-        .hero { padding: 100px 24px 60px; background: linear-gradient(180deg, rgba(1,33,71,.9) 0%, rgba(1,33,71,.8) 100%), url('{{ asset('images/ttmc.jpeg') }}') center/cover no-repeat; color: #fff; text-align: center; }
-        .hero h2 { font-size: 42px; margin-bottom: 12px; }
-        .hero p { font-size: 18px; max-width: 760px; margin: auto; }
-        .faculties { padding: 36px 24px 60px; max-width: 1200px; margin: auto; }
-        .faculties-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-        .faculty-card { background: #fff; border-radius: 18px; padding: 26px; box-shadow: 0 14px 36px rgba(0,0,0,.08); transition: transform .25s ease; }
-        .faculty-card:hover { transform: translateY(-6px); }
-        .faculty-card h3 { margin: 0 0 12px; font-size: 20px; color: #012147; }
-        .faculty-card p { margin: 0; color: #475569; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #f4f6fb; }
+
+        .topbar {
+            background: #012147; color: #fff; padding: 14px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 10;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        }
+        .topbar h1 { font-size: 19px; margin: 0; font-weight: 700; display:flex; align-items:center; gap:10px; }
+        .topbar .actions { display: flex; align-items: center; gap: 14px; }
+        .topbar .welcome-text { font-size: 14px; opacity: 0.9; }
+
+        .btn-pill-light {
+            background: rgba(255,255,255,0.12); border: none; color: #fff;
+            padding: 8px 16px; border-radius: 10px; text-decoration: none;
+            font-size: 14px; display: inline-flex; align-items: center; gap: 6px;
+            transition: 0.2s;
+        }
+        .btn-pill-light:hover { background: rgba(255,255,255,0.22); color: #fff; }
+
+        .logout-btn {
+            background: #ef4444; border: none; color: #fff;
+            padding: 8px 16px; border-radius: 10px; font-size: 14px;
+            display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;
+        }
+        .logout-btn:hover { background: #dc2626; }
+
+        .hero {
+            padding: 80px 24px 70px;
+            background: linear-gradient(120deg, rgba(1,33,71,.92), rgba(30,58,110,.88)), url('{{ asset('images/ttmc.jpeg') }}') center/cover no-repeat;
+            color: #fff; text-align: center;
+        }
+        .hero h2 { font-size: 38px; margin-bottom: 12px; font-weight: 700; }
+        .hero p { font-size: 17px; max-width: 720px; margin: auto; opacity: 0.92; line-height: 1.6; }
+        .hero-icon { font-size: 42px; margin-bottom: 14px; opacity: 0.9; }
+
+        .faculties { padding: 40px 24px 70px; max-width: 1200px; margin: auto; }
+        .section-title-row {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 26px; flex-wrap: wrap; gap: 12px;
+        }
+        .section-title-row h3 { margin: 0 0 4px; font-size: 22px; color: #012147; font-weight: 700; }
+        .section-title-row p { margin: 0; color: #64748b; font-size: 14px; }
+        .faculty-count-pill {
+            background: #fff; color: #012147; font-weight: 600; font-size: 13px;
+            padding: 8px 16px; border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+        }
+
+        .faculties-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 22px; }
+
         .faculty-card-link { display: block; color: inherit; text-decoration: none; }
-        .faculty-card-link:hover .faculty-card { transform: translateY(-6px); }
-        .logout-btn { background: #ff4d4f; border: none; color: white; padding: 10px 18px; border-radius: 10px; text-decoration: none; }
+        .faculty-card {
+            background: #fff; border-radius: 18px; padding: 0; overflow: hidden;
+            box-shadow: 0 8px 24px rgba(0,0,0,.07); transition: transform .25s ease, box-shadow .25s ease;
+        }
+        .faculty-card-link:hover .faculty-card { transform: translateY(-6px); box-shadow: 0 14px 32px rgba(0,0,0,.12); }
+        .faculty-card-img { height: 170px; background: #f2f5fb; overflow: hidden; position: relative; }
+        .faculty-card-img img { width: 100%; height: 100%; object-fit: cover; }
+        .faculty-card-body { padding: 20px 22px 24px; }
+        .faculty-card h3 { margin: 0 0 8px; font-size: 18px; color: #012147; font-weight: 700; }
+        .faculty-card p { margin: 0 0 14px; color: #64748b; font-size: 14px; line-height: 1.5; }
+        .faculty-card-cta {
+            font-size: 13px; font-weight: 600; color: #012147;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+
         @media (max-width:576px){
-        .topbar{
-            flex-direction:column;
-            align-items:flex-start;
-            gap:10px;
-            padding:14px 16px;
+            .topbar{ flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px; }
+            .topbar .actions{ width:100%; justify-content:space-between; }
+            .hero{ padding:60px 16px 40px; }
+            .hero h2{ font-size:26px; }
+            .hero p{ font-size:14px; }
+            .section-title-row{ flex-direction:column; align-items:flex-start; }
         }
-
-        .topbar .actions{
-            width:100%;
-            justify-content:space-between;
-        }
-
-        .hero{
-            padding:80px 16px 40px;
-        }
-
-        .hero h2{
-            font-size:28px;
-        }
-
-        .hero p{
-            font-size:15px;
-        }
-    }
     </style>
 </head>
 <body>
     <div class="topbar">
-        <h1>Lecturer Dashboard</h1>
+        <h1><i class="bi bi-speedometer2"></i> Lecturer Dashboard</h1>
         <div class="actions">
-            <span>Welcome, {{ $lecturer->name }}</span>
-            <a href="{{ route('lecturer.my.payments') }}" class="btn btn-outline-light btn-sm">
+            <span class="welcome-text">Welcome, {{ $lecturer->name }}</span>
+            <a href="{{ route('lecturer.my.payments') }}" class="btn-pill-light">
                 <i class="bi bi-wallet2"></i> My Payments
             </a>
             <form method="POST" action="{{ route('lecturer.logout') }}">
                 @csrf
-                <button type="submit" class="logout-btn">Logout</button>
+                <button type="submit" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</button>
             </form>
         </div>
     </div>
 
     <section class="hero">
+        <i class="bi bi-mortarboard hero-icon"></i>
         <h2>Hello, {{ $lecturer->name }}!</h2>
         <p>Here are all the faculties available in the system. Use this page to review faculty offerings and start your lecturer activities from here.</p>
     </section>
 
     <section class="faculties">
-        <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="section-title-row">
             <div>
-                <h3 class="mb-1">All Faculties</h3>
-                <p class="text-secondary">Browse the active faculties in your school.</p>
+                <h3>All Faculties</h3>
+                <p>Browse the active faculties in your school.</p>
             </div>
+            <span class="faculty-count-pill"><i class="bi bi-building"></i> {{ $faculties->count() }} Faculties</span>
         </div>
 
         <div class="faculties-grid">
@@ -89,11 +124,14 @@
                 @endphp
                 <a href="{{ route('faculty.courses', ['facultyId' => $faculty->id]) }}" class="faculty-card-link">
                     <div class="faculty-card">
-                        <div style="height:180px; border-radius:16px; overflow:hidden; background:#f2f5fb; margin-bottom:18px; display:flex; align-items:center; justify-content:center;">
-                            <img src="{{ $imageUrl }}" alt="{{ $faculty->name }}" style="width:100%; height:100%; object-fit:cover;" />
+                        <div class="faculty-card-img">
+                            <img src="{{ $imageUrl }}" alt="{{ $faculty->name }}" />
                         </div>
-                        <h3>{{ $faculty->name }}</h3>
-                        <p>{{ $faculty->description ?? 'No description available.' }}</p>
+                        <div class="faculty-card-body">
+                            <h3>{{ $faculty->name }}</h3>
+                            <p>{{ $faculty->description ?? 'No description available.' }}</p>
+                            <span class="faculty-card-cta">View Courses <i class="bi bi-arrow-right"></i></span>
+                        </div>
                     </div>
                 </a>
             @endforeach

@@ -7,14 +7,17 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
-body{ font-family:'Segoe UI', sans-serif; background:#f4f7ff; margin:0; overflow-x:hidden; }
+*{ box-sizing:border-box; }
+body{ font-family:'Segoe UI', sans-serif; background:#f4f6fb; margin:0; overflow-x:hidden; }
 
 /* Sidebar */
-.sidebar{ position:fixed; top:0; left:-260px; width:260px; height:100%; background:#012147; color:white; padding:20px; transition:0.3s; z-index:3000; padding-top:100px; }
+.sidebar{ position:fixed; top:0; left:-260px; width:260px; height:100%; background:#012147; color:white; padding:20px; transition:0.3s; z-index:5000; padding-top:100px; box-shadow: 4px 0 20px rgba(0,0,0,0.2); }
 .sidebar.active{ left:0; }
-.sidebar a{ display:block; color:white; text-decoration:none; padding:10px 0; border-bottom:1px solid rgba(255,255,255,0.2); }
-.close-btn{ font-size:28px; cursor:pointer; position:absolute; top:10px; right:10px; }
-.overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.4); opacity:0; visibility:hidden; transition:0.3s; z-index:2500; }
+.sidebar h4{ font-weight:700; margin-bottom:20px; }
+.sidebar a{ display:flex; align-items:center; gap:8px; color:rgba(255,255,255,0.85); text-decoration:none; padding:12px 8px; border-radius:10px; transition:0.2s; margin-bottom:4px; }
+.sidebar a:hover{ background:rgba(255,255,255,0.1); color:#fff; }
+.close-btn{ font-size:28px; cursor:pointer; position:absolute; top:14px; right:16px; color:#fff; }
+.overlay{ position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.45); opacity:0; visibility:hidden; transition:0.3s; z-index:2500; }
 .overlay.active{ opacity:1; visibility:visible; }
 
 /* Page content */
@@ -22,516 +25,145 @@ body{ font-family:'Segoe UI', sans-serif; background:#f4f7ff; margin:0; overflow
 .page-content.shifted{ margin-left:260px; }
 
 /* Topbar */
-.topbar{ position:fixed; top:0; left:0; width:100%; background:#012147; color:white; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; z-index:4000; }
-.topbar h1{ font-size:20px; margin:0; font-weight:600; }
-.topbar .actions{ display:flex; align-items:center; gap:12px; }
-.logout-btn{ background:#ff4d4f; border:none; color:#fff; padding:10px 16px; border-radius:10px; cursor:pointer; }
-.logout-btn:hover{ opacity:.9; }
-.topbar-right a{ color:white; text-decoration:none; }
+.topbar{ position:fixed; top:0; left:0; width:100%; background:#012147; color:white; padding:14px 24px; display:flex; justify-content:space-between; align-items:center; z-index:4000; box-shadow:0 2px 12px rgba(0,0,0,0.15); }
+.topbar h1{ font-size:19px; margin:0; font-weight:700; }
+.topbar .actions{ display:flex; align-items:center; gap:12px; font-size:14px; }
+.logout-btn{ background:#ef4444; border:none; color:#fff; padding:9px 16px; border-radius:10px; cursor:pointer; font-size:14px; transition:0.2s; }
+.logout-btn:hover{ background:#dc2626; }
 .menu-icon{ font-size:26px; cursor:pointer; }
 .topbar.shifted{ left:260px; width:calc(100% - 260px); }
 
 /* Header */
-.header{ position:fixed; top:50px; left:0; width:100%; background:#f3f3f3; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; z-index:3500; transition:0.3s; }
+.header{ position:fixed; top:53px; left:0; width:100%; background:#fff; padding:15px 30px; display:flex; justify-content:space-between; align-items:center; z-index:3500; transition:0.3s; box-shadow:0 2px 10px rgba(0,0,0,0.05); }
 .header.shifted{ left:260px; width:calc(100% - 260px); }
 .logo-area{ display:flex; align-items:center; gap:12px; }
-.logo-area img{ width:70px; }
-.campus-name{ font-family:'Georgia', serif; font-size:24px; font-weight:bold; color:#012147; }
-.lms-name{ font-family:'Georgia', serif; font-size:18px; color:#012147; }
+.logo-area img{ width:56px; border-radius:10px; }
+.campus-name{ font-family:'Georgia', serif; font-size:22px; font-weight:bold; color:#012147; }
+.lms-name{ font-family:'Georgia', serif; font-size:15px; color:#64748b; }
 
 /* Hero */
-.hero{ color:white; padding:100px 20px; text-align:center; background:linear-gradient(rgba(1,33,71,0.7),rgba(1,33,71,0.9)), url('{{ asset("images/ttmc.jpeg") }}') center/cover no-repeat; }
-.hero h1{ font-size:42px; font-weight:bold; margin-bottom:15px; }
+.hero{ color:white; padding:120px 20px 70px; text-align:center; background:linear-gradient(120deg, rgba(1,33,71,.92), rgba(30,58,110,.88)), url('{{ asset("images/ttmc.jpeg") }}') center/cover no-repeat; }
+.hero h1{ font-size:38px; font-weight:700; margin-bottom:10px; }
+.hero p{ font-size:16px; opacity:0.9; }
 
-/* Courses */
-#searchInput{ margin-bottom:20px; padding:8px 12px; width:100%; border-radius:6px; border:1px solid #ddd; }
-.course-item .card{ cursor:pointer; height:250px; position: relative; border-radius:10px; overflow: hidden; color:white; transition: transform 0.3s, box-shadow 0.3s; }
-.course-item .card:hover{ transform: scale(1.05); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
-.course-item .card .card-body{ position: absolute; bottom: 0; left:0; right:0; background: rgba(0,0,0,0.5); padding: 10px; }
+/* Search */
+#searchInput{ margin-bottom:20px; padding:12px 16px; width:100%; border-radius:12px; border:1px solid #e2e8f0; box-shadow:0 4px 12px rgba(0,0,0,0.04); }
+#searchInput:focus{ outline:none; border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
 
-/* Modal */
-#levelModal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; z-index:5000; }
-#levelModalContent{ background:white; padding:20px; border-radius:10px; max-width:400px; width:90%; text-align:center; position:relative; }
-#levelModalContent span{ position:absolute; top:10px; right:15px; cursor:pointer; font-size:20px; }
-#modalCourseLevels a{ display:block; font-size:18px; font-weight:500; text-decoration:none; color:#ff9900; cursor:pointer; padding:4px 0; transition: color 0.2s; }
-#modalCourseLevels a:hover{ color:#012147; }
+/* Course cards */
+.course-item .card{ cursor:pointer; height:230px; position: relative; border-radius:16px; overflow: hidden; color:white; border:none; transition: transform 0.3s, box-shadow 0.3s; }
+.course-item .card:hover{ transform: translateY(-6px); box-shadow: 0 14px 32px rgba(0,0,0,0.25); }
+.course-item .card::before{ content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(1,33,71,0) 40%, rgba(1,33,71,0.85) 100%); }
+.course-item .card .card-body{ position: absolute; bottom: 0; left:0; right:0; padding: 16px; z-index:2; }
+.course-item .card .card-body h5{ font-size:15px; font-weight:700; margin-bottom:8px; }
+.course-item .card .badge{ border-radius:20px; padding:6px 12px; font-weight:600; }
 
-/* Calendar */
+/* Section headings */
+.section-heading{ font-size:22px; font-weight:700; color:#012147; margin-bottom:18px; display:flex; align-items:center; gap:10px; }
+
+/* Faculty structure accordion */
+.structure-card{ border-radius:16px; border:none; box-shadow:0 6px 20px rgba(0,0,0,0.06); padding:22px; margin-bottom:20px; }
+.structure-header{ cursor:pointer; }
+.structure-header h4{ font-size:17px; color:#012147; font-weight:700; margin-bottom:4px; }
+.structure-header .badge{ border-radius:20px; padding:6px 12px; }
+.structure-header i{ transition:transform 0.2s; color:#012147; }
+
+.level-block h5{ font-size:15px; font-weight:700; color:#012147; margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+.level-block h5::before{ content:''; width:6px; height:6px; border-radius:50%; background:#3b82f6; }
+
+.semester-btn{
+    border-radius:10px !important; border:1px solid #e2e8f0 !important; color:#012147 !important;
+    background:#f8fafc !important; font-weight:600; padding:10px 14px !important;
+}
+.semester-btn:hover{ background:#eef2f9 !important; }
+
+.subject-list .list-group-item{
+    border:none; border-bottom:1px solid #f1f5f9; padding:12px 16px;
+}
+.subject-list .list-group-item:hover{ background:#f8fafc; }
+.subject-list a{ color:#012147; font-weight:500; }
+
+/* Calendar card */
+.calendar-card{ border-radius:16px; border:none; box-shadow:0 6px 20px rgba(0,0,0,0.06); overflow:hidden; }
+.calendar-card .card-header{ background:#012147; color:#fff; font-weight:700; border:none; padding:14px 18px; }
 #calendar{ text-align:center; font-size:14px; }
 #calendar table{ width:100%; border-collapse:collapse; }
 #calendar th{ color:#b22222; font-weight:bold; padding:5px 0; }
-#calendar td{ padding:8px; border:1px solid #ddd; }
-#calendar .today{ background:#b22222; color:white; border-radius:50%; font-weight:bold; }
+#calendar td{ padding:8px; border:1px solid #f1f5f9; border-radius:6px; }
+#calendar .today{ background:#012147; color:white; border-radius:50%; font-weight:bold; }
+
+/* Modal */
+#levelModal{ display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); justify-content:center; align-items:center; z-index:6000; }
+#levelModalContent{ background:white; padding:26px; border-radius:16px; max-width:400px; width:90%; text-align:center; position:relative; box-shadow:0 20px 50px rgba(0,0,0,0.3); }
+#levelModalContent span{ position:absolute; top:14px; right:18px; cursor:pointer; font-size:22px; color:#64748b; }
+#modalCourseName{ color:#012147; font-weight:700; margin-bottom:10px; }
+#modalCourseLevels a{ display:block; font-size:16px; font-weight:600; text-decoration:none; color:#012147; cursor:pointer; padding:10px 14px; border-radius:10px; transition: 0.2s; width:100%; }
+#modalCourseLevels a:hover{ background:#f1f5f9; }
 
 /* Footer */
-footer{
-    background:#012147;
-    color:#e2e8f0;
-    margin-top:60px;
-}
+footer{ background:#012147; color:#e2e8f0; margin-top:60px; }
+.footer-container{ padding:60px 25px; max-width:1200px; margin:auto; }
+.footer-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:30px; }
+.footer-box h5{ font-size:16px; margin-bottom:15px; color:#ffffff; border-left:4px solid #3b82f6; padding-left:10px; }
+.footer-box a{ display:block; color:#cbd5e1; text-decoration:none; margin-bottom:10px; }
+.footer-box a:hover{ color:#60a5fa; padding-left:6px; }
+.footer-box p{ margin-bottom:10px; color:#cbd5e1; }
+.footer-logo{ display:flex; align-items:center; gap:12px; margin-bottom:15px; }
+.footer-logo img{ width:50px; height:50px; border-radius:10px; }
+.footer-logo h4{ margin:0; color:white; }
+.footer-desc{ font-size:14px; color:#94a3b8; line-height:1.6; }
+.footer-bottom{ background:#050a14; text-align:center; padding:15px; font-size:14px; color:#94a3b8; border-top:1px solid #1f2937; }
+footer.shifted{ margin-left:260px; transition:0.3s; }
 
-.footer-container{
-    padding:60px 25px;
-    max-width:1200px;
-    margin:auto;
-}
-
-.footer-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:30px;
-}
-
-.footer-box h5{
-    font-size:16px;
-    margin-bottom:15px;
-    color:#ffffff;
-    border-left:4px solid #3b82f6;
-    padding-left:10px;
-}
-
-.footer-box a{
-    display:block;
-    color:#cbd5e1;
-    text-decoration:none;
-    margin-bottom:10px;
-}
-
-.footer-box a:hover{
-    color:#60a5fa;
-    padding-left:6px;
-}
-
-.footer-box p{
-    margin-bottom:10px;
-    color:#cbd5e1;
-}
-
-.footer-logo{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    margin-bottom:15px;
-}
-
-.footer-logo img{
-    width:50px;
-    height:50px;
-    border-radius:10px;
-}
-
-.footer-logo h4{
-    margin:0;
-    color:white;
-}
-
-.footer-desc{
-    font-size:14px;
-    color:#94a3b8;
-    line-height:1.6;
-}
-
-.footer-bottom{
-    background:#050a14;
-    text-align:center;
-    padding:15px;
-    font-size:14px;
-    color:#94a3b8;
-    border-top:1px solid #1f2937;
-}
-/* ===== RESPONSIVE FIX ===== */
-
-/* Tablet */
+/* ===== RESPONSIVE ===== */
 @media (max-width: 992px) {
-    .sidebar {
-        width: 220px;
-        left: -220px;
-    }
-
-    .main.shift {
-        margin-left: 220px;
-    }
+    .sidebar{ width: 220px; left: -220px; }
 }
 
-/* Mobile */
 @media (max-width: 768px) {
-
-    .topbar {
-        padding: 0 10px;
-        font-size: 14px;
+    .topbar{ padding: 8px 14px; min-height:45px; }
+    .topbar h1{ font-size:16px; }
+    .topbar .actions span{ display:none; }
+    .header{ top:53px; padding:10px 14px; height:75px; }
+    .logo-area img{ width:42px; }
+    .campus-name{ font-size:16px; }
+    .lms-name{ font-size:11px; }
+    .page-content.shifted, .topbar.shifted, .header.shifted, footer.shifted{ margin-left:0 !important; left:0 !important; width:100% !important; }
+    .hero{ padding:150px 16px 60px; }
+    .hero h1{ font-size:26px; }
+    .hero p{ font-size:14px; }
+    .course-item .card{ height:190px; }
+    .footer-grid{ grid-template-columns:1fr; text-align:center; }
+    .footer-box h5{ border-left:none; border-bottom:2px solid #3b82f6; padding-bottom:8px; }
+    .sidebar{ width:80%; max-width:280px; left:-100%; }
+    .sidebar.active{ left:0; }
+    .structure-header{
+        flex-direction:column;
+        align-items:flex-start !important;
+        gap:10px;
     }
-
-    .header {
-        padding-left: 10px;
-        height: 60px;
+    .structure-header .d-flex.align-items-center.gap-2{
+        align-self:flex-end;
     }
-
-    .logo-area img {
-        width: 38px;
-        height: 38px;
+    .course-item{
+        flex: 0 0 50%;
+        max-width: 50%;
     }
-
-    /* Sidebar becomes full overlay */
-    .sidebar {
-        width: 80%;
-        max-width: 280px;
-        left: -100%;
-        top: 0;
-        height: 100vh;
-        z-index: 2000;
-    }
-
-    .sidebar.show {
-        left: 0;
-    }
-
-    /* MAIN remove shifting on mobile */
-    .main.shift {
-        margin-left: 0 !important;
-    }
-
-    .main {
-        padding: 140px 10px 20px;
-    }
-
-    .footer-grid {
-        grid-template-columns: 1fr;
+    .semester-btn span{
+        white-space:normal;
+        word-break:break-word;
     }
 }
-footer.shifted{
-    margin-left:260px;
-    transition:0.3s;
-}
 
-/* Small mobile */
 @media (max-width: 480px) {
-
-    .topbar b {
-        font-size: 14px;
-    }
-
-    .subject-title {
-        font-size: 18px;
-    }
-
-    .note-item {
-        font-size: 14px;
-        padding: 10px;
-    }
-
-    .sidebar {
-        width: 100%;
-    }
+    .header{ height:70px; }
+    .lms-name{ display:none; }
+    .hero h1{ font-size:22px; }
+    .hero p{ font-size:13px; }
+    .sidebar{ width:100%; }
+    .footer-desc{ font-size:13px; }
+    .course-item{ flex: 0 0 100%; max-width: 100%; }
 }
-/* ==============================
-   FINAL MOBILE RESPONSIVE FIX
-============================== */
-
-*{
-    box-sizing:border-box;
-}
-
-body{
-    overflow-x:hidden;
-}
-
-
-/* MOBILE */
-@media(max-width:768px){
-
-
-/* TOP BAR */
-
-.topbar{
-
-    position:fixed;
-    height:auto;
-    min-height:45px;
-    padding:8px 10px;
-    flex-direction:row;
-
-}
-
-
-.topbar-left{
-
-    gap:8px;
-
-}
-
-
-.topbar-left span{
-
-    display:none;
-
-}
-
-
-.menu-icon{
-
-    font-size:28px;
-
-}
-
-
-/* LOGIN AREA */
-
-.topbar-right{
-
-    font-size:12px;
-
-}
-
-
-
-/* HEADER */
-
-.header{
-
-    top:45px;
-    height:75px;
-    padding:10px 12px;
-
-}
-
-
-
-.logo-area{
-
-    gap:8px;
-
-}
-
-
-.logo-area img{
-
-    width:45px;
-    height:45px;
-
-}
-
-
-
-.campus-name{
-
-    font-size:16px;
-
-}
-
-
-.lms-name{
-
-    font-size:11px;
-
-}
-
-
-/* DASHBOARD BUTTON */
-
-.dashboard-btn{
-
-    font-size:12px;
-
-    padding:6px 8px;
-
-}
-
-
-
-/* REMOVE SHIFT */
-
-.page-content.shifted{
-
-    margin-left:0 !important;
-
-}
-
-
-.topbar.shifted{
-
-    left:0 !important;
-
-    width:100% !important;
-
-}
-
-
-.header.shifted{
-
-    left:0 !important;
-
-    width:100% !important;
-
-}
-
-
-
-/* SIDEBAR */
-
-.sidebar{
- position:fixed;
- top:0;
- left:-260px;
- width:260px;
- height:100%;
- background:#012147;
- color:white;
- padding:20px;
- transition:0.3s;
- z-index:5000;
-}
-
-
-
-.sidebar.active{
-
-    left:0;
-
-}
-
-
-
-/* HERO */
-
-.hero{
-
-    padding:160px 15px 80px;
-
-}
-
-
-
-.hero h1{
-
-    font-size:30px;
-
-}
-
-
-.hero p{
-
-    font-size:15px;
-
-}
-
-
-
-/* FACULTY */
-
-.faculty-card{
-
-    height:210px;
-
-}
-
-
-.swiper-slide{
-
-    width:230px !important;
-
-}
-
-
-
-/* FOOTER */
-
-.footer-container{
-
-    padding:40px 15px;
-
-}
-
-
-.footer-grid{
-
-    grid-template-columns:1fr;
-
-    text-align:center;
-
-}
-
-
-.footer-box h5{
-
-    border-left:none;
-
-    border-bottom:2px solid #3b82f6;
-
-    padding-bottom:8px;
-
-}
-
-
-
-}
-
-
-/* SMALL PHONE */
-
-@media(max-width:480px){
-
-
-.header{
-
-    height:70px;
-
-}
-
-
-.campus-name{
-
-    font-size:14px;
-
-}
-
-
-.lms-name{
-
-    display:none;
-
-}
-
-
-
-.dashboard-btn{
-
-    display:none;
-
-}
-
-
-
-.hero h1{
-
-    font-size:25px;
-
-}
-
-
-.hero p{
-
-    font-size:14px;
-
-}
-
-
-
-.sidebar{
-
-    width:100%;
-
-}
-
-
-.footer-desc{
-
-    font-size:13px;
-
-}
-
-
-}
-
 </style>
 </head>
 <body>
@@ -541,13 +173,11 @@ body{
     <span class="close-btn" onclick="closeMenu()"><i class="bi bi-x"></i></span>
     <h4>Menu</h4>
     <a href="/">
-    <i class="bi bi-house-door-fill me-1"></i> Home
-</a>
-
-<a href="/student-grade">
-    <i class="bi bi-mortarboard-fill me-1"></i> Grade & GPA Scale
-</a>
-    
+        <i class="bi bi-house-door-fill"></i> Home
+    </a>
+    <a href="/student-grade">
+        <i class="bi bi-mortarboard-fill"></i> Grade & GPA Scale
+    </a>
 </div>
 <div class="overlay" id="overlay" onclick="closeMenu()"></div>
 
@@ -594,7 +224,7 @@ body{
 <div class="container mt-5">
     <div class="row">
         <div class="col-md-9">
-            <h2>Available Courses</h2>
+            <div class="section-heading"><i class="bi bi-collection"></i> Available Courses</div>
             <input type="text" id="searchInput" placeholder="Search courses by name or code...">
 
             @if($faculty->courses->count())
@@ -617,107 +247,104 @@ body{
             </div>
 
             <div class="mt-5">
-                                        <h3>Faculty structure</h3>
-                                        @foreach($faculty->courses as $course)
-                                            @php $courseCollapseId = 'course-' . $course->id; @endphp
-                                            <div class="card mb-4 p-3">
-                                                <div class="d-flex justify-content-between align-items-center mb-3"
-                                                    style="cursor:pointer;"
-                                                    data-bs-toggle="collapse"
-                                                    data-bs-target="#{{ $courseCollapseId }}"
-                                                    aria-expanded="false">
-                                                    <div>
-                                                        <h4 class="mb-1">{{ $course->code }} - {{ $course->name }}</h4>
-                                                        <small class="text-muted">{{ $course->description ?? 'No course description available.' }}</small>
-                                                    </div>
-                                                    <div class="d-flex align-items-center gap-2">
-                                                        <span class="badge bg-primary">{{ ucfirst($course->status) }}</span>
-                                                        <i class="bi bi-chevron-down"></i>
-                                                    </div>
-                                                </div>
-
-                                                <div class="collapse" id="{{ $courseCollapseId }}">
-
-                                                    @if($course->levels->count())
-                                                        @foreach($course->levels as $level)
-                                                            @php
-                                                                $levelName = strtolower(trim($level->name));
-                                                                $semesterCount = match($levelName) {
-                                                                    'hnd' => 4,
-                                                                    'diploma' => 2,
-                                                                    'degree' => 6,
-                                                                    default => max($level->semesters->count(), 0),
-                                                                };
-                                                                $semesters = $level->semesters->values();
-                                                            @endphp
-                                                            <div class="mb-4">
-                                                                <h5 class="mb-2">{{ $level->name }}</h5>
-                                                                @if($semesterCount > 0)
-                                                                    @for($i = 1; $i <= $semesterCount; $i++)
-                                                                        @php
-                                                                            $semester = $semesters->get($i - 1);
-                                                                            $semesterName = $semester?->name ?? "Semester {$i}";
-                                                                            $collapseId = 'semester-' . $course->id . '-' . $level->id . '-' . $i;
-                                                                        @endphp
-                                                                        <div class="mb-2 ps-3">
-                                                                            <button class="btn btn-sm btn-outline-primary w-100 text-start d-flex justify-content-between align-items-center"
-                                                                                    type="button"
-                                                                                    data-bs-toggle="collapse"
-                                                                                    data-bs-target="#{{ $collapseId }}"
-                                                                                    aria-expanded="false">
-                                                                                <span>{{ $semesterName }}</span>
-                                                                                <i class="bi bi-chevron-down"></i>
-                                                                            </button>
-
-                                                                            <div class="collapse mt-2" id="{{ $collapseId }}">
-                                                                                @if($semester && $semester->subjects->count())
-                                                                                    <ul class="list-group mb-2">
-                                                                                        @foreach($semester->subjects as $subject)
-                                                                                            <li class="list-group-item py-2">
-                                                                                                <a href="{{ route('lecturer.subject.show', $subject->id) }}"
-                                                                                                class="text-decoration-none d-flex justify-content-between align-items-center">
-                                                                                                    <span>{{ $subject->code }} - {{ $subject->name }}</span>
-                                                                                                    <i class="bi bi-chevron-right"></i>
-                                                                                                </a>
-                                                                                            </li>
-                                                                                        @endforeach
-                                                                                    </ul>
-                                                                                @else
-                                                                                    <p class="text-muted ps-3">No subjects found for this semester.</p>
-                                                                                @endif
-                                                                            </div>
-                                                                        </div>
-                                                                    @endfor
-                                                                @else
-                                                                    <p class="text-muted ps-3">No semesters available for this level.</p>
-                                                                @endif
-                                                            </div>
-                                                        @endforeach
-                                                    @else
-                                                        <p class="text-muted">No levels configured for this course.</p>
-                                                    @endif
-
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    @else
-                                    <p>No courses available for this faculty.</p>
-                                    @endif
-                                </div>
-
-                                <div class="col-md-3">
-                                    <div class="card">
-                                        <div class="card-header" style="color:#b22222;font-weight:bold;">Calendar</div>
-                                        <div class="card-body">
-                                            <div id="calendar"></div>
-                                        </div>
-                                    </div>
-                                </div>
+                <div class="section-heading"><i class="bi bi-diagram-3"></i> Faculty Structure</div>
+                @foreach($faculty->courses as $course)
+                    @php $courseCollapseId = 'course-' . $course->id; @endphp
+                    <div class="card structure-card">
+                        <div class="d-flex justify-content-between align-items-center structure-header"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#{{ $courseCollapseId }}"
+                            aria-expanded="false">
+                            <div>
+                                <h4>{{ $course->code }} - {{ $course->name }}</h4>
+                                <small class="text-muted">{{ $course->description ?? 'No course description available.' }}</small>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-primary">{{ ucfirst($course->status) }}</span>
+                                <i class="bi bi-chevron-down"></i>
                             </div>
                         </div>
 
+                        <div class="collapse mt-3" id="{{ $courseCollapseId }}">
+
+                            @if($course->levels->count())
+                                @foreach($course->levels as $level)
+                                    @php
+                                        $levelName = strtolower(trim($level->name));
+                                        $semesterCount = match($levelName) {
+                                            'hnd' => 4,
+                                            'diploma' => 2,
+                                            'degree' => 6,
+                                            default => max($level->semesters->count(), 0),
+                                        };
+                                        $semesters = $level->semesters->values();
+                                    @endphp
+                                    <div class="level-block mb-4">
+                                        <h5>{{ $level->name }}</h5>
+                                        @if($semesterCount > 0)
+                                            @for($i = 1; $i <= $semesterCount; $i++)
+                                                @php
+                                                    $semester = $semesters->get($i - 1);
+                                                    $semesterName = $semester?->name ?? "Semester {$i}";
+                                                    $collapseId = 'semester-' . $course->id . '-' . $level->id . '-' . $i;
+                                                @endphp
+                                                <div class="mb-2 ps-3">
+                                                    <button class="btn semester-btn w-100 text-start d-flex justify-content-between align-items-center"
+                                                            type="button"
+                                                            data-bs-toggle="collapse"
+                                                            data-bs-target="#{{ $collapseId }}"
+                                                            aria-expanded="false">
+                                                        <span>{{ $semesterName }}</span>
+                                                        <i class="bi bi-chevron-down"></i>
+                                                    </button>
+
+                                                    <div class="collapse mt-2" id="{{ $collapseId }}">
+                                                        @if($semester && $semester->subjects->count())
+                                                            <ul class="list-group subject-list mb-2">
+                                                                @foreach($semester->subjects as $subject)
+                                                                    <li class="list-group-item py-2">
+                                                                        <a href="{{ route('lecturer.subject.show', $subject->id) }}"
+                                                                        class="text-decoration-none d-flex justify-content-between align-items-center">
+                                                                            <span>{{ $subject->code }} - {{ $subject->name }}</span>
+                                                                            <i class="bi bi-chevron-right"></i>
+                                                                        </a>
+                                                                    </li>
+                                                                @endforeach
+                                                            </ul>
+                                                        @else
+                                                            <p class="text-muted ps-3">No subjects found for this semester.</p>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            @endfor
+                                        @else
+                                            <p class="text-muted ps-3">No semesters available for this level.</p>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            @else
+                                <p class="text-muted">No levels configured for this course.</p>
+                            @endif
+
+                        </div>
+                    </div>
+                @endforeach
             </div>
+            @else
+            <p>No courses available for this faculty.</p>
+            @endif
+        </div>
+
+        <div class="col-md-3">
+            <div class="card calendar-card">
+                <div class="card-header"><i class="bi bi-calendar3"></i> Calendar</div>
+                <div class="card-body">
+                    <div id="calendar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Level Modal -->
 <div id="levelModal">
@@ -731,10 +358,7 @@ body{
 <!-- Footer -->
 <footer id="footer">
     <div class="footer-container">
-
         <div class="footer-grid">
-
-            <!-- CAMPUS INFO -->
             <div class="footer-box">
                 <div class="footer-logo">
                     <img src="{{ asset('images/logo.jpeg') }}">
@@ -743,31 +367,25 @@ body{
                         <small>Learning Management System</small>
                     </div>
                 </div>
-
                 <p class="footer-desc">
                     A modern LMS platform designed for students and faculty to access notes,
                     assignments, and learning resources easily.
                 </p>
             </div>
 
-            <!-- QUICK LINKS -->
             <div class="footer-box">
                 <h5>Quick Links</h5>
                 <a href="https://techlinktechnology.com/"><i class="bi bi-globe"></i> www.techlinktechnology.com</a>
                 <a href="https://ttmetrocampus.com/"><i class="bi bi-globe"></i> www.ttmetrocampus.com</a>
             </div>
 
-            <!-- CONTACT -->
             <div class="footer-box">
                 <h5>Contact Us</h5>
-
                 <p><i class="bi bi-geo-alt"></i> No 11 A1, Galle Road, Mount Lavinia</p>
                 <p><i class="bi bi-telephone"></i> 011 4319 996 | 077 2270 348</p>
                 <p><i class="bi bi-envelope"></i> Info.ttmcml@gmail.com</p>
             </div>
-
         </div>
-
     </div>
 
     <div class="footer-bottom">
@@ -778,7 +396,6 @@ body{
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Sidebar toggle
 function openMenu(){
     document.getElementById("sidebar").classList.add("active");
     document.getElementById("overlay").classList.add("active");
@@ -796,19 +413,14 @@ function closeMenu(){
     document.querySelector("footer").classList.remove("shifted");
 }
 
-// Calendar
 function generateCalendar(){
-
     let calendar = document.getElementById("calendar");
-
     let date = new Date();
     let month = date.getMonth();
     let year = date.getFullYear();
-
     let firstDay = new Date(year, month, 1).getDay();
     let daysInMonth = new Date(year, month+1, 0).getDate();
     let today = date.getDate();
-
     let months = ["January","February","March","April","May","June",
                   "July","August","September","October","November","December"];
 
@@ -819,10 +431,8 @@ function generateCalendar(){
     </tr><tr>`;
 
     let day = 1;
-
     for(let i=0;i<6;i++){
         for(let j=0;j<7;j++){
-
             if(i===0 && j<firstDay){
                 html += "<td></td>";
             }
@@ -838,14 +448,12 @@ function generateCalendar(){
         }
         html += "</tr><tr>";
     }
-
     html += "</tr></table>";
-
     calendar.innerHTML = html;
 }
 
 generateCalendar();
-// Search filter
+
 document.getElementById('searchInput').addEventListener('keyup', function(){
     const filter = this.value.toLowerCase();
     document.querySelectorAll('.course-item').forEach(function(card){
@@ -853,12 +461,10 @@ document.getElementById('searchInput').addEventListener('keyup', function(){
         card.style.display = text.includes(filter) ? '' : 'none';
     });
 });
+
 function fetchLevels(courseId, courseName){
-
     document.getElementById('modalCourseName').innerText = courseName;
-
     const levelsContainer=document.getElementById('modalCourseLevels');
-
     levelsContainer.innerHTML='';
 
     const levels=[
@@ -869,19 +475,13 @@ function fetchLevels(courseId, courseName){
     ];
 
     levels.forEach(level=>{
-
         let a=document.createElement('a');
-
         a.href="/login?course_id="+courseId+"&level_id="+level.id;
-
         a.innerHTML=level.name;
-
         levelsContainer.appendChild(a);
-
     });
 
     document.getElementById('levelModal').style.display='flex';
-
 }
 
 function closeLevelModal(){
