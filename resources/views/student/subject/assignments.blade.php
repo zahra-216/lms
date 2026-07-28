@@ -8,42 +8,77 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <meta name="csrf-token" content="{{ csrf_token() }}">
 <style>
-    body { background:#f4f6f9; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
+    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
 
-    @media (max-width: 576px){
+    @media (max-width:576px){
         body { padding:20px 12px; }
-
-        .assignment-header{
-            flex-direction:column;
-            align-items:flex-start !important;
-            gap:8px;
-            padding:15px 16px;
-        }
-
-        .assignment-body{
-            padding:16px;
-        }
+        .page-header{ flex-direction:column; align-items:flex-start !important; gap:14px; }
+        .assignment-header{ flex-direction:column; align-items:flex-start !important; gap:8px; padding:15px 16px; }
+        .assignment-body{ padding:16px; }
     }
+
     .container { max-width:1000px; margin:auto; }
-    h2 { color:#012147; }
-    .assignment-card { border-radius:12px; box-shadow:0 4px 15px rgba(0,0,0,0.08); margin-bottom:25px; }
-    .assignment-header { background:#012147; color:#fff; border-radius:12px 12px 0 0; padding:18px 22px; }
-    .assignment-body { padding:20px 22px; }
-    .meta-badge { font-size:0.8rem; margin-right:6px; }
-    .late-badge { background:#dc3545; }
-    .ontime-badge { background:#198754; }
+
+    .back-btn{
+        border:none; background:#fff; color:#012147; font-weight:600;
+        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
+        text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+    }
+    .back-btn:hover{ background:#012147; color:#fff; }
+
+    .page-header{
+        background:linear-gradient(120deg,#012147,#1e3a6e);
+        color:#fff; border-radius:18px; padding:26px 30px; margin:18px 0 26px;
+        box-shadow:0 10px 30px rgba(1,33,71,0.25);
+        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+    }
+    .page-header h2{ margin:0; font-weight:700; font-size:22px; }
+    .page-header small{ opacity:0.85; }
+
+    .assignment-card {
+        background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06);
+        margin-bottom:22px; overflow:hidden; border:none;
+    }
+    .assignment-header {
+        background:#eef2f9; color:#012147; padding:16px 22px;
+        border-bottom:1px solid #e2e8f0;
+    }
+    .assignment-header h5{ font-weight:700; }
+    .assignment-body { padding:20px 22px; background:#fff; }
+
+    .meta-badge { font-size:0.8rem; margin-right:6px; padding:6px 12px; border-radius:20px; }
+    .late-badge { background:#fee2e2; color:#b91c1c; }
+    .ontime-badge { background:#dcfce7; color:#15803d; }
+
+    .status-badge{ padding:6px 14px; border-radius:20px; font-weight:600; font-size:13px; }
+    .status-overdue{ background:#fee2e2; color:#b91c1c; }
+    .status-active{ background:#dcfce7; color:#15803d; }
+
+    .submission-box{ border-radius:12px; }
+    .submit-form{ background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:18px; }
+
+    .empty-state{ text-align:center; color:#94a3b8; padding:36px 0; }
 </style>
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('student.subject.portal.show', $subject->id) }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back</a>
-    <h2 class="mb-4">{{ $subject->code }} - {{ $subject->name }} — Assignments</h2>
+    <a href="{{ route('student.subject.portal.show', $subject->id) }}" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+
+    <div class="page-header">
+        <div>
+            <h2><i class="bi bi-journal-text"></i> {{ $subject->code }} — {{ $subject->name }}</h2>
+            <small>Assignments</small>
+        </div>
+        <i class="bi bi-clipboard-check" style="font-size:44px; opacity:0.85;"></i>
+    </div>
 
     @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
+        <div class="alert alert-success rounded-3"><i class="bi bi-check-circle"></i> {{ session('success') }}</div>
     @endif
     @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
+        <div class="alert alert-danger rounded-3"><i class="bi bi-exclamation-circle"></i> {{ session('error') }}</div>
     @endif
 
     @if($subject->assignments && $subject->assignments->count())
@@ -56,9 +91,9 @@
             <div class="assignment-header d-flex justify-content-between align-items-center">
                 <div>
                     <h5 class="mb-1">{{ $assignment->title }}</h5>
-                    <small>Due: {{ $assignment->due_date?->format('d M Y, h:i A') ?? 'No due date set' }}</small>
+                    <small class="text-muted">Due: {{ $assignment->due_date?->format('d M Y, h:i A') ?? 'No due date set' }}</small>
                 </div>
-                <span class="badge bg-{{ now()->gt($assignment->due_date) ? 'danger' : 'success' }}">
+                <span class="status-badge {{ now()->gt($assignment->due_date) ? 'status-overdue' : 'status-active' }}">
                     {{ now()->gt($assignment->due_date) ? 'Overdue' : 'Active' }}
                 </span>
             </div>
@@ -78,7 +113,7 @@
                     <span class="badge bg-primary meta-badge">
                         <i class="bi bi-star"></i> {{ $assignment->total_points ?? 'N/A' }} pts
                     </span>
-                    <span class="badge bg-{{ $assignment->allow_late ? 'warning text-dark' : 'secondary' }} meta-badge">
+                    <span class="badge meta-badge {{ $assignment->allow_late ? 'ontime-badge' : 'late-badge' }}">
                         {{ $assignment->allow_late ? 'Late submissions allowed' : 'No late submissions' }}
                     </span>
                 </div>
@@ -98,31 +133,33 @@
                         if ($diff->i > 0) $parts[] = $diff->i . 'm';
                         $durationText = $parts ? implode(' ', $parts) : 'less than a minute';
                     @endphp
-                    <div class="alert alert-{{ $isLate ? 'danger' : 'success' }}">
+                    <div class="alert submission-box {{ $isLate ? 'alert-danger' : 'alert-success' }}">
                         Submitted on {{ $submission->submitted_at->format('d M Y, h:i A') }} —
                         <strong>{{ $isLate ? 'Late by ' . $durationText : 'Early by ' . $durationText }}</strong>
                         <br>
                         <a href="{{ asset('storage/' . $submission->file) }}" target="_blank">View my submission</a>
                     </div>
                 @elseif(now()->lte($assignment->due_date) || $assignment->allow_late)
-                    <form action="{{ route('assignment.submit') }}" method="POST" enctype="multipart/form-data" class="border rounded p-3 bg-light">
+                    <form action="{{ route('assignment.submit') }}" method="POST" enctype="multipart/form-data" class="submit-form">
                         @csrf
                         <input type="hidden" name="assignment_id" value="{{ $assignment->id }}">
                         <input type="hidden" name="student_id" value="{{ $student->id }}">
                         <div class="mb-2">
                             <input type="file" name="file" class="form-control" required>
                         </div>
-                        <button class="btn btn-primary btn-sm">Submit Assignment</button>
+                        <button class="btn btn-navy btn-sm" style="background:#012147; color:#fff;">Submit Assignment</button>
                     </form>
                 @else
-                    <p class="text-danger">Deadline passed — late submissions are not allowed for this assignment.</p>
+                    <p class="text-danger mb-0"><i class="bi bi-exclamation-triangle"></i> Deadline passed — late submissions are not allowed for this assignment.</p>
                 @endif
             </div>
         </div>
         @endforeach
 
     @else
-        <p class="text-muted mt-3">No assignments posted yet for this subject.</p>
+        <div class="assignment-card">
+            <div class="empty-state">No assignments posted yet for this subject.</div>
+        </div>
     @endif
 </div>
 
