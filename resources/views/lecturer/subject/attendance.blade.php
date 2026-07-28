@@ -64,9 +64,14 @@
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+        <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn">
+            <i class="bi bi-arrow-left"></i> Back
+        </a>
+        <a href="{{ route('lecturer.subject.attendance.history', $subject->id) }}" class="back-btn">
+            <i class="bi bi-clock-history"></i> View History
+        </a>
+    </div>
 
     <div class="page-header">
         <div>
@@ -78,6 +83,12 @@
 
     @if(session('success'))
         <div class="alert alert-success rounded-3"><i class="bi bi-check-circle"></i> {{ session('success') }}</div>
+    @endif
+
+    @if($alreadyMarked)
+        <div class="alert alert-warning rounded-3">
+            <i class="bi bi-exclamation-triangle"></i> Attendance for {{ $date }} has already been marked. Saving again will overwrite it.
+        </div>
     @endif
 
     <div class="card-box">

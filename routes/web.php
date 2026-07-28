@@ -148,6 +148,10 @@ Route::prefix('lecturer')->group(function () {
                 ->name('subject.attendance');
             Route::post('/subject/{id}/attendance', [App\Http\Controllers\LecturerAttendanceController::class, 'store'])
                 ->name('subject.attendance.store');
+            Route::get('/subject/{id}/attendance/history', [App\Http\Controllers\LecturerAttendanceController::class, 'history'])
+                ->name('subject.attendance.history');
+            Route::get('/subject/{id}/attendance/history/{date}/pdf', [App\Http\Controllers\LecturerAttendanceController::class, 'historyPdf'])
+                ->name('subject.attendance.history.pdf');
         });
     });
 });
