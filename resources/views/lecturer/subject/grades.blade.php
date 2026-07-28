@@ -77,6 +77,7 @@
     .grade-A{ background:#dcfce7; color:#15803d; }
     .grade-B{ background:#dbeafe; color:#1d4ed8; }
     .grade-C{ background:#fef9c3; color:#a16207; }
+    .grade-D{ background:#ffedd5; color:#c2410c; }
     .grade-F{ background:#fee2e2; color:#b91c1c; }
     .grade-none{ background:#e2e8f0; color:#64748b; }
 
@@ -160,34 +161,38 @@
                             <td>{{ $student->registration_no }}</td>
                             <td>{{ $student->name }}</td>
                             <td>
-                                <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm mark-input" readonly
+                                <input type="text" class="form-control form-control-sm mark-input" readonly
                                     name="marks[{{ $student->id }}][assignment_marks]"
                                     value="{{ $sm->assignment_marks ?? '' }}">
                             </td>
                             <td>
-                                <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm mark-input" readonly
+                                <input type="text" class="form-control form-control-sm mark-input" readonly
                                     name="marks[{{ $student->id }}][mid_marks]"
                                     value="{{ $sm->mid_marks ?? '' }}">
                             </td>
                             <td>
-                                <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm mark-input" readonly
+                                <input type="text" class="form-control form-control-sm mark-input" readonly
                                     name="marks[{{ $student->id }}][practical_marks]"
                                     value="{{ $sm->practical_marks ?? '' }}">
                             </td>
                             <td>
-                                <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm mark-input" readonly
+                                <input type="text" class="form-control form-control-sm mark-input" readonly
                                     name="marks[{{ $student->id }}][final_exam_marks]"
                                     value="{{ $sm->final_exam_marks ?? '' }}">
                             </td>
                             <td>
-                                <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm final-mark-input mark-input" readonly
+                                <input type="text" class="form-control form-control-sm mark-input" readonly
                                     name="marks[{{ $student->id }}][final_marks]"
                                     value="{{ $sm->final_marks ?? '' }}"
                                     oninput="updateGradePreview(this)">
                             </td>
                             <td>
-                                <span class="grade-badge {{ ($sm && $sm->final_grade) ? 'grade-'.$sm->final_grade : 'grade-none' }}">
-                                    {{ $sm->final_grade ?? '—' }}
+                                @php
+                                    $fg = $sm->final_grade ?? null;
+                                    $badgeClass = $fg ? ($fg === 'AB' ? 'grade-none' : 'grade-'.$fg[0]) : 'grade-none';
+                                @endphp
+                                <span class="grade-badge {{ $badgeClass }}">
+                                    {{ $fg ?? '—' }}
                                 </span>
                             </td>
                         </tr>
@@ -212,24 +217,45 @@
         function updateGradePreview(input) {
             const row = input.closest('tr');
             const badge = row.querySelector('.grade-badge');
-            const val = parseFloat(input.value);
+            const raw = input.value.trim();
 
-            badge.classList.remove('grade-A','grade-B','grade-C','grade-F','grade-none');
+            badge.classList.remove('grade-A','grade-B','grade-C','grade-D','grade-F','grade-none');
 
-            if (isNaN(val) || input.value === '') {
+            if (raw === '') {
+                badge.textContent = '—';
+                badge.classList.add('grade-none');
+                return;
+            }
+
+            if (raw.toUpperCase() === 'AB') {
+                badge.textContent = 'AB';
+                badge.classList.add('grade-none');
+                return;
+            }
+
+            const val = parseFloat(raw);
+            if (isNaN(val)) {
                 badge.textContent = '—';
                 badge.classList.add('grade-none');
                 return;
             }
 
             let grade;
-            if (val >= 80) grade = 'A';
+            if (val >= 85) grade = 'A+';
+            else if (val >= 75) grade = 'A';
+            else if (val >= 70) grade = 'A-';
+            else if (val >= 65) grade = 'B+';
             else if (val >= 60) grade = 'B';
-            else if (val >= 40) grade = 'C';
+            else if (val >= 55) grade = 'B-';
+            else if (val >= 50) grade = 'C+';
+            else if (val >= 45) grade = 'C';
+            else if (val >= 40) grade = 'C-';
+            else if (val >= 35) grade = 'D+';
+            else if (val >= 30) grade = 'D';
             else grade = 'F';
 
             badge.textContent = grade;
-            badge.classList.add('grade-' + grade);
+            badge.classList.add('grade-' + grade.charAt(0));
         }
 
         document.getElementById('studentSearch').addEventListener('input', function () {
