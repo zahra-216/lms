@@ -51,7 +51,7 @@ class LecturerSubjectController extends Controller
     {
         $subject = Subject::findOrFail($id);
 
-        $rule = 'nullable|regex:/^(?:[Aa][Bb]|\d{1,3}(\.\d{1,2})?)$/';
+        $rule = ['nullable', 'regex:/^(?:[Aa][Bb]|\d{1,3}(\.\d{1,2})?)$/'];
 
         $request->validate([
             'marks' => 'required|array',
