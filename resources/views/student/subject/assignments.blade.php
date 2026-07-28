@@ -93,8 +93,8 @@
                     <h5 class="mb-1">{{ $assignment->title }}</h5>
                     <small class="text-muted">Due: {{ $assignment->due_date?->format('d M Y, h:i A') ?? 'No due date set' }}</small>
                 </div>
-                <span class="status-badge {{ now()->gt($assignment->due_date) ? 'status-overdue' : 'status-active' }}">
-                    {{ now()->gt($assignment->due_date) ? 'Overdue' : 'Active' }}
+                <span class="status-badge {{ (!$submission && now()->gt($assignment->due_date)) ? 'status-overdue' : 'status-active' }}">
+                    {{ (!$submission && now()->gt($assignment->due_date)) ? 'Overdue' : 'Active' }}
                 </span>
             </div>
 
@@ -118,10 +118,12 @@
                     </span>
                 </div>
 
+                @if(!$submission)
                 <div class="mb-3">
                     <strong>Time remaining:</strong>
                     <span class="countdown" data-deadline="{{ $assignment->due_date }}"></span>
                 </div>
+                @endif
 
                 @if($submission)
                     @php
