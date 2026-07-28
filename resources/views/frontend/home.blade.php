@@ -195,6 +195,8 @@ body{
 
 /* HEADER */
 .header{
+    position:static;
+    top:auto;
     top:45px;
     height:auto;
     padding:18px 12px 10px;
@@ -269,7 +271,7 @@ body{
 
 /* HERO */
 .hero{
-    padding:230px 15px 80px;
+    padding:20px 15px 80px;
 }
 
 .hero h1{
