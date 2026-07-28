@@ -347,6 +347,7 @@ class CourseStructureSeeder extends Seeder
                     'Introduction to Computer Science & Programming in Python Lab',
                     'Web Technologies Lab',
                     'Mechanics Lab',
+                    'Networking',
                 ],
                 'Semester 2' => [
                     'Number Theory',
