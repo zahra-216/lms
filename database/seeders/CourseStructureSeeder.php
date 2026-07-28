@@ -339,14 +339,11 @@ class CourseStructureSeeder extends Seeder
             ],
             'Degree' => [
                 'Semester 1' => [
-                    'Web Technologies',
-                    'Mechanics',
+                    'Web Development',
+                    'Discrete Mathematics',
                     'Communication Skills',
-                    'Introduction to Computer Science & Programming in Python',
+                    'Programming Fundamentals - I',
                     'Management Thoughts and Applications',
-                    'Introduction to Computer Science & Programming in Python Lab',
-                    'Web Technologies Lab',
-                    'Mechanics Lab',
                     'Networking',
                 ],
                 'Semester 2' => [
