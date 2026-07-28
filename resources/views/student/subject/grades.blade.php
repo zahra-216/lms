@@ -117,7 +117,6 @@
                 <tr>
                     <th>Mid Marks</th>
                     <th>Final Exam</th>
-                    <th>Final Mark</th>
                     <th>Final Grade</th>
                 </tr>
             </thead>
@@ -126,7 +125,6 @@
                 <tr>
                     <td>{{ $subjectMark->mid_marks }}</td>
                     <td>{{ $subjectMark->final_exam_marks }}</td>
-                    <td>{{ $subjectMark->final_marks }}</td>
                     <td>
                         @if($subjectMark->final_grade)
                             <span class="grade-badge grade-{{ $subjectMark->final_grade }}">{{ $subjectMark->final_grade }}</span>
@@ -136,7 +134,7 @@
                     </td>
                 </tr>
                 @else
-                <tr><td colspan="4" class="empty-state">No marks recorded yet for this subject.</td></tr>
+                <tr><td colspan="3" class="empty-state">No marks recorded yet for this subject.</td></tr>
                 @endif
             </tbody>
         </table>
