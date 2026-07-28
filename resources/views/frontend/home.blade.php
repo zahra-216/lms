@@ -321,6 +321,7 @@ body{
 
 .sidebar{
     width:100%;
+    left:-100%;
 }
 
 .footer-desc{
