@@ -7,7 +7,6 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css"/>
 
 <style>
 body{
@@ -68,13 +67,6 @@ body{
 .hero{ color:white; padding:200px 20px; text-align:center; background:linear-gradient(rgba(1,33,71,0.7),rgba(1,33,71,0.9)), url("{{ asset('images/ttmc.jpeg') }}") center/cover no-repeat; }
 .hero h1{ font-size:42px; font-weight:bold; margin-bottom:15px; }
 .hero p{ font-size:18px; }
-/* FACULTY */
-.faculty-card{ display:flex; flex-direction:column; align-items:center; justify-content:center; background:white; border-radius:12px; padding:20px; height:220px; box-shadow:0 5px 15px rgba(0,0,0,0.08); cursor:pointer; transition:0.3s; }
-.faculty-card:hover{ transform:translateY(-5px); box-shadow:0 10px 20px rgba(0,0,0,0.15);}
-.faculty-card img{ width:100px; height:100px; border-radius:50%; object-fit:cover; margin-bottom:10px; border:3px solid #012147; }
-.swiper-slide{ display:flex; justify-content:center; width:230px !important; }
-.swiper-wrapper{ transition-timing-function:linear !important; }
-/* FOOTER */
 /* FOOTER */
 footer{
     background:#012147;
@@ -288,15 +280,6 @@ body{
     font-size:15px;
 }
 
-/* FACULTY */
-.faculty-card{
-    height:210px;
-}
-
-.swiper-slide{
-    width:230px !important;
-}
-
 /* FOOTER */
 .footer-container{
     padding:40px 15px;
@@ -422,46 +405,6 @@ body{
         </div>
     </section>
 
-    <!-- FACULTY -->
-    <div class="container mt-5">
-        <h3 class="text-center mb-4" style="color:#012147;">Our Faculty</h3>
-        <div class="swiper facultySwiper">
-            <div class="swiper-wrapper">
-                @foreach($faculties as $faculty)
-                @php
-                    $imgPath = 'storage/faculty/'.$faculty->image;
-                    $img = ($faculty->image && file_exists(public_path($imgPath))) ? asset($imgPath) : 'https://picsum.photos/200';
-                @endphp
-                <div class="swiper-slide">
-                    <!-- Make the card clickable -->
-                    <a href="{{ route('faculty.courses', $faculty->id) }}" style="text-decoration:none;">
-                        <div class="faculty-card">
-                            <img src="{{ $img }}" alt="{{ $faculty->name }}">
-                            <h5 style="color:#012147;">{{ $faculty->name }}</h5>
-                        </div>
-                    </a>
-                </div>
-                @endforeach
-
-                <!-- Duplicate for continuous scroll -->
-                @foreach($faculties as $faculty)
-                @php
-                    $imgPath = 'storage/faculty/'.$faculty->image;
-                    $img = ($faculty->image && file_exists(public_path($imgPath))) ? asset($imgPath) : 'https://picsum.photos/200';
-                @endphp
-                <div class="swiper-slide">
-                    <a href="{{ route('faculty.courses', $faculty->id) }}" style="text-decoration:none;">
-                        <div class="faculty-card">
-                            <img src="{{ $img }}" alt="{{ $faculty->name }}">
-                            <h5 style="color:#012147;">{{ $faculty->name }}</h5>
-                        </div>
-                    </a>
-                </div>
-                @endforeach
-            </div>
-        </div>
-    </div>
-
     <!-- FOOTER -->
   <footer id="footer">
     <div class="footer-container">
@@ -512,7 +455,6 @@ body{
 </div> <!-- END PAGE CONTENT -->
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
 
 <script>
 // Sidebar toggle
@@ -530,15 +472,6 @@ function closeMenu(){
     document.querySelector(".topbar").classList.remove("shifted");
     document.querySelector(".header").classList.remove("shifted");
 }
-// Continuous faculty carousel
-var swiper = new Swiper(".facultySwiper", {
-    slidesPerView: 'auto',
-    spaceBetween: 20,
-    loop: true,
-    speed: 6000,
-    autoplay: { delay: 0, disableOnInteraction: false },
-    allowTouchMove: false
-});
 </script>
 
 </body>
