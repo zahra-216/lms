@@ -186,7 +186,7 @@
                                     oninput="updateGradePreview(this)">
                             </td>
                             <td>
-                                <span class="grade-badge {{ $sm->final_grade ? 'grade-'.$sm->final_grade : 'grade-none' }}">
+                                <span class="grade-badge {{ ($sm && $sm->final_grade) ? 'grade-'.$sm->final_grade : 'grade-none' }}">
                                     {{ $sm->final_grade ?? '—' }}
                                 </span>
                             </td>
