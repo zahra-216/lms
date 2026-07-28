@@ -236,6 +236,10 @@ body{
     font-size:11px;
 }
 
+.page-content{
+    padding-top:50px;
+}
+
 /* REMOVE SHIFT */
 .page-content.shifted{
     margin-left:0 !important;
