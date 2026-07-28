@@ -237,7 +237,7 @@ body{
 }
 
 .page-content{
-    padding-top:50px;
+    padding-top:60px;
 }
 
 /* REMOVE SHIFT */
@@ -306,7 +306,7 @@ body{
 /* SMALL PHONE */
 @media(max-width:480px){
 .header{
-    height:70px;
+    height:auto;
 }
 
 .campus-name{
