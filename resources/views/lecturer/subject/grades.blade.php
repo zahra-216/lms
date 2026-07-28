@@ -58,13 +58,16 @@
     @endif
 
 
-    <h5 class="mt-5 mb-3">All Marks</h5>
+    <div class="d-flex justify-content-between align-items-center mt-5 mb-3">
+        <h5 class="mb-0">All Marks</h5>
+        <button type="button" id="addEditBtn" class="btn btn-sm btn-primary" onclick="unlockMarks()">Add/Edit</button>
+    </div>
     <div class="mb-3">
         <input type="text" id="studentSearch" class="form-control" placeholder="Search by name or reg no...">
     </div>
 
     @if($students->count())
-    <form method="POST" action="{{ route('lecturer.subject.marks.update', $subject->id) }}">
+    <form method="POST" action="{{ route('lecturer.subject.marks.update', $subject->id) }}" id="marksForm">
         @csrf
         <div class="table-responsive">
         <table class="table table-bordered bg-white align-middle">
@@ -73,6 +76,7 @@
                     <th>Reg No</th>
                     <th>Student Name</th>
                     <th>Assignment Marks</th>
+                    <th>Practical Marks</th>
                     <th>Mid Marks</th>
                     <th>Final Exam</th>
                     <th>Final Mark</th>
@@ -86,22 +90,27 @@
                         <td>{{ $student->registration_no }}</td>
                         <td>{{ $student->name }}</td>
                         <td>
-                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm"
+                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm mark-input" readonly
                                 name="marks[{{ $student->id }}][assignment_marks]"
                                 value="{{ $sm->assignment_marks ?? '' }}">
                         </td>
                         <td>
-                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm"
+                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm mark-input" readonly
+                                name="marks[{{ $student->id }}][practical_marks]"
+                                value="{{ $sm->practical_marks ?? '' }}">
+                        </td>
+                        <td>
+                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm mark-input" readonly
                                 name="marks[{{ $student->id }}][mid_marks]"
                                 value="{{ $sm->mid_marks ?? '' }}">
                         </td>
                         <td>
-                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm"
+                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm mark-input" readonly
                                 name="marks[{{ $student->id }}][final_exam_marks]"
                                 value="{{ $sm->final_exam_marks ?? '' }}">
                         </td>
                         <td>
-                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm final-mark-input"
+                            <input type="number" step="0.01" min="0" max="100" class="form-control form-control-sm final-mark-input mark-input" readonly
                                 name="marks[{{ $student->id }}][final_marks]"
                                 value="{{ $sm->final_marks ?? '' }}"
                                 oninput="updateGradePreview(this)">
@@ -114,10 +123,18 @@
             </tbody>
         </table>
         </div>
-        <button type="submit" class="btn btn-primary">Save Marks</button>
+        <button type="submit" class="btn btn-primary" id="saveMarksBtn" style="display:none;">Save Marks</button>
     </form>
 
     <script>
+    function unlockMarks() {
+        document.querySelectorAll('.mark-input').forEach(function (input) {
+            input.readOnly = false;
+        });
+        document.getElementById('saveMarksBtn').style.display = 'inline-block';
+        document.getElementById('addEditBtn').style.display = 'none';
+    }
+
     function updateGradePreview(input) {
         const row = input.closest('tr');
         const badge = row.querySelector('.grade-badge');

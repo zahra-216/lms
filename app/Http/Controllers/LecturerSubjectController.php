@@ -54,6 +54,7 @@ class LecturerSubjectController extends Controller
         $request->validate([
             'marks' => 'required|array',
             'marks.*.assignment_marks' => 'nullable|numeric|min:0|max:100',
+            'marks.*.practical_marks' => 'nullable|numeric|min:0|max:100',
             'marks.*.mid_marks' => 'nullable|numeric|min:0|max:100',
             'marks.*.final_exam_marks' => 'nullable|numeric|min:0|max:100',
             'marks.*.final_marks' => 'nullable|numeric|min:0|max:100',
@@ -71,6 +72,7 @@ class LecturerSubjectController extends Controller
                     ['student_id' => $student_id, 'subject_id' => $id],
                     [
                         'assignment_marks'  => $data['assignment_marks'] ?? null,
+                        'practical_marks'   => $data['practical_marks'] ?? null,
                         'mid_marks'         => $data['mid_marks'] ?? null,
                         'final_exam_marks'  => $data['final_exam_marks'] ?? null,
                         'final_marks'       => $finalMarks,
