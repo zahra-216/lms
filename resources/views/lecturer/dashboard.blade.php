@@ -35,6 +35,19 @@
         }
         .logout-btn:hover { background: #dc2626; }
 
+        .header-actions{ display:flex; gap:12px; flex-wrap:wrap; }
+        .btn-pill-navy{
+            background:#012147; color:#fff; border:none;
+            padding:8px 18px; border-radius:20px; text-decoration:none;
+            font-size:13px; font-weight:600; display:inline-flex; align-items:center; gap:6px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.08); transition:0.2s;
+        }
+        .btn-pill-navy:hover{ background:#1e3a6e; color:#fff; }
+
+        @media (max-width:576px){
+            .header-actions{ width:100%; }
+            .btn-pill-navy{ flex:1; justify-content:center; }
+        }
         .hero {
             padding: 80px 24px 70px;
             background: linear-gradient(120deg, rgba(1,33,71,.92), rgba(30,58,110,.88)), url('{{ asset('images/ttmc.jpeg') }}') center/cover no-repeat;
@@ -111,7 +124,14 @@
                 <h3>All Faculties</h3>
                 <p>Browse the active faculties in your school.</p>
             </div>
-            <span class="faculty-count-pill"><i class="bi bi-building"></i> {{ $faculties->count() }} Faculties</span>
+            <div class="header-actions">
+                <a href="{{ route('lecturer.lecture-records.select') }}" class="btn-pill-navy">
+                    <i class="bi bi-journal-text"></i> Lecture Record
+                </a>
+                <a href="{{ route('lecturer.my.payments') }}" class="btn-pill-navy">
+                    <i class="bi bi-wallet2"></i> My Payments
+                </a>
+            </div>
         </div>
 
         <div class="faculties-grid">
