@@ -427,6 +427,22 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/attendance/{id}/summary-pdf', [App\Http\Controllers\Admin\AttendanceController::class, 'exportSummaryPdf'])
         ->name('attendance.summary.pdf');
 
+    // Lecture Records
+    Route::get('/lecture-records', [App\Http\Controllers\Admin\LectureRecordController::class, 'index'])
+        ->name('lecture-records.index');
+    Route::get('/lecture-records/subject/{id}', [App\Http\Controllers\Admin\LectureRecordController::class, 'show'])
+        ->name('lecture-records.show');
+    Route::get('/lecture-records/subject/{id}/create', [App\Http\Controllers\Admin\LectureRecordController::class, 'create'])
+        ->name('lecture-records.create');
+    Route::post('/lecture-records/subject/{id}', [App\Http\Controllers\Admin\LectureRecordController::class, 'store'])
+        ->name('lecture-records.store');
+    Route::get('/lecture-records/{record}/edit', [App\Http\Controllers\Admin\LectureRecordController::class, 'edit'])
+        ->name('lecture-records.edit');
+    Route::put('/lecture-records/{record}', [App\Http\Controllers\Admin\LectureRecordController::class, 'update'])
+        ->name('lecture-records.update');
+    Route::get('/lecture-records/subject/{id}/pdf', [App\Http\Controllers\Admin\LectureRecordController::class, 'pdf'])
+        ->name('lecture-records.pdf');
+
     // Student payments
     Route::get('/payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])
         ->name('payments.index');
