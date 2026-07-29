@@ -236,7 +236,7 @@ footer.shifted{ margin-left:260px; transition:0.3s; }
                                : 'https://via.placeholder.com/300x250';
                 @endphp
                 <div class="col-md-3 mb-3 course-item">
-                    <div class="card" style="background-image: url('{{ asset($imgPath) }}'); background-size: cover; background-position: center;">
+                    <div class="card" style="background-image: url('{{ asset($imgPath) }}'); background-size: cover; background-position: center;" onclick="openCourseStructure('course-{{ $course->id }}')">
                         <div class="card-body">
                             <h5>{{ $course->code }} - {{ $course->name }}</h5>
                             <span class="badge bg-success">{{ ucfirst($course->status) }}</span>
@@ -486,6 +486,23 @@ function fetchLevels(courseId, courseName){
 
 function closeLevelModal(){
     document.getElementById('levelModal').style.display='none';
+}
+
+function openCourseStructure(collapseId){
+    const target = document.getElementById(collapseId);
+    if(!target) return;
+
+    const bsCollapse = bootstrap.Collapse.getOrCreateInstance(target, { toggle: false });
+    bsCollapse.show();
+
+    const header = document.querySelector(`[data-bs-target="#${collapseId}"]`);
+    if(header){
+        header.setAttribute('aria-expanded', 'true');
+    }
+
+    setTimeout(() => {
+        target.closest('.structure-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 150);
 }
 </script>
 
