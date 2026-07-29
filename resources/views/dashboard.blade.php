@@ -330,7 +330,35 @@
                     <p class="text-muted">No semesters found</p>
                 @endif
             </div>
+
+            <div class="card-box mt-4">
+                <div class="section-title"><i class="bi bi-clipboard-check"></i> Pending Assignments</div>
+
+                @if($pendingAssignments->count() > 0)
+                    <div class="list-group">
+                        @foreach($pendingAssignments as $a)
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <b>{{ $a->subject->name ?? 'N/A' }}</b><br>
+                                    <span>{{ $a->title }}</span>
+                                </div>
+                                @if($a->due_date->isPast())
+                                    <span class="badge bg-danger">Overdue</span>
+                                @else
+                                    <span class="badge bg-warning text-dark">
+                                        {{ $a->due_date->diffForHumans(now(), true) }} left
+                                    </span>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-muted mb-0">No pending assignments</p>
+                @endif
+            </div>
         </div>
+
+
 
         <!-- SUBJECT LOGIN MODAL -->
         <div class="modal fade" id="subjectModal" tabindex="-1">

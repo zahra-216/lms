@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Session;
 use App\Models\Course;
 use App\Models\Semester;
 use App\Models\Student;
+use App\Models\Assignment;
 use Carbon\Carbon;
 
 class DashboardController extends Controller
@@ -42,11 +43,25 @@ class DashboardController extends Controller
             })
             ->values();
 
+        $pendingAssignments = Assignment::with('subject')
+            ->where('is_published', true)
+            ->whereHas('subject', function ($q) use ($student) {
+                $q->where('course_id', $student->course_id)
+                ->where('level_id', $student->level_id)
+                ->where('semester_id', $student->semester_id);
+            })
+            ->whereDoesntHave('submissions', function ($q) use ($studentId) {
+                $q->where('student_id', $studentId);
+            })
+            ->orderBy('due_date')
+            ->get();
+
         return view('dashboard', compact(
             'student',
             'course',
             'level',
             'semesters',
+            'pendingAssignments',
         ));
     }
 
