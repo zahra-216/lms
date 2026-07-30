@@ -13,9 +13,9 @@ class SubjectController extends Controller
 {
     public function show(Subject $subject)
     {
-        return view('admin.subject.show', compact('subject'));
+        return view('admin.subjects.show', compact('subject'));
     }
-
+    
     public function grades(Subject $subject)
     {
         $subject->load(['assignments.marks.student', 'assignments.submissions']);
@@ -28,7 +28,7 @@ class SubjectController extends Controller
             ->get()
             ->keyBy('student_id');
 
-        return view('admin.subject.grades', compact('subject', 'students', 'subjectMarks'));
+        return view('admin.subjects.grades', compact('subject', 'students', 'subjectMarks'));
     }
 
     public function updateMarks(Request $request, Subject $subject)

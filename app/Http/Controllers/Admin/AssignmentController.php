@@ -71,7 +71,7 @@ class AssignmentController extends Controller
 
     public function create(\App\Models\Subject $subject)
     {
-        return view('admin.subject.assignments-create', compact('subject'));
+        return view('admin.subjects.assignments-create', compact('subject'));
     }
 
     public function store(Request $request, \App\Models\Subject $subject)
@@ -107,7 +107,7 @@ class AssignmentController extends Controller
     public function subjectIndex(\App\Models\Subject $subject)
     {
         $subject->load('assignments.submissions.student');
-        return view('admin.subject.assignments', compact('subject'));
+        return view('admin.subjects.assignments', compact('subject'));
     }
 
     public function edit(\App\Models\Subject $subject, Assignment $assignment)

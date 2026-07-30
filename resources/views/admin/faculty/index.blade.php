@@ -10,13 +10,8 @@
     * { box-sizing:border-box; }
     body { font-family:'Segoe UI', sans-serif; background:#f4f6fb; margin:0; color:#012147; }
 
-    /* Sidebar (identical to dashboard.blade.php — keep in sync) */
-    .sidebar {
-        width:260px; background:#012147; color:#fff; min-height:100vh;
-        position:fixed; top:0; left:0; z-index:1030; overflow-y:auto;
-        transition:transform .3s ease;
-    }
-    .sidebar-brand { padding:22px 20px; background:#01193a; text-align:center; font-weight:700; font-size:18px; letter-spacing:0.5px; }
+    .sidebar { width:260px; background:#012147; color:#fff; min-height:100vh; position:fixed; top:0; left:0; z-index:1030; overflow-y:auto; transition:transform .3s ease; }
+    .sidebar-brand { padding:22px 20px; background:#01193a; text-align:center; font-weight:700; font-size:18px; }
     .sidebar .profile { padding:16px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.1); }
     .sidebar .profile img { width:46px; height:46px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.3); }
     .sidebar .profile .name { font-weight:600; font-size:14px; }
@@ -34,39 +29,27 @@
     .page-title { font-weight:700; font-size:22px; margin-bottom:6px; color:#012147; }
     .page-subtitle { color:#64748b; font-size:14px; margin-bottom:26px; }
 
-    .add-btn {
-        background:#012147; color:#fff; padding:10px 20px; border-radius:12px;
-        text-decoration:none; font-weight:600; font-size:14px; display:inline-flex;
-        align-items:center; gap:8px; box-shadow:0 6px 16px rgba(1,33,71,0.15); transition:.2s;
-    }
+    .add-btn { background:#012147; color:#fff; padding:10px 20px; border-radius:12px; text-decoration:none; font-weight:600; font-size:14px; display:inline-flex; align-items:center; gap:8px; box-shadow:0 6px 16px rgba(1,33,71,0.15); transition:.2s; }
     .add-btn:hover { background:#1e3a6e; color:#fff; }
 
-    .alert-success-pill {
-        background:#d1fae5; color:#065f46; padding:12px 18px; border-radius:12px;
-        font-size:14px; font-weight:600; margin-bottom:20px; display:flex; align-items:center; gap:8px;
-    }
+    .alert-success-pill { background:#d1fae5; color:#065f46; padding:12px 18px; border-radius:12px; font-size:14px; font-weight:600; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
 
     .faculty-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:22px; }
 
-    .faculty-card {
-        background:#fff; border-radius:18px; overflow:hidden; text-decoration:none; color:inherit;
-        box-shadow:0 8px 24px rgba(0,0,0,.07); transition:transform .25s ease, box-shadow .25s ease;
-        display:block; position:relative;
-    }
-    .faculty-card:hover { transform:translateY(-6px); box-shadow:0 14px 32px rgba(0,0,0,.12); color:inherit; }
+    /* Outer wrapper is a DIV (not a link) so it can safely contain both
+       the clickable overlay link AND the edit/delete buttons */
+    .faculty-card { position:relative; background:#fff; border-radius:18px; overflow:hidden; box-shadow:0 8px 24px rgba(0,0,0,.07); transition:transform .25s ease, box-shadow .25s ease; }
+    .faculty-card:hover { transform:translateY(-6px); box-shadow:0 14px 32px rgba(0,0,0,.12); }
+
+    .faculty-card-link { position:absolute; inset:0; z-index:1; }
     .faculty-card-img { height:150px; background:#f2f5fb; overflow:hidden; }
-    .faculty-card-img img { width:100%; height:100%; object-fit:cover; }
-    .faculty-card-body { padding:18px 20px 20px; }
+    .faculty-card-img img { width:100%; height:100%; object-fit:cover; display:block; }
+    .faculty-card-body { padding:18px 20px 20px; position:relative; z-index:0; }
     .faculty-card-body h3 { margin:0 0 8px; font-size:17px; color:#012147; font-weight:700; }
     .faculty-card-cta { font-size:13px; font-weight:600; color:#012147; display:inline-flex; align-items:center; gap:6px; }
 
-    .card-actions {
-        position:absolute; top:12px; right:12px; display:flex; gap:6px; z-index:5;
-    }
-    .card-actions button, .card-actions a {
-        width:32px; height:32px; border-radius:9px; border:none; display:flex;
-        align-items:center; justify-content:center; font-size:13px; box-shadow:0 4px 10px rgba(0,0,0,0.15);
-    }
+    .card-actions { position:absolute; top:12px; right:12px; display:flex; gap:6px; z-index:5; }
+    .card-actions button, .card-actions a { width:32px; height:32px; border-radius:9px; border:none; display:flex; align-items:center; justify-content:center; font-size:13px; box-shadow:0 4px 10px rgba(0,0,0,0.15); }
     .icon-edit { background:#ffc107; color:#012147; }
     .icon-delete { background:#ef4444; color:#fff; }
 
@@ -128,22 +111,25 @@
     <div class="faculty-grid">
         @foreach($faculties as $faculty)
             @php
-                $imgPath = $faculty->image ? asset('storage/faculty/'.$faculty->image) : 'https://picsum.photos/320/220?random='.$loop->index;
+                $imgPath = $faculty->image ? asset('storage/faculty/'.$faculty->image) : 'https://picsum.photos/320/220?random='.$faculty->id;
             @endphp
-            <a href="{{ route('admin.faculties.courses', $faculty->id) }}" class="faculty-card">
+            <div class="faculty-card">
+                <a href="{{ route('admin.faculties.courses', $faculty->id) }}" class="faculty-card-link" aria-label="Manage {{ $faculty->name }}"></a>
+
                 <div class="card-actions">
-                    <a href="{{ route('admin.faculties.edit', $faculty->id) }}" class="icon-edit" onclick="event.stopPropagation()"><i class="bi bi-pencil"></i></a>
-                    <form action="{{ route('admin.faculties.destroy', $faculty->id) }}" method="POST" onsubmit="return confirm('Delete this faculty?')" onclick="event.stopPropagation()">
+                    <a href="{{ route('admin.faculties.edit', $faculty->id) }}" class="icon-edit"><i class="bi bi-pencil"></i></a>
+                    <form action="{{ route('admin.faculties.destroy', $faculty->id) }}" method="POST" onsubmit="return confirm('Delete this faculty?')">
                         @csrf @method('DELETE')
                         <button type="submit" class="icon-delete"><i class="bi bi-trash"></i></button>
                     </form>
                 </div>
+
                 <div class="faculty-card-img"><img src="{{ $imgPath }}" alt="{{ $faculty->name }}"></div>
                 <div class="faculty-card-body">
                     <h3>{{ $faculty->name }}</h3>
                     <span class="faculty-card-cta">Manage Courses <i class="bi bi-arrow-right"></i></span>
                 </div>
-            </a>
+            </div>
         @endforeach
     </div>
 </div>
