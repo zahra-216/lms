@@ -131,16 +131,6 @@ body{
     </div>
     @endif
 
-    {{-- RESET LINK --}}
-    @if(session('link'))
-    <div class="alert alert-info mt-3">
-        <i class="bi bi-link-45deg"></i>
-        <a href="{{ session('link') }}" style="color:#012147;font-weight:600;">
-            Click here to reset password
-        </a>
-    </div>
-    @endif
-
 </div>
 
 </body>

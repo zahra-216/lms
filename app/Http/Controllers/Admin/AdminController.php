@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Mail\AdminResetPasswordMail;
+use Illuminate\Support\Facades\Mail;
 
 class AdminController extends Controller
 {
@@ -104,9 +106,9 @@ class AdminController extends Controller
         // reset link
         $link = url("/admin/reset-password/$token");
 
-        return back()
-            ->with('status', 'Reset link generated')
-            ->with('link', $link); // ✅ IMPORTANT FIX
+        \Illuminate\Support\Facades\Mail::to($admin->email)->send(new \App\Mail\AdminResetPasswordMail($link));
+
+        return back()->with('status', 'A password reset link has been sent to your email.');
     }
 
     // RESET FORM
