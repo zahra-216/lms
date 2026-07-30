@@ -1,56 +1,102 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Edit Lecturer | Admin</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body {font-family: 'Segoe UI'; background:#f4f6f9; color:#012147; padding:40px;}
-        .container {max-width:500px; margin:auto; background:#fff; padding:30px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,.1);}
-        h2 {text-align:center; margin-bottom:20px;}
-        input {width:100%; padding:12px; margin-bottom:15px; border-radius:8px; border:1px solid #ccc;}
-        .password-wrap { position:relative; }
-        .password-wrap input { padding-right:42px; }
-        .toggle-eye { position:absolute; top:14px; right:14px; cursor:pointer; color:#6b7280; }
-        .hint { font-size:12px; color:#6b7280; margin:-10px 0 15px; }
-        button {background:#ffc107; color:#012147; border:none; padding:12px 20px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:8px;}
-        button:hover {background:#e0a800; color:#fff;}
-        .error { color:#dc2626; margin-bottom:15px; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Lecturer | Admin</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    body { font-family:'Segoe UI', sans-serif; background:#f4f6fb; margin:0; padding:40px 20px; color:#012147; }
+    .container { max-width:560px; margin:auto; }
+
+    .back-btn {
+        border:none; background:#fff; color:#012147; font-weight:600;
+        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
+        text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:18px;
+    }
+    .back-btn:hover { background:#012147; color:#fff; }
+
+    .page-header {
+        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
+        border-radius:18px; padding:24px 28px; margin-bottom:26px;
+        box-shadow:0 10px 30px rgba(1,33,71,0.25);
+    }
+    .page-header h3 { margin:0; font-weight:700; font-size:20px; }
+
+    .card-box { background:#fff; border-radius:16px; padding:28px; box-shadow:0 8px 26px rgba(0,0,0,0.06); }
+
+    .form-label { font-weight:600; color:#012147; font-size:14px; margin-bottom:6px; }
+    .form-control { border-radius:10px; border:1px solid #e2e8f0; padding:11px 14px; }
+    .form-control:focus { border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
+
+    .password-wrap { position:relative; }
+    .password-wrap .form-control { padding-right:42px; }
+    .toggle-eye { position:absolute; top:38px; right:14px; cursor:pointer; color:#64748b; }
+    .hint { font-size:12px; color:#6b7280; margin-top:-8px; margin-bottom:16px; }
+
+    .btn-navy { width:100%; background:#012147; color:#fff; border:none; padding:12px; border-radius:12px; font-weight:600; }
+    .btn-navy:hover { background:#0b2d5a; }
+
+    @media (max-width:480px){ .card-box{ padding:20px; } }
+</style>
 </head>
 <body>
 <div class="container">
-    <h2>Edit Lecturer</h2>
+    <a href="{{ route('admin.lecturers.index') }}" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+
+    <div class="page-header">
+        <h3><i class="bi bi-pencil-square"></i> Edit Lecturer</h3>
+    </div>
 
     @if($errors->any())
-    <div class="error">
-        <ul>
-            @foreach($errors->all() as $error)
-            <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
+        <div class="alert alert-danger rounded-3">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
 
-    <form action="{{ route('admin.lecturers.update', $lecturer->id) }}" method="POST">
-        @csrf
-        @method('PUT')
+    <div class="card-box">
+        <form action="{{ route('admin.lecturers.update', $lecturer->id) }}" method="POST">
+            @csrf
+            @method('PUT')
 
-        <input type="text" name="username" value="{{ $lecturer->username }}" placeholder="Username" required>
-        <input type="text" name="name" value="{{ $lecturer->name }}" placeholder="Full Name" required>
-        <input type="email" name="email" value="{{ $lecturer->email }}" placeholder="Email">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" value="{{ $lecturer->username }}" required>
+            </div>
 
-        <div class="password-wrap">
-            <input type="password" name="password" id="lecturerNewPassword" placeholder="New Password (leave blank to keep unchanged)">
-            <i class="fa fa-eye toggle-eye" onclick="togglePassword('lecturerNewPassword', this)"></i>
-        </div>
-        <div class="password-wrap">
-            <input type="password" name="password_confirmation" id="lecturerConfirmPassword" placeholder="Confirm New Password">
-            <i class="fa fa-eye toggle-eye" onclick="togglePassword('lecturerConfirmPassword', this)"></i>
-        </div>
-        <div class="hint">Only fill this in if you want to reset the lecturer's password.</div>
+            <div class="mb-3">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="name" class="form-control" value="{{ $lecturer->name }}" required>
+            </div>
 
-        <button type="submit"><i class="fa fa-edit"></i> Update Lecturer</button>
-    </form>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-control" value="{{ $lecturer->email }}">
+            </div>
+
+            <div class="mb-3 password-wrap">
+                <label class="form-label">New Password</label>
+                <input type="password" name="password" id="lecturerNewPassword" class="form-control" placeholder="Leave blank to keep unchanged">
+                <i class="bi bi-eye toggle-eye" onclick="togglePassword('lecturerNewPassword', this)"></i>
+            </div>
+
+            <div class="mb-2 password-wrap">
+                <label class="form-label">Confirm New Password</label>
+                <input type="password" name="password_confirmation" id="lecturerConfirmPassword" class="form-control">
+                <i class="bi bi-eye toggle-eye" onclick="togglePassword('lecturerConfirmPassword', this)"></i>
+            </div>
+            <div class="hint">Only fill this in if you want to reset the lecturer's password.</div>
+
+            <button type="submit" class="btn-navy">Update Lecturer</button>
+        </form>
+    </div>
 </div>
 
 <script>
@@ -58,12 +104,12 @@ function togglePassword(id, icon) {
     const input = document.getElementById(id);
     if (input.type === 'password') {
         input.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
     } else {
         input.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
     }
 }
 </script>
