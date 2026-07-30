@@ -54,7 +54,7 @@
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('admin.lecture-records.show', $record->subject_id) }}" class="back-btn">
+    <a href="{{ route('admin.lecture-records.index') }}" class="back-btn">
         <i class="bi bi-arrow-left"></i> Back
     </a>
 
