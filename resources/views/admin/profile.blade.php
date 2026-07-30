@@ -1,119 +1,50 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Profile</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-    body{
-        background: linear-gradient(135deg, #012147, #0b2d5a);
-        height:100vh;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        font-family:Segoe UI;
-    }
-
-    .card-box{
-        width:100%;
-        max-width:500px;
-        background:#fff;
-        padding:30px;
-        border-radius:18px;
-        box-shadow:0 20px 50px rgba(0,0,0,0.25);
-    }
-
-    h3{
-        text-align:center;
-        color:#012147;
-        margin-bottom:20px;
-        font-weight:700;
-    }
-
-    .form-control{
-        border-radius:10px;
-    }
-
-    .btn-custom{
-        background:#012147;
-        color:#fff;
-        border:none;
-        border-radius:10px;
-        padding:10px;
-    }
-
-    .btn-custom:hover{
-        background:#0b2d5a;
-    }
-
-    .profile-img{
-        width:110px;
-        height:110px;
-        border-radius:50%;
-        object-fit:cover;
-        border:3px solid #012147;
-    }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Profile</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background:#012147; font-family:'Segoe UI',sans-serif; padding:20px; }
+    .card-box { width:100%; max-width:480px; background:#fff; border-radius:20px; padding:40px; box-shadow:0 20px 50px rgba(0,0,0,0.25); }
+    .card-box h2 { text-align:center; color:#012147; font-weight:700; margin-bottom:20px; }
+    .logo { display:block; margin:0 auto 20px; width:120px; }
+    .form-label { font-weight:600; color:#012147; font-size:14px; }
+    .form-control { border-radius:12px; padding:11px 14px; border:1px solid #e2e8f0; margin-bottom:16px; }
+    .form-control:focus { border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
+    .btn-navy { width:100%; background:#012147; color:#fff; border:none; padding:12px; border-radius:12px; font-weight:600; }
+    .btn-navy:hover { background:#0353a4; }
+    @media (max-width:480px){ .card-box{ padding:26px; } }
+</style>
 </head>
 <body>
-
 <div class="card-box">
+    <h2>Admin Profile</h2>
+    <img src="{{ asset('images/logo.png.jpeg') }}" class="logo" alt="Logo">
 
-    <h3>Admin Profile</h3>
-
-    {{-- SUCCESS MESSAGE --}}
     @if(session('success'))
         <div class="alert alert-success">{{ session('success') }}</div>
     @endif
+    @if($errors->any())
+        <div class="alert alert-danger">{{ $errors->first() }}</div>
+    @endif
 
-    {{-- PROFILE IMAGE --}}
-    <div class="text-center mb-3">
-
-        @if($admin->photo)
-            <img src="{{ asset('uploads/admin/'.$admin->photo) }}" class="profile-img">
-        @else
-            <img src="https://ui-avatars.com/api/?name={{ $admin->name }}" class="profile-img">
-        @endif
-
-    </div>
-
-    {{-- FORM --}}
     <form method="POST" action="{{ route('admin.profile.update') }}" enctype="multipart/form-data">
         @csrf
 
-        <div class="mb-3">
-            <label>Name</label>
-            <input type="text" name="name" class="form-control" value="{{ $admin->name }}" required>
-        </div>
+        <label class="form-label">Name</label>
+        <input type="text" name="name" class="form-control" value="{{ $admin->name }}" required>
 
-        <div class="mb-3">
-            <label>Email</label>
-            <input type="email" name="email" class="form-control" value="{{ $admin->email }}" required>
-        </div>
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" value="{{ $admin->email }}" required>
 
-        <div class="mb-3">
-            <label>Profile Image</label>
-            <input type="file" name="photo" class="form-control">
-        </div>
+        <label class="form-label">Profile Image</label>
+        <input type="file" name="photo" class="form-control">
 
-        <hr>
-
-        <div class="mb-3">
-            <label>New Password</label>
-            <input type="password" name="password" class="form-control">
-        </div>
-
-        <div class="mb-3">
-            <label>Confirm Password</label>
-            <input type="password" name="password_confirmation" class="form-control">
-        </div>
-
-        <button class="btn btn-custom w-100">Update Profile</button>
-
+        <button type="submit" class="btn-navy">Update Profile</button>
     </form>
-
 </div>
-
 </body>
 </html>

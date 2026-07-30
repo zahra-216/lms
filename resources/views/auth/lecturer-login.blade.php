@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lecturer Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { margin:0; min-height:100vh; display:flex; align-items:center; justify-content:center; background: linear-gradient(135deg,#012147,#0353a4); font-family:'Segoe UI',sans-serif; }
@@ -29,11 +30,30 @@
             <div class="mb-3">
                 <input type="text" name="username" class="form-control" placeholder="Username" required>
             </div>
-            <div class="mb-3">
-                <input type="password" name="password" class="form-control" placeholder="Password" required>
+
+            <div class="mb-3" style="position:relative;">
+                <input type="password" name="password" id="lecturerPassword" class="form-control" placeholder="Password" required style="padding-right:40px;">
+                <i class="bi bi-eye" onclick="togglePassword('lecturerPassword', this)"
+                style="position:absolute; top:50%; right:14px; transform:translateY(-50%); cursor:pointer; color:#6b7280;"></i>
             </div>
             <button type="submit" class="btn btn-login">Login</button>
         </form>
     </div>
+
+<script>
+function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+</script>
+  
 </body>
 </html>

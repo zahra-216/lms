@@ -149,7 +149,11 @@ h3{
 
         <div class="mb-3 text-start">
             <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" placeholder="Enter Password">
+            <div style="position:relative;">
+                <input type="password" name="password" id="studentPassword" class="form-control" placeholder="Enter Password" style="padding-right:40px;">
+                <i class="bi bi-eye" onclick="togglePassword('studentPassword', this)"
+                style="position:absolute; top:50%; right:14px; transform:translateY(-50%); cursor:pointer; color:#6b7280;"></i>
+            </div>
         </div>
 
         <button class="btn btn-login">
@@ -163,6 +167,21 @@ h3{
     </div>
 
 </div>
+
+<script>
+function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+</script>
 
 </body>
 </html>

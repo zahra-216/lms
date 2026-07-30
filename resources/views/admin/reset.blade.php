@@ -123,12 +123,16 @@
 
         <input type="hidden" name="token" value="{{ $token }}">
 
-        <div class="mb-3">
-            <input type="password" name="password" class="form-control" placeholder="New Password" required>
+        <div class="mb-3" style="position:relative;">
+            <input type="password" name="password" id="resetPassword" class="form-control" placeholder="New Password" required style="padding-right:40px;">
+            <i class="bi bi-eye" onclick="togglePassword('resetPassword', this)"
+            style="position:absolute; top:50%; right:14px; transform:translateY(-50%); cursor:pointer; color:#6b7280;"></i>
         </div>
 
-        <div class="mb-3">
-            <input type="password" name="password_confirmation" class="form-control" placeholder="Confirm Password" required>
+        <div class="mb-3" style="position:relative;">
+            <input type="password" name="password_confirmation" id="resetConfirmPassword" class="form-control" placeholder="Confirm Password" required style="padding-right:40px;">
+            <i class="bi bi-eye" onclick="togglePassword('resetConfirmPassword', this)"
+            style="position:absolute; top:50%; right:14px; transform:translateY(-50%); cursor:pointer; color:#6b7280;"></i>
         </div>
 
         <button class="btn btn-custom w-100">
@@ -137,6 +141,21 @@
     </form>
 
 </div>
+
+<script>
+function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('bi-eye');
+        icon.classList.add('bi-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('bi-eye-slash');
+        icon.classList.add('bi-eye');
+    }
+}
+</script>
 
 </body>
 </html>
