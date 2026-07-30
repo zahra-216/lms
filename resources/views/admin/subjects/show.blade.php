@@ -27,7 +27,7 @@
 </head>
 <body>
 <div class="container">
-    <a href="{{ url()->previous() }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    <a href="{{ route('admin.dashboard') }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
 
     <div class="page-header">
         <h2><i class="bi bi-mortarboard"></i> {{ $subject->code }} - {{ $subject->name }}</h2>

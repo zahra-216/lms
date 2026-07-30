@@ -27,7 +27,7 @@
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('admin.subjects.assignments.index', $subject->id) }}" class="back-btn">
+    <a href="{{ route('admin.subjects.show', $subject->id) }}" class="back-btn">
         <i class="bi bi-arrow-left"></i> Back
     </a>
 

@@ -1,71 +1,84 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Students | Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body { font-family: 'Segoe UI'; background: #f4f6f9; color:#012147; padding:40px; }
-        .container { max-width:1200px; margin:auto; }
-        h1 { text-align:center; margin-bottom:20px; }
-        .success { color:green; text-align:center; margin-bottom:15px; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Students | Admin</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+    body { font-family:'Segoe UI', sans-serif; background:#f4f6fb; color:#012147; margin:0; padding:40px 20px; }
+    .container { max-width:1200px; margin:auto; }
 
-        .add-btn {
-            background:#012147; color:#fff; padding:10px 18px; border-radius:8px;
-            text-decoration:none; font-weight:600; display:inline-flex; align-items:center; gap:8px;
-        }
-        .add-btn:hover { background:#021634; color:#fff; }
+    .page-header {
+        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
+        border-radius:18px; padding:26px 30px; margin-bottom:22px;
+        box-shadow:0 10px 30px rgba(1,33,71,0.25);
+        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+    }
+    .page-header h2 { margin:0; font-weight:700; font-size:22px; }
 
-        .search-box { max-width:400px; margin:0 auto 25px; }
+    .add-btn {
+        background:#fff; color:#012147; padding:10px 18px; border-radius:10px;
+        text-decoration:none; font-weight:600; display:inline-flex; align-items:center; gap:8px;
+    }
+    .add-btn:hover { background:#e2e8f0; color:#012147; }
 
-        .level-card {
-            background:#012147; color:#fff; border-radius:12px; margin-bottom:18px; overflow:hidden;
-        }
-        .level-card .level-header {
-            padding:16px 22px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
-        }
-        .level-card .level-body { background:#f4f6f9; color:#012147; padding:20px; display:none; }
-        .level-card .level-body.show { display:block; }
+    .search-box { max-width:420px; margin:0 auto 25px; }
+    .search-box .form-control { border-radius:10px 0 0 10px; }
+    .search-box .btn { border-radius:0 10px 10px 0; }
 
-        .faculty-block { background:#fff; border-radius:10px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-        .faculty-header {
-            padding:12px 18px; font-weight:600; cursor:pointer; display:flex;
-            justify-content:space-between; align-items:center; background:#e9edf5; border-radius:10px 10px 0 0;
-        }
-        .faculty-body { display:none; padding:15px; }
-        .faculty-body.show { display:block; }
+    .level-card { background:#012147; color:#fff; border-radius:12px; margin-bottom:18px; overflow:hidden; }
+    .level-card .level-header { padding:16px 22px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
+    .level-card .level-body { background:#f4f6fb; color:#012147; padding:20px; display:none; }
+    .level-card .level-body.show { display:block; }
 
-        .course-block { margin-bottom:16px; }
-        .course-title { font-weight:600; color:#0d6efd; margin-bottom:8px; }
+    .faculty-block { background:#fff; border-radius:10px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+    .faculty-header {
+        padding:12px 18px; font-weight:600; cursor:pointer; display:flex;
+        justify-content:space-between; align-items:center; background:#e9edf5; border-radius:10px 10px 0 0;
+    }
+    .faculty-body { display:none; padding:15px; }
+    .faculty-body.show { display:block; }
 
-        table { width:100%; border-collapse:collapse; margin-bottom:10px; }
-        th, td { padding:10px; border:1px solid #ddd; text-align:center; font-size:14px; }
-        th { background:#f0f2f7; }
+    .course-block { margin-bottom:16px; }
+    .course-title { font-weight:600; color:#012147; margin-bottom:8px; }
 
-        .btn { padding:6px 12px; border:none; border-radius:6px; cursor:pointer; text-decoration:none; margin:2px; display:inline-flex; align-items:center; gap:5px; }
-        .edit-btn { background:#ffc107; color:#012147; }
-        .edit-btn:hover { background:#e0a800; color:#fff; }
-        .delete-btn { background:#dc3545; color:#fff; }
-        .delete-btn:hover { background:#a71d2a; }
-        .change-sem-btn { background:#0d6efd; color:#fff; border:none; }
-        .change-sem-btn:hover { background:#0b5ed7; color:#fff; }
+    table { width:100%; border-collapse:collapse; margin-bottom:10px; }
+    th, td { padding:10px; border:1px solid #e2e8f0; text-align:center; font-size:13.5px; }
+    th { background:#012147; color:#fff; font-weight:600; }
+    tbody tr:nth-child(even) { background:#f8fafc; }
 
-        .empty-note { text-align:center; color:#6b7280; padding:10px; }
-        .chevron { transition:.2s; }
-        .rotate { transform:rotate(180deg); }
-    </style>
+    .btn-sm-action { padding:6px 12px; border:none; border-radius:8px; cursor:pointer; text-decoration:none; margin:2px; display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:600; }
+    .edit-btn { background:#eef2f9; color:#012147; }
+    .edit-btn:hover { background:#012147; color:#fff; }
+    .delete-btn { background:#fee2e2; color:#991b1b; }
+    .delete-btn:hover { background:#dc2626; color:#fff; }
+    .change-sem-btn { background:#012147; color:#fff; border:none; }
+    .change-sem-btn:hover { background:#1e3a6e; }
+
+    .empty-note { text-align:center; color:#6b7280; padding:10px; }
+    .chevron { transition:.2s; }
+    .rotate { transform:rotate(180deg); }
+
+    @media (max-width:576px){
+        body { padding:20px 12px; }
+        .page-header { flex-direction:column; align-items:flex-start; }
+        table { display:block; overflow-x:auto; white-space:nowrap; }
+    }
+</style>
 </head>
 <body>
 <div class="container">
-    <h1>Students Details</h1>
+    <div class="page-header">
+        <h2><i class="bi bi-people"></i> Students</h2>
+        <a href="{{ route('admin.students.create') }}" class="add-btn"><i class="bi bi-plus-circle"></i> Add Student</a>
+    </div>
 
     @if(session('success'))
-        <p class="success">{{ session('success') }}</p>
+        <div class="alert alert-success rounded-3 text-center">{{ session('success') }}</div>
     @endif
-
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <a href="{{ route('admin.students.create') }}" class="add-btn"><i class="fa fa-plus"></i> Add Student</a>
-    </div>
 
     <form method="GET" action="{{ route('admin.students.index') }}" class="search-box">
         <div class="input-group">
@@ -106,13 +119,14 @@
                                         ->where('level_id', $firstStudent->level_id);
                                 @endphp
                                 <div class="course-block">
-                                    <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <div class="d-flex justify-content-between align-items-center mb-2 flex-wrap gap-2">
                                         <div class="course-title"><i class="fa fa-book"></i> {{ $courseName }}</div>
-                                        <button type="button" class="btn change-sem-btn open-sem-modal" data-course="{{ $courseSlug }}">
+                                        <button type="button" class="btn-sm-action change-sem-btn open-sem-modal" data-course="{{ $courseSlug }}">
                                             <i class="fa fa-calendar"></i> Change Semester
                                         </button>
                                     </div>
 
+                                    <div class="table-responsive">
                                     <table class="course-table" data-course="{{ $courseSlug }}">
                                         <tr>
                                             <th><input type="checkbox" class="select-all" onclick="toggleAll(this)"></th>
@@ -132,7 +146,7 @@
                                                 <td>{{ $student->branch }}</td>
                                                 <td>{{ $student->semester->name ?? '—' }}</td>
                                                 <td>
-                                                    <a href="{{ route('admin.students.edit', $student->id) }}" class="btn edit-btn">
+                                                    <a href="{{ route('admin.students.edit', $student->id) }}" class="btn-sm-action edit-btn">
                                                         <i class="fa fa-edit"></i>
                                                     </a>
                                                     <form action="{{ route('admin.students.destroy', $student->id) }}"
@@ -140,7 +154,7 @@
                                                           onsubmit="return confirm('Delete this student?')">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn delete-btn">
+                                                        <button type="submit" class="btn-sm-action delete-btn">
                                                             <i class="fa fa-trash"></i>
                                                         </button>
                                                     </form>
@@ -148,6 +162,7 @@
                                             </tr>
                                         @endforeach
                                     </table>
+                                    </div>
 
                                     <!-- CHANGE SEMESTER MODAL -->
                                     <div class="modal fade" id="semModal-{{ $courseSlug }}" tabindex="-1">
@@ -233,7 +248,6 @@ document.querySelectorAll('.open-sem-modal').forEach(btn => {
     });
 });
 
-// Auto-expand everything when a search is active
 @if($search)
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('.level-body, .faculty-body').forEach(el => el.classList.add('show'));
