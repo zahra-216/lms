@@ -39,13 +39,13 @@
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('lecturer.subject.lecture-records', $record->subject_id) }}" class="back-btn">
+    <a href="{{ route('lecturer.lecture-records.index') }}" class="back-btn">
         <i class="bi bi-arrow-left"></i> Back
     </a>
 
     <div class="page-header">
         <h3><i class="bi bi-pencil-square"></i> Add Content</h3>
-        <small>{{ $record->subject->code }} - {{ $record->subject->name }}</small>
+        <small>Fill in what was covered in this lecture</small>
     </div>
 
     @if($errors->any())

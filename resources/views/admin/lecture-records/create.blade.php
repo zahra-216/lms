@@ -86,40 +86,35 @@
             @csrf
 
             <div class="mb-3">
-                <label class="form-label">Faculty</label>
-                <select id="faculty" class="form-select">
-                    <option value="">-- Select Faculty --</option>
-                    @foreach($faculties as $faculty)
-                        <option value="{{ $faculty->id }}">{{ $faculty->name }}</option>
-                    @endforeach
-                </select>
+                <label class="form-label">Faculty (select one or more)</label>
+                <div id="facultyList" class="module-list"></div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Course</label>
-                <select id="course" class="form-select" disabled>
-                    <option value="">-- Select Course --</option>
-                </select>
+                <div id="courseList" class="module-list">
+                    <div class="module-empty">Select a faculty first.</div>
+                </div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Level</label>
-                <select id="level" class="form-select" disabled>
-                    <option value="">-- Select Level --</option>
-                </select>
+                <div id="levelList" class="module-list">
+                    <div class="module-empty">Select a course first.</div>
+                </div>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Semester</label>
-                <select id="semester" class="form-select" disabled>
-                    <option value="">-- Select Semester --</option>
-                </select>
+                <div id="semesterList" class="module-list">
+                    <div class="module-empty">Select a level first.</div>
+                </div>
             </div>
 
             <div class="mb-4">
                 <label class="form-label">Modules (select one or more)</label>
                 <div id="moduleList" class="module-list">
-                    <div class="module-empty">Select a semester to see modules.</div>
+                    <div class="module-empty">Select a semester first.</div>
                 </div>
             </div>
 
@@ -174,77 +169,102 @@
 </div>
 
 <script>
-const facultySel = document.getElementById('faculty');
-const courseSel = document.getElementById('course');
-const levelSel = document.getElementById('level');
-const semesterSel = document.getElementById('semester');
+// ---------- Seed faculty checkboxes on page load ----------
+document.getElementById('facultyList').innerHTML = `
+    @foreach($faculties as $faculty)
+        <label class="module-item">
+            <input type="checkbox" class="lvl-faculty" value="{{ $faculty->id }}">
+            {{ $faculty->name }}
+        </label>
+    @endforeach
+`;
+
+// ---------- Cascading multi-select logic ----------
+function checkedValues(container, cls) {
+    return [...container.querySelectorAll('.' + cls + ':checked')].map(el => el.value);
+}
+
+function renderCheckboxes(container, items, cls) {
+    if (!items.length) {
+        container.innerHTML = '<div class="module-empty">No options found.</div>';
+        return;
+    }
+    container.innerHTML = items.map(i => `
+        <label class="module-item">
+            <input type="checkbox" class="${cls}" value="${i.id}">
+            ${i.code ? i.code + ' - ' : ''}${i.name}
+        </label>
+    `).join('');
+}
+
+function resetBelow(containers, message) {
+    containers.forEach(c => c.innerHTML = `<div class="module-empty">${message}</div>`);
+}
+
+const facultyList = document.getElementById('facultyList');
+const courseList = document.getElementById('courseList');
+const levelList = document.getElementById('levelList');
+const semesterList = document.getElementById('semesterList');
 const moduleList = document.getElementById('moduleList');
 
-function resetSelect(sel, placeholder) {
-    sel.innerHTML = `<option value="">${placeholder}</option>`;
-    sel.disabled = true;
+async function fetchIds(routeName, ids) {
+    const params = new URLSearchParams();
+    ids.forEach(id => params.append('ids[]', id));
+    const res = await fetch(`/admin/lecture-records/${routeName}?${params.toString()}`);
+    return res.json();
 }
 
-function resetModules(message) {
-    moduleList.innerHTML = `<div class="module-empty">${message}</div>`;
-}
+facultyList.addEventListener('change', async function () {
+    const ids = checkedValues(facultyList, 'lvl-faculty');
+    resetBelow([levelList, semesterList], 'Select a course first.');
+    moduleList.innerHTML = '<div class="module-empty">Select a semester first.</div>';
 
-facultySel.addEventListener('change', async function () {
-    resetSelect(courseSel, '-- Select Course --');
-    resetSelect(levelSel, '-- Select Level --');
-    resetSelect(semesterSel, '-- Select Semester --');
-    resetModules('Select a semester to see modules.');
-
-    if (!this.value) return;
-
-    const res = await fetch(`/admin/lecture-records/get-courses/${this.value}`);
-    const data = await res.json();
-    data.forEach(c => courseSel.innerHTML += `<option value="${c.id}">${c.name}</option>`);
-    courseSel.disabled = false;
-});
-
-courseSel.addEventListener('change', async function () {
-    resetSelect(levelSel, '-- Select Level --');
-    resetSelect(semesterSel, '-- Select Semester --');
-    resetModules('Select a semester to see modules.');
-
-    if (!this.value) return;
-
-    const res = await fetch(`/admin/lecture-records/get-levels/${this.value}`);
-    const data = await res.json();
-    data.forEach(l => levelSel.innerHTML += `<option value="${l.id}">${l.name}</option>`);
-    levelSel.disabled = false;
-});
-
-levelSel.addEventListener('change', async function () {
-    resetSelect(semesterSel, '-- Select Semester --');
-    resetModules('Select a semester to see modules.');
-
-    if (!this.value) return;
-
-    const res = await fetch(`/admin/lecture-records/get-semesters/${this.value}`);
-    const data = await res.json();
-    data.forEach(s => semesterSel.innerHTML += `<option value="${s.id}">${s.name}</option>`);
-    semesterSel.disabled = false;
-});
-
-semesterSel.addEventListener('change', async function () {
-    resetModules('Loading modules...');
-
-    if (!this.value) {
-        resetModules('Select a semester to see modules.');
+    if (!ids.length) {
+        resetBelow([courseList], 'Select a faculty first.');
         return;
     }
+    const courses = await fetchIds('get-courses', ids);
+    renderCheckboxes(courseList, courses, 'lvl-course');
+});
 
-    const res = await fetch(`/admin/lecture-records/get-subjects/${this.value}`);
-    const data = await res.json();
+courseList.addEventListener('change', async function () {
+    const ids = checkedValues(courseList, 'lvl-course');
+    resetBelow([semesterList], 'Select a level first.');
+    moduleList.innerHTML = '<div class="module-empty">Select a semester first.</div>';
 
-    if (!data.length) {
-        resetModules('No modules found for this semester.');
+    if (!ids.length) {
+        resetBelow([levelList], 'Select a course first.');
         return;
     }
+    const levels = await fetchIds('get-levels', ids);
+    renderCheckboxes(levelList, levels, 'lvl-level');
+});
 
-    moduleList.innerHTML = data.map(s => `
+levelList.addEventListener('change', async function () {
+    const ids = checkedValues(levelList, 'lvl-level');
+    moduleList.innerHTML = '<div class="module-empty">Select a semester first.</div>';
+
+    if (!ids.length) {
+        resetBelow([semesterList], 'Select a level first.');
+        return;
+    }
+    const semesters = await fetchIds('get-semesters', ids);
+    renderCheckboxes(semesterList, semesters, 'lvl-semester');
+});
+
+semesterList.addEventListener('change', async function () {
+    const ids = checkedValues(semesterList, 'lvl-semester');
+
+    if (!ids.length) {
+        moduleList.innerHTML = '<div class="module-empty">Select a semester first.</div>';
+        return;
+    }
+    const modules = await fetchIds('get-subjects', ids);
+    if (!modules.length) {
+        moduleList.innerHTML = '<div class="module-empty">No modules found.</div>';
+        return;
+    }
+    moduleList.innerHTML = modules.map(s => `
         <label class="module-item">
             <input type="checkbox" name="subject_ids[]" value="${s.id}">
             ${s.code} - ${s.name}
@@ -252,7 +272,7 @@ semesterSel.addEventListener('change', async function () {
     `).join('');
 });
 
-// Lecturer search (same pattern as before)
+// ---------- Lecturer search ----------
 const searchInput = document.getElementById('lecturerSearch');
 const resultsBox = document.getElementById('lecturerResults');
 const lecturerIdInput = document.getElementById('lecturer_id');

@@ -423,13 +423,13 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::post('/lecture-records', [App\Http\Controllers\Admin\LectureRecordController::class, 'store'])
         ->name('lecture-records.store');
 
-    Route::get('/lecture-records/get-courses/{faculty}', [App\Http\Controllers\Admin\LectureRecordController::class, 'getCourses'])
-        ->name('lecture-records.get-courses');
-    Route::get('/lecture-records/get-levels/{course}', [App\Http\Controllers\Admin\LectureRecordController::class, 'getLevels'])
+    Route::get('/lecture-records/get-courses', [App\Http\Controllers\Admin\LectureRecordController::class, 'getCourses'])
+    ->name('lecture-records.get-courses');
+    Route::get('/lecture-records/get-levels', [App\Http\Controllers\Admin\LectureRecordController::class, 'getLevels'])
         ->name('lecture-records.get-levels');
-    Route::get('/lecture-records/get-semesters/{level}', [App\Http\Controllers\Admin\LectureRecordController::class, 'getSemesters'])
+    Route::get('/lecture-records/get-semesters', [App\Http\Controllers\Admin\LectureRecordController::class, 'getSemesters'])
         ->name('lecture-records.get-semesters');
-    Route::get('/lecture-records/get-subjects/{semester}', [App\Http\Controllers\Admin\LectureRecordController::class, 'getSubjects'])
+    Route::get('/lecture-records/get-subjects', [App\Http\Controllers\Admin\LectureRecordController::class, 'getSubjects'])
         ->name('lecture-records.get-subjects');
 
     Route::get('/lecture-records/{record}/edit', [App\Http\Controllers\Admin\LectureRecordController::class, 'edit'])

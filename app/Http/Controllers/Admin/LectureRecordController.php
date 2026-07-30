@@ -160,31 +160,35 @@ class LectureRecordController extends Controller
         ]);
     }
 
-    public function getCourses($facultyId)
+    public function getCourses(Request $request)
     {
+        $facultyIds = (array) $request->query('ids', []);
         return response()->json(
-            \App\Models\Course::where('faculty_id', $facultyId)->get(['id', 'name'])
+            \App\Models\Course::whereIn('faculty_id', $facultyIds)->get(['id', 'name'])
         );
     }
 
-    public function getLevels($courseId)
+    public function getLevels(Request $request)
     {
+        $courseIds = (array) $request->query('ids', []);
         return response()->json(
-            \App\Models\Level::where('course_id', $courseId)->get(['id', 'name'])
+            \App\Models\Level::whereIn('course_id', $courseIds)->get(['id', 'name'])
         );
     }
 
-    public function getSemesters($levelId)
+    public function getSemesters(Request $request)
     {
+        $levelIds = (array) $request->query('ids', []);
         return response()->json(
-            \App\Models\Semester::where('level_id', $levelId)->get(['id', 'name'])
+            \App\Models\Semester::whereIn('level_id', $levelIds)->get(['id', 'name'])
         );
     }
 
-    public function getSubjects($semesterId)
+    public function getSubjects(Request $request)
     {
+        $semesterIds = (array) $request->query('ids', []);
         return response()->json(
-            Subject::where('semester_id', $semesterId)->get(['id', 'code', 'name'])
+            Subject::whereIn('semester_id', $semesterIds)->get(['id', 'code', 'name'])
         );
     }
 
