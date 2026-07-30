@@ -160,6 +160,11 @@ Route::prefix('lecturer')->group(function () {
             Route::get('/lecture-records/pdf', [App\Http\Controllers\LecturerLectureRecordController::class, 'pdf'])
                 ->name('lecture-records.pdf');
 
+            Route::get('/lecture-records/create', [App\Http\Controllers\LecturerLectureRecordController::class, 'create'])
+                ->name('lecture-records.create');
+            Route::post('/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'store'])
+                ->name('lecture-records.store');
+
             Route::get('/lecture-record/{record}/add-content', [App\Http\Controllers\LecturerLectureRecordController::class, 'addContentForm'])
                 ->name('lecture-records.add-content');
             Route::post('/lecture-record/{record}/add-content', [App\Http\Controllers\LecturerLectureRecordController::class, 'addContentStore'])
@@ -415,8 +420,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     // Lecture Records
     Route::get('/lecture-records', [App\Http\Controllers\Admin\LectureRecordController::class, 'index'])
         ->name('lecture-records.index');
-    Route::get('/lecture-records/subject/{id}', [App\Http\Controllers\Admin\LectureRecordController::class, 'show'])
-        ->name('lecture-records.show');
 
     Route::get('/lecture-records/create', [App\Http\Controllers\Admin\LectureRecordController::class, 'create'])
         ->name('lecture-records.create');

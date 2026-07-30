@@ -58,6 +58,10 @@
             <small>Your recorded and pending lectures</small>
         </div>
         <div class="top-actions">
+            <a href="{{ route('lecturer.lecture-records.create') }}" class="action-btn">
+                <i class="bi bi-plus-circle"></i> Add Record
+            </a>
+            
             <a href="{{ route('lecturer.lecture-records.pdf') }}?download=1" class="action-btn">
                 <i class="bi bi-download"></i> Download PDF
             </a>

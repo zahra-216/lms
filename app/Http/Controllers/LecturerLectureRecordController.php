@@ -24,6 +24,27 @@ class LecturerLectureRecordController extends Controller
         return view('lecturer.lecture-records.index', compact('records'));
     }
 
+    public function create()
+    {
+        return view('lecturer.lecture-records.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'content_covered' => 'required|string',
+        ]);
+
+        LectureRecord::create([
+            'lecturer_id' => Auth::guard('lecturer')->id(),
+            'content_covered' => $request->content_covered,
+            'created_by' => 'lecturer',
+        ]);
+
+        return redirect()->route('lecturer.lecture-records.index')
+            ->with('success', 'Lecture record created successfully.');
+    }
+
     public function addContentForm(LectureRecord $record)
     {
         return view('lecturer.lecture-records.add-content', compact('record'));

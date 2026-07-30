@@ -10,24 +10,14 @@ use Illuminate\Http\Request;
 
 class LectureRecordController extends Controller
 {
-    // Faculty -> Course -> Level -> Semester accordion (same pattern as AttendanceController@index)
     public function index()
     {
-        $subjects = Subject::with(['course.faculty', 'level', 'semester'])->get();
+        $records = LectureRecord::with(['subject', 'lecturer'])
+            ->orderByDesc('date')
+            ->orderByDesc('id')
+            ->get();
 
-        $grouped = $subjects
-            ->groupBy(function ($s) { return optional(optional($s->course)->faculty)->name ?? 'Unassigned Faculty'; })
-            ->map(function ($facultySubjects) {
-                return $facultySubjects->groupBy(function ($s) { return optional($s->course)->name ?? 'Unassigned Course'; })
-                    ->map(function ($courseSubjects) {
-                        return $courseSubjects->groupBy(function ($s) { return optional($s->level)->name ?? 'Unassigned Level'; })
-                            ->map(function ($levelSubjects) {
-                                return $levelSubjects->groupBy(function ($s) { return optional($s->semester)->name ?? 'Unassigned Semester'; });
-                            });
-                    });
-            });
-
-        return view('admin.lecture-records.index', compact('grouped'));
+        return view('admin.lecture-records.index', compact('records'));
     }
 
     // List of records for a subject
@@ -163,25 +153,65 @@ class LectureRecordController extends Controller
     public function getCourses(Request $request)
     {
         $facultyIds = (array) $request->query('ids', []);
-        return response()->json(
-            \App\Models\Course::whereIn('faculty_id', $facultyIds)->get(['id', 'name'])
-        );
+
+        $grouped = \App\Models\Course::whereIn('faculty_id', $facultyIds)
+            ->get(['id', 'name'])
+            ->groupBy('name')
+            ->map(fn($group, $name) => [
+                'name' => $name,
+                'ids' => $group->pluck('id')->values(),
+            ])
+            ->values();
+
+        return response()->json($grouped);
     }
 
     public function getLevels(Request $request)
     {
         $courseIds = (array) $request->query('ids', []);
-        return response()->json(
-            \App\Models\Level::whereIn('course_id', $courseIds)->get(['id', 'name'])
-        );
+
+        $grouped = \App\Models\Level::whereIn('course_id', $courseIds)
+            ->get(['id', 'name'])
+            ->groupBy('name')
+            ->map(fn($group, $name) => [
+                'name' => $name,
+                'ids' => $group->pluck('id')->values(),
+            ])
+            ->values();
+
+        return response()->json($grouped);
     }
 
     public function getSemesters(Request $request)
     {
         $levelIds = (array) $request->query('ids', []);
-        return response()->json(
-            \App\Models\Semester::whereIn('level_id', $levelIds)->get(['id', 'name'])
-        );
+
+        $levelNames = \App\Models\Level::whereIn('id', $levelIds)
+            ->pluck('name')
+            ->map(fn($n) => strtolower(trim($n)));
+
+        $maxSemester = 2;
+        if ($levelNames->contains('degree')) {
+            $maxSemester = 6;
+        } elseif ($levelNames->contains('hnd')) {
+            $maxSemester = 4;
+        }
+
+        $grouped = \App\Models\Semester::whereIn('level_id', $levelIds)
+            ->get(['id', 'name'])
+            ->groupBy('name')
+            ->map(fn($group, $name) => [
+                'name' => $name,
+                'ids' => $group->pluck('id')->values(),
+            ])
+            ->filter(function ($item) use ($maxSemester) {
+                preg_match('/(\d+)/', $item['name'], $m);
+                $num = isset($m[1]) ? (int) $m[1] : 999;
+                return $num <= $maxSemester;
+            })
+            ->values();
+
+        return response()->json($grouped);
     }
 
     public function getSubjects(Request $request)

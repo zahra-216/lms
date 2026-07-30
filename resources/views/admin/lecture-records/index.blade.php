@@ -1,112 +1,116 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lecture Records | Admin</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        body { font-family: 'Segoe UI'; background: #f4f6f9; color:#012147; padding:40px; }
-        .container { max-width:1200px; margin:auto; }
-        h1 { text-align:center; margin-bottom:20px; }
-
-        .level-card { background:#012147; color:#fff; border-radius:12px; margin-bottom:18px; overflow:hidden; }
-        .level-card .level-header { padding:16px 22px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
-        .level-card .level-body { background:#f4f6f9; color:#012147; padding:20px; display:none; }
-        .level-card .level-body.show { display:block; }
-
-        .faculty-block { background:#fff; border-radius:10px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-        .faculty-header { padding:12px 18px; font-weight:600; cursor:pointer; display:flex; justify-content:space-between; align-items:center; background:#e9edf5; border-radius:10px 10px 0 0; }
-        .faculty-body { display:none; padding:15px; }
-        .faculty-body.show { display:block; }
-
-        .course-block { margin-bottom:16px; }
-        .course-title { font-weight:600; color:#0d6efd; margin-bottom:8px; cursor:pointer; }
-        .course-body { display:none; padding-left:15px; }
-        .course-body.show { display:block; }
-
-        .semester-title { font-weight:600; color:#012147; margin:10px 0 6px; cursor:pointer; }
-        .semester-body { display:none; padding-left:15px; }
-        .semester-body.show { display:block; }
-
-        .subject-link {
-            display:flex; justify-content:space-between; align-items:center;
-            background:#f1f5f9; padding:10px 14px; border-radius:8px; margin-bottom:8px;
-            text-decoration:none; color:#012147;
-        }
-        .subject-link:hover { background:#3b82f6; color:#fff; }
-
-        .empty-note { text-align:center; color:#6b7280; padding:10px; }
-        .chevron { transition:.2s; }
-        .rotate { transform:rotate(180deg); }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lecture Records</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
+    @media (max-width:576px){
+        body { padding:20px 12px; }
+        .page-header{ flex-direction:column; align-items:flex-start !important; gap:14px; }
+        .top-actions{ flex-direction:column; align-items:stretch !important; }
+    }
+    .container { max-width:1100px; margin:auto; }
+    .action-btn{
+        border:none; background:#fff; color:#012147; font-weight:600;
+        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
+        text-decoration:none; display:inline-flex; align-items:center; gap:6px;
+    }
+    .action-btn:hover{ background:#012147; color:#fff; }
+    .page-header{
+        background:linear-gradient(120deg,#012147,#1e3a6e);
+        color:#fff; border-radius:18px; padding:26px 30px; margin:18px 0 26px;
+        box-shadow:0 10px 30px rgba(1,33,71,0.25);
+        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+    }
+    .page-header h2{ margin:0; font-weight:700; font-size:22px; }
+    .top-actions{ display:flex; gap:10px; flex-wrap:wrap; }
+    .card-box{
+        background:#fff; padding:20px; border-radius:14px;
+        box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:26px;
+    }
+    table.lr-table{ border-collapse:separate; border-spacing:0; }
+    table.lr-table thead th{
+        background:#012147; color:#fff; font-weight:600; border:none;
+        padding:12px 10px; white-space:nowrap;
+    }
+    table.lr-table thead th:first-child{ border-top-left-radius:10px; }
+    table.lr-table thead th:last-child{ border-top-right-radius:10px; }
+    table.lr-table tbody td{ vertical-align:middle; padding:10px; }
+    table.lr-table tbody tr:nth-child(even){ background:#f8fafc; }
+    table.lr-table tbody tr:hover{ background:#eef2f9; }
+    .badge-pending{ background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+    .badge-complete{ background:#d1fae5; color:#065f46; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+</style>
 </head>
 <body>
 <div class="container">
-    <h1>Lecture Records</h1>
-
-    <div class="text-center mb-3">
-        <a href="{{ route('admin.lecture-records.pdf-all') }}" class="btn btn-navy">
-            <i class="fa fa-download"></i> Download All (Grouped PDF)
-        </a>
+    <div class="page-header">
+        <div>
+            <h2><i class="bi bi-journal-text"></i> Lecture Records</h2>
+            <small>All lecture records across every module</small>
+        </div>
+        <div class="top-actions">
+            <a href="{{ route('admin.lecture-records.create') }}" class="action-btn">
+                <i class="bi bi-plus-circle"></i> Add Record
+            </a>
+            <a href="{{ route('admin.lecture-records.pdf-all') }}" class="action-btn">
+                <i class="bi bi-download"></i> Download All (Grouped PDF)
+            </a>
+        </div>
     </div>
 
-    @forelse($grouped as $facultyName => $courses)
-        @php $facultyId = \Illuminate\Support\Str::slug($facultyName); @endphp
-        <div class="level-card">
-            <div class="level-header" onclick="toggleBlock('faculty-{{ $facultyId }}', this)">
-                <span><i class="fa fa-building"></i> {{ $facultyName }}</span>
-                <i class="fa fa-chevron-down chevron"></i>
-            </div>
-            <div class="level-body" id="faculty-{{ $facultyId }}">
-                @foreach($courses as $courseName => $levels)
-                    @php $courseId = $facultyId.'-'.\Illuminate\Support\Str::slug($courseName); @endphp
-                    <div class="faculty-block">
-                        <div class="faculty-header" onclick="toggleBlock('course-{{ $courseId }}', this)">
-                            <span><i class="fa fa-book"></i> {{ $courseName }}</span>
-                            <i class="fa fa-chevron-down chevron"></i>
-                        </div>
-                        <div class="faculty-body" id="course-{{ $courseId }}">
-                            @foreach($levels as $levelName => $semesters)
-                                @php $levelId = $courseId.'-'.\Illuminate\Support\Str::slug($levelName); @endphp
-                                <div class="course-block">
-                                    <div class="course-title" onclick="toggleBlock('level-{{ $levelId }}', this)">
-                                        <i class="fa fa-layer-group"></i> {{ $levelName }}
-                                    </div>
-                                    <div class="course-body" id="level-{{ $levelId }}">
-                                        @foreach($semesters as $semesterName => $subjects)
-                                            @php $semId = $levelId.'-'.\Illuminate\Support\Str::slug($semesterName); @endphp
-                                            <div class="semester-title" onclick="toggleBlock('sem-{{ $semId }}', this)">
-                                                <i class="fa fa-calendar3"></i> {{ $semesterName }}
-                                            </div>
-                                            <div class="semester-body" id="sem-{{ $semId }}">
-                                                @foreach($subjects as $subject)
-                                                    <a href="{{ route('admin.lecture-records.show', $subject->id) }}" class="subject-link">
-                                                        <span>{{ $subject->code }} - {{ $subject->name }}</span>
-                                                        <i class="fa fa-arrow-right"></i>
-                                                    </a>
-                                                @endforeach
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                            @endforeach
-                        </div>
-                    </div>
-                @endforeach
-            </div>
-        </div>
-    @empty
-        <p class="empty-note">No subjects found.</p>
-    @endforelse
-</div>
+    @if(session('success'))
+        <div class="alert alert-success rounded-3"><i class="bi bi-check-circle"></i> {{ session('success') }}</div>
+    @endif
 
-<script>
-function toggleBlock(id, headerEl) {
-    const el = document.getElementById(id);
-    el.classList.toggle('show');
-    const chevron = headerEl.querySelector('.chevron');
-    if (chevron) chevron.classList.toggle('rotate');
-}
-</script>
+    <div class="card-box">
+        <div class="table-responsive">
+        <table class="table lr-table align-middle">
+            <thead>
+                <tr>
+                    <th>Module</th>
+                    <th>Date</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Lecturer</th>
+                    <th>Content Covered</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @forelse($records as $record)
+                    <tr>
+                        <td>{{ $record->subject ? $record->subject->code . ' - ' . $record->subject->name : '—' }}</td>
+                        <td>{{ $record->date ? \Carbon\Carbon::parse($record->date)->format('d M Y') : '—' }}</td>
+                        <td>{{ $record->start_time ? \Carbon\Carbon::parse($record->start_time)->format('h:i A') : '—' }}</td>
+                        <td>{{ $record->end_time ? \Carbon\Carbon::parse($record->end_time)->format('h:i A') : '—' }}</td>
+                        <td>{{ $record->lecturer->name ?? '—' }}</td>
+                        <td>{{ $record->content_covered ?? '—' }}</td>
+                        <td>
+                            @if($record->content_covered && $record->date)
+                                <span class="badge-complete">Complete</span>
+                            @else
+                                <span class="badge-pending">Pending</span>
+                            @endif
+                        </td>
+                        <td>
+                            <a href="{{ route('admin.lecture-records.edit', $record->id) }}" class="action-btn">
+                                <i class="bi bi-pencil"></i> Edit
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="8" class="text-center text-muted">No lecture records yet.</td></tr>
+                @endforelse
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
 </body>
 </html>
