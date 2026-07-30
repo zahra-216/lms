@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ $subject->name }} - Lecture Records</title>
+<title>My Lecture Records</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
@@ -44,26 +44,21 @@
     table.lr-table tbody tr:hover{ background:#eef2f9; }
     .badge-pending{ background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
     .badge-complete{ background:#d1fae5; color:#065f46; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
-    .btn-navy{ background:#012147; color:#fff; border:none; }
-    .btn-navy:hover{ background:#1e3a6e; color:#fff; }
 </style>
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn">
+    <a href="{{ route('lecturer.dashboard') }}" class="back-btn">
         <i class="bi bi-arrow-left"></i> Back
     </a>
 
     <div class="page-header">
         <div>
-            <h2><i class="bi bi-journal-text"></i> {{ $subject->code }} - {{ $subject->name }}</h2>
-            <small>Lecture Records</small>
+            <h2><i class="bi bi-journal-text"></i> My Lecture Records</h2>
+            <small>Your recorded and pending lectures</small>
         </div>
         <div class="top-actions">
-            <a href="{{ route('lecturer.subject.lecture-records.create', $subject->id) }}" class="action-btn">
-                <i class="bi bi-plus-circle"></i> Add Record
-            </a>
-            <a href="{{ route('lecturer.subject.lecture-records.pdf', $subject->id) }}?download=1" class="action-btn">
+            <a href="{{ route('lecturer.lecture-records.pdf') }}?download=1" class="action-btn">
                 <i class="bi bi-download"></i> Download PDF
             </a>
         </div>
@@ -81,7 +76,7 @@
                     <th>Date</th>
                     <th>Start</th>
                     <th>End</th>
-                    <th>Duration</th>
+                    <th>Lecturer</th>
                     <th>Content Covered</th>
                     <th>Status</th>
                     <th></th>
@@ -93,7 +88,7 @@
                         <td>{{ $record->date ? \Carbon\Carbon::parse($record->date)->format('d M Y') : '—' }}</td>
                         <td>{{ $record->start_time ? \Carbon\Carbon::parse($record->start_time)->format('h:i A') : '—' }}</td>
                         <td>{{ $record->end_time ? \Carbon\Carbon::parse($record->end_time)->format('h:i A') : '—' }}</td>
-                        <td>{{ $record->duration ?? '—' }}</td>
+                        <td>{{ $record->lecturer->name ?? '—' }}</td>
                         <td>{{ $record->content_covered ?? '—' }}</td>
                         <td>
                             @if($record->content_covered && $record->date)

@@ -44,30 +44,45 @@ class LectureRecordController extends Controller
         return view('admin.lecture-records.show', compact('subject', 'records'));
     }
 
-    public function create($id)
+    public function create()
     {
-        $subject = Subject::findOrFail($id);
+        $faculties = \App\Models\Faculty::orderBy('name')->get(['id', 'name']);
         $lecturers = Lecturer::orderBy('name')->get(['id', 'name', 'username']);
 
-        return view('admin.lecture-records.create', compact('subject', 'lecturers'));
+        return view('admin.lecture-records.create', compact('faculties', 'lecturers'));
     }
 
-    public function store(Request $request, $id)
+    public function store(Request $request)
     {
-        $data = $this->validateData($request);
-
-        LectureRecord::create([
-            'subject_id' => $id,
-            'lecturer_id' => $data['lecturer_id'] ?? null,
-            'content_covered' => $data['content_covered'] ?? null,
-            'date' => $data['date'] ?? null,
-            'start_time' => $data['start_time'] ?? null,
-            'end_time' => $data['end_time'] ?? null,
-            'created_by' => 'admin',
+        $data = $request->validate([
+            'subject_ids' => 'required|array|min:1',
+            'subject_ids.*' => 'exists:subjects,id',
+            'lecturer_id' => 'nullable|exists:lecturers,id',
+            'content_covered' => 'nullable|string',
+            'date' => 'nullable|date',
+            'start_time' => 'nullable|date_format:H:i',
+            'end_time' => 'nullable|date_format:H:i|after:start_time',
+        ], [
+            'end_time.after' => 'End time must be after start time.',
+            'subject_ids.required' => 'Select at least one module.',
         ]);
 
-        return redirect()->route('admin.lecture-records.show', $id)
-            ->with('success', 'Lecture record created successfully.');
+        foreach ($data['subject_ids'] as $subjectId) {
+            LectureRecord::create([
+                'subject_id' => $subjectId,
+                'lecturer_id' => $data['lecturer_id'] ?? null,
+                'content_covered' => $data['content_covered'] ?? null,
+                'date' => $data['date'] ?? null,
+                'start_time' => $data['start_time'] ?? null,
+                'end_time' => $data['end_time'] ?? null,
+                'created_by' => 'admin',
+            ]);
+        }
+
+        $count = count($data['subject_ids']);
+
+        return redirect()->route('admin.lecture-records.index')
+            ->with('success', "{$count} lecture record(s) created successfully.");
     }
 
     public function edit(LectureRecord $record)
@@ -108,6 +123,30 @@ class LectureRecordController extends Controller
         return $pdf->download('lecture-records-' . $subject->code . '.pdf');
     }
 
+    public function pdfAll()
+    {
+        $records = LectureRecord::with(['subject.course.faculty', 'subject.level', 'lecturer'])
+            ->orderBy('date')
+            ->get();
+
+        $grouped = $records
+            ->groupBy(fn($r) => optional(optional($r->subject->course)->faculty)->name ?? 'Unassigned Faculty')
+            ->map(fn($facultyRecords) => $facultyRecords
+                ->groupBy(fn($r) => optional($r->subject->course)->name ?? 'Unassigned Course')
+                ->map(fn($courseRecords) => $courseRecords
+                    ->groupBy(fn($r) => optional($r->subject->level)->name ?? 'Unassigned Level')
+                    ->map(fn($levelRecords) => $levelRecords
+                        ->groupBy(fn($r) => $r->subject->code . ' - ' . $r->subject->name)
+                    )
+                )
+            );
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->loadView('admin.lecture-records.pdf-grouped', compact('grouped'));
+
+        return $pdf->download('lecture-records-grouped.pdf');
+    }
+
     private function validateData(Request $request)
     {
         return $request->validate([
@@ -120,4 +159,33 @@ class LectureRecordController extends Controller
             'end_time.after' => 'End time must be after start time.',
         ]);
     }
+
+    public function getCourses($facultyId)
+    {
+        return response()->json(
+            \App\Models\Course::where('faculty_id', $facultyId)->get(['id', 'name'])
+        );
+    }
+
+    public function getLevels($courseId)
+    {
+        return response()->json(
+            \App\Models\Level::where('course_id', $courseId)->get(['id', 'name'])
+        );
+    }
+
+    public function getSemesters($levelId)
+    {
+        return response()->json(
+            \App\Models\Semester::where('level_id', $levelId)->get(['id', 'name'])
+        );
+    }
+
+    public function getSubjects($semesterId)
+    {
+        return response()->json(
+            Subject::where('semester_id', $semesterId)->get(['id', 'code', 'name'])
+        );
+    }
+
 }

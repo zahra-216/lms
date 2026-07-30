@@ -44,6 +44,12 @@
 <div class="container">
     <h1>Lecture Records</h1>
 
+    <div class="text-center mb-3">
+        <a href="{{ route('admin.lecture-records.pdf-all') }}" class="btn btn-navy">
+            <i class="fa fa-download"></i> Download All (Grouped PDF)
+        </a>
+    </div>
+
     @forelse($grouped as $facultyName => $courses)
         @php $facultyId = \Illuminate\Support\Str::slug($facultyName); @endphp
         <div class="level-card">

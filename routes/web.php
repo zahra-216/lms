@@ -153,26 +153,12 @@ Route::prefix('lecturer')->group(function () {
             Route::get('/subject/{id}/attendance/history/{date}/pdf', [App\Http\Controllers\LecturerAttendanceController::class, 'historyPdf'])
                 ->name('subject.attendance.history.pdf');
 
-            // Lecture Records
-            Route::get('/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'select'])
-                ->name('lecture-records.select');
-            Route::get('/lecture-records/get-courses/{faculty}', [App\Http\Controllers\LecturerLectureRecordController::class, 'getCourses'])
-                ->name('lecture-records.get-courses');
-            Route::get('/lecture-records/get-levels/{course}', [App\Http\Controllers\LecturerLectureRecordController::class, 'getLevels'])
-                ->name('lecture-records.get-levels');
-            Route::get('/lecture-records/get-semesters/{level}', [App\Http\Controllers\LecturerLectureRecordController::class, 'getSemesters'])
-                ->name('lecture-records.get-semesters');
-            Route::get('/lecture-records/get-subjects/{semester}', [App\Http\Controllers\LecturerLectureRecordController::class, 'getSubjects'])
-                ->name('lecture-records.get-subjects');
+            // Lecture Records — read-only history + add content
+            Route::get('/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'index'])
+                ->name('lecture-records.index');
 
-            Route::get('/subject/{id}/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'index'])
-                ->name('subject.lecture-records');
-            Route::get('/subject/{id}/lecture-records/create', [App\Http\Controllers\LecturerLectureRecordController::class, 'create'])
-                ->name('subject.lecture-records.create');
-            Route::post('/subject/{id}/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'store'])
-                ->name('subject.lecture-records.store');
-            Route::get('/subject/{id}/lecture-records/pdf', [App\Http\Controllers\LecturerLectureRecordController::class, 'pdf'])
-                ->name('subject.lecture-records.pdf');
+            Route::get('/lecture-records/pdf', [App\Http\Controllers\LecturerLectureRecordController::class, 'pdf'])
+                ->name('lecture-records.pdf');
 
             Route::get('/lecture-record/{record}/add-content', [App\Http\Controllers\LecturerLectureRecordController::class, 'addContentForm'])
                 ->name('lecture-records.add-content');
@@ -431,16 +417,30 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('lecture-records.index');
     Route::get('/lecture-records/subject/{id}', [App\Http\Controllers\Admin\LectureRecordController::class, 'show'])
         ->name('lecture-records.show');
-    Route::get('/lecture-records/subject/{id}/create', [App\Http\Controllers\Admin\LectureRecordController::class, 'create'])
+
+    Route::get('/lecture-records/create', [App\Http\Controllers\Admin\LectureRecordController::class, 'create'])
         ->name('lecture-records.create');
-    Route::post('/lecture-records/subject/{id}', [App\Http\Controllers\Admin\LectureRecordController::class, 'store'])
+    Route::post('/lecture-records', [App\Http\Controllers\Admin\LectureRecordController::class, 'store'])
         ->name('lecture-records.store');
+
+    Route::get('/lecture-records/get-courses/{faculty}', [App\Http\Controllers\Admin\LectureRecordController::class, 'getCourses'])
+        ->name('lecture-records.get-courses');
+    Route::get('/lecture-records/get-levels/{course}', [App\Http\Controllers\Admin\LectureRecordController::class, 'getLevels'])
+        ->name('lecture-records.get-levels');
+    Route::get('/lecture-records/get-semesters/{level}', [App\Http\Controllers\Admin\LectureRecordController::class, 'getSemesters'])
+        ->name('lecture-records.get-semesters');
+    Route::get('/lecture-records/get-subjects/{semester}', [App\Http\Controllers\Admin\LectureRecordController::class, 'getSubjects'])
+        ->name('lecture-records.get-subjects');
+
     Route::get('/lecture-records/{record}/edit', [App\Http\Controllers\Admin\LectureRecordController::class, 'edit'])
         ->name('lecture-records.edit');
     Route::put('/lecture-records/{record}', [App\Http\Controllers\Admin\LectureRecordController::class, 'update'])
         ->name('lecture-records.update');
+
     Route::get('/lecture-records/subject/{id}/pdf', [App\Http\Controllers\Admin\LectureRecordController::class, 'pdf'])
         ->name('lecture-records.pdf');
+    Route::get('/lecture-records/pdf-all', [App\Http\Controllers\Admin\LectureRecordController::class, 'pdfAll'])
+        ->name('lecture-records.pdf-all');
 
     // Student payments
     Route::get('/payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])

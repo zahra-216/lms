@@ -58,7 +58,7 @@
             <small>Lecture Records</small>
         </div>
         <div class="top-actions">
-            <a href="{{ route('admin.lecture-records.create', $subject->id) }}" class="action-btn">
+            <a href="{{ route('admin.lecture-records.create') }}" class="action-btn">
                 <i class="bi bi-plus-circle"></i> Add Record
             </a>
             <a href="{{ route('admin.lecture-records.pdf', $subject->id) }}" class="action-btn">

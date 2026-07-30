@@ -102,9 +102,6 @@
         <h1><i class="bi bi-speedometer2"></i> Lecturer Dashboard</h1>
         <div class="actions">
             <span class="welcome-text">Welcome, {{ $lecturer->name }}</span>
-            <a href="{{ route('lecturer.my.payments') }}" class="btn-pill-light">
-                <i class="bi bi-wallet2"></i> My Payments
-            </a>
             <form method="POST" action="{{ route('lecturer.logout') }}">
                 @csrf
                 <button type="submit" class="logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</button>
@@ -125,7 +122,7 @@
                 <p>Browse the active faculties in your school.</p>
             </div>
             <div class="header-actions">
-                <a href="{{ route('lecturer.lecture-records.select') }}" class="btn-pill-navy">
+                <a href="{{ route('lecturer.lecture-records.index') }}" class="btn-pill-navy">
                     <i class="bi bi-journal-text"></i> Lecture Record
                 </a>
                 <a href="{{ route('lecturer.my.payments') }}" class="btn-pill-navy">
