@@ -71,11 +71,34 @@
             @endforeach
         </select>
 
-        {{-- password intentionally not shown/editable here --}}
+        <div style="position:relative; margin-bottom:15px;">
+            <input type="password" name="password" id="studentNewPassword" placeholder="New Password (leave blank to keep unchanged)" style="width:100%; padding:12px; padding-right:42px; border-radius:8px; border:1px solid #ccc;">
+            <i class="fa fa-eye" id="toggleStudentPw1" onclick="togglePassword('studentNewPassword', this)" style="position:absolute; top:14px; right:14px; cursor:pointer;"></i>
+        </div>
+
+        <div style="position:relative; margin-bottom:15px;">
+            <input type="password" name="password_confirmation" id="studentConfirmPassword" placeholder="Confirm New Password" style="width:100%; padding:12px; padding-right:42px; border-radius:8px; border:1px solid #ccc;">
+            <i class="fa fa-eye" id="toggleStudentPw2" onclick="togglePassword('studentConfirmPassword', this)" style="position:absolute; top:14px; right:14px; cursor:pointer;"></i>
+        </div>
+        <div style="font-size:12px; color:#6b7280; margin:-10px 0 15px;">Only fill this in if you want to reset the student's password.</div>
 
         <button type="submit"><i class="fa fa-edit"></i> Update Student</button>
     </form>
 </div>
+<script>
+function togglePassword(id, icon) {
+    const input = document.getElementById(id);
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+    }
+}
+</script>
 </body>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>

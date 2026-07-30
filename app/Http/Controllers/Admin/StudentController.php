@@ -130,17 +130,22 @@ class StudentController extends Controller
             'course_id' => 'required|integer',
             'level_id' => 'required|integer',
             'semester_id' => 'required|integer',
+            'password' => 'nullable|string|min:6|confirmed',
         ]);
 
-        $student->update([
-            'registration_no' => $request->registration_no,
-            'name' => $request->name,
-            'email' => $request->email,
-            'branch' => $request->branch,
-            'course_id' => $request->course_id,
-            'level_id' => $request->level_id,
-            'semester_id' => $request->semester_id,
-        ]);
+        $student->registration_no = $request->registration_no;
+        $student->name = $request->name;
+        $student->email = $request->email;
+        $student->branch = $request->branch;
+        $student->course_id = $request->course_id;
+        $student->level_id = $request->level_id;
+        $student->semester_id = $request->semester_id;
+
+        if ($request->filled('password')) {
+            $student->password = Hash::make($request->password);
+        }
+
+        $student->save();
 
         return redirect()->route('admin.students.index')
             ->with('success', 'Student updated successfully!');

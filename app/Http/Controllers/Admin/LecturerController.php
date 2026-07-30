@@ -39,4 +39,43 @@ class LecturerController extends Controller
         return redirect()->route('admin.lecturers.index')
             ->with('success', 'Lecturer added successfully!');
     }
+
+    public function edit($id)
+    {
+        $lecturer = Lecturer::findOrFail($id);
+        return view('admin.lecturers.edit', compact('lecturer'));
+    }
+
+    public function update(Request $request, $id)
+    {
+        $lecturer = Lecturer::findOrFail($id);
+
+        $request->validate([
+            'username' => 'required|string|unique:lecturers,username,' . $lecturer->id,
+            'name' => 'required|string|max:255',
+            'email' => 'nullable|email|unique:lecturers,email,' . $lecturer->id,
+            'password' => 'nullable|string|min:6|confirmed',
+        ]);
+
+        $lecturer->username = $request->username;
+        $lecturer->name = $request->name;
+        $lecturer->email = $request->email;
+
+        if ($request->filled('password')) {
+            $lecturer->password = Hash::make($request->password);
+        }
+
+        $lecturer->save();
+
+        return redirect()->route('admin.lecturers.index')
+            ->with('success', 'Lecturer updated successfully!');
+    }
+
+    public function destroy($id)
+    {
+        Lecturer::findOrFail($id)->delete();
+
+        return redirect()->route('admin.lecturers.index')
+            ->with('success', 'Lecturer deleted!');
+    }
 }
