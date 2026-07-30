@@ -111,7 +111,10 @@
     <div class="faculty-grid">
         @foreach($faculties as $faculty)
             @php
-                $imgPath = $faculty->image ? asset('storage/faculty/'.$faculty->image) : 'https://picsum.photos/320/220?random='.$faculty->id;
+                $relativePath = 'storage/faculty/'.$faculty->image;
+                $imgPath = ($faculty->image && file_exists(public_path($relativePath)))
+                    ? asset($relativePath)
+                    : 'https://picsum.photos/320/220?random='.$faculty->id;
             @endphp
             <div class="faculty-card">
                 <a href="{{ route('admin.faculties.courses', $faculty->id) }}" class="faculty-card-link" aria-label="Manage {{ $faculty->name }}"></a>
