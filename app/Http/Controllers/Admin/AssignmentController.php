@@ -13,6 +13,7 @@ use App\Models\Level;
 use App\Models\Subject;
 use App\Events\AssignmentCreated;
 use App\Notifications\AssignmentSubmitted;
+use App\Notifications\AssignmentSubmissionConfirmed;
 
 class AssignmentController extends Controller
 {
@@ -58,12 +59,20 @@ class AssignmentController extends Controller
         $student = Student::find($studentId);
         $assignment = Assignment::find($request->assignment_id);
 
+        // Admin gets in-app notification only (no email)
         foreach (Admin::all() as $admin) {
             try {
                 $admin->notify(new AssignmentSubmitted($student, $assignment));
             } catch (\Exception $e) {
                 \Log::error('Failed to notify admin #' . $admin->id . ' (' . $admin->email . '): ' . $e->getMessage());
             }
+        }
+
+        // Student gets email confirmation
+        try {
+            $student->notify(new \App\Notifications\AssignmentSubmissionConfirmed($assignment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to email student #' . $student->id . ' (' . $student->email . '): ' . $e->getMessage());
         }
 
         return back()->with('success', 'Submitted!');
