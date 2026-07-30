@@ -140,15 +140,10 @@
     </div>
 
     <div class="sidebar-nav">
+        <a href="{{ route('admin.dashboard') }}" class="active"><i class="bi bi-speedometer2"></i> Dashboard</a>
         <a href="{{ route('admin.students.index') }}"><i class="bi bi-people"></i> Students</a>
-        <a href="{{ route('admin.faculties.index') }}"><i class="bi bi-person-badge"></i> Faculty</a>
-        <a href="{{ route('admin.courses.index') }}"><i class="bi bi-journal-bookmark"></i> Courses</a>
-        <a href="{{ route('admin.levels.index') }}"><i class="bi bi-bar-chart-steps"></i> Levels</a>
-        <a href="{{ route('admin.semesters.index') }}"><i class="bi bi-calendar3"></i> Semesters</a>
-        <a href="{{ route('admin.subjects.index') }}"><i class="bi bi-book"></i> Subjects</a>
-        <a href="{{ route('admin.subjects.notes.index', ['subject' => 1]) }}"><i class="bi bi-file-earmark-text"></i> Notes</a>
-        <a href="{{ route('admin.assignments.index') }}"><i class="bi bi-journal-text"></i> Assignments</a>
-        <a href="{{ route('admin.marks.index') }}"><i class="bi bi-clipboard-data"></i> Marks</a>
+        <a href="{{ route('admin.lecturers.index') }}"><i class="bi bi-person-workspace"></i> Lecturers</a>
+        <a href="{{ route('admin.faculties.index') }}"><i class="bi bi-person-badge"></i> Faculties</a>
         <a href="{{ route('admin.attendance.index') }}"><i class="bi bi-calendar-check"></i> Attendance</a>
         <a href="{{ route('admin.lecture-records.index') }}"><i class="bi bi-journal-plus"></i> Lecture Records</a>
         <a href="{{ route('admin.payments.index') }}"><i class="bi bi-cash-coin"></i> Student Payments</a>

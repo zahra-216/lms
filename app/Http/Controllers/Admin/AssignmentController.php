@@ -23,69 +23,6 @@ class AssignmentController extends Controller
         return view('admin.assignments.index', compact('assignments'));
     }
 
-    // CREATE
-    public function create()
-    {
-        $courses = Course::all();
-        $levels = Level::all();
-        $subjects = Subject::all();
-
-        return view('admin.assignments.create', compact('courses', 'levels', 'subjects'));
-    }
-
-    // STORE
-    public function store(Request $request)
-    {
-        $data = $request->validate([
-            'subject_id' => 'required|exists:subjects,id',
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
-            'due_date' => 'required|date',
-            'total_points' => 'nullable|numeric|min:0',
-            'submission_type' => 'nullable|string',
-            'allow_late' => 'nullable|boolean',
-            'late_penalty' => 'nullable|numeric|min:0|max:100',
-            'is_published' => 'nullable|boolean',
-            'assignment_file' => 'nullable|file|max:10240',
-        ]);
-
-        $data['allow_late'] = $request->boolean('allow_late');
-        $data['is_published'] = $request->boolean('is_published', true);
-
-        if ($request->hasFile('assignment_file')) {
-            $data['file_path'] = $request->file('assignment_file')->store('assignments', 'public');
-        }
-
-        unset($data['assignment_file']);
-
-        $assignment = Assignment::create($data);
-
-        // match students by course + level (subject-level enrollment pivot is unused/empty)
-        $studentIds = Student::where('course_id', $assignment->subject->course_id)
-            ->where('level_id', $assignment->subject->level_id)
-            ->pluck('id')
-            ->toArray();
-
-        event(new AssignmentCreated($assignment, $studentIds));
-
-        // Save a database notification too (event above only broadcasts live, doesn't persist)
-        $students = Student::whereIn('id', $studentIds)->get();
-
-        foreach ($students as $student) {
-            try {
-                $student->notify(new \App\Notifications\StudentNotification(
-                    'New Assignment: ' . $assignment->title,
-                    'A new assignment "' . $assignment->title . '" has been posted for ' . $assignment->subject->name,
-                    route('student.subject.portal.assignments', $assignment->subject_id)
-                ));
-            } catch (\Exception $e) {
-                \Log::error('Failed to notify student #' . $student->id . ': ' . $e->getMessage());
-            }
-        }
-
-        return redirect()->route('admin.assignments.index')->with('success', 'Assignment created!');
-    }
-
     // SUBMIT
     public function submit(Request $request)
     {
@@ -130,6 +67,89 @@ class AssignmentController extends Controller
         }
 
         return back()->with('success', 'Submitted!');
+    }
+
+    public function create(\App\Models\Subject $subject)
+    {
+        return view('admin.subject.assignments-create', compact('subject'));
+    }
+
+    public function store(Request $request, \App\Models\Subject $subject)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'due_date' => 'required|date',
+            'total_points' => 'nullable|numeric|min:0',
+            'submission_type' => 'nullable|string',
+            'allow_late' => 'nullable|boolean',
+            'late_penalty' => 'nullable|numeric|min:0|max:100',
+            'is_published' => 'nullable|boolean',
+            'assignment_file' => 'nullable|file|max:10240',
+        ]);
+
+        $data['subject_id'] = $subject->id;
+        $data['allow_late'] = $request->boolean('allow_late');
+        $data['is_published'] = $request->boolean('is_published', true);
+
+        if ($request->hasFile('assignment_file')) {
+            $data['file_path'] = $request->file('assignment_file')->store('assignments', 'public');
+        }
+        unset($data['assignment_file']);
+
+        Assignment::create($data);
+
+        return redirect()->route('admin.subjects.assignments.index', $subject->id)
+            ->with('success', 'Assignment created!');
+    }
+
+    // SUBJECT-SCOPED LIST (mirrors lecturer view)
+    public function subjectIndex(\App\Models\Subject $subject)
+    {
+        $subject->load('assignments.submissions.student');
+        return view('admin.subject.assignments', compact('subject'));
+    }
+
+    public function edit(\App\Models\Subject $subject, Assignment $assignment)
+    {
+        return view('admin.assignments.edit', compact('subject', 'assignment'));
+    }
+
+    public function update(Request $request, \App\Models\Subject $subject, Assignment $assignment)
+    {
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'due_date' => 'required|date',
+            'total_points' => 'nullable|numeric|min:0',
+            'submission_type' => 'nullable|string',
+            'allow_late' => 'nullable|boolean',
+            'late_penalty' => 'nullable|numeric|min:0|max:100',
+            'is_published' => 'nullable|boolean',
+            'assignment_file' => 'nullable|file|max:10240',
+        ]);
+
+        $data['allow_late'] = $request->boolean('allow_late');
+        $data['is_published'] = $request->boolean('is_published', true);
+
+        if ($request->hasFile('assignment_file')) {
+            $data['file_path'] = $request->file('assignment_file')->store('assignments', 'public');
+        } else {
+            unset($data['file_path']);
+        }
+        unset($data['assignment_file']);
+
+        $assignment->update($data);
+
+        return redirect()->route('admin.subjects.assignments.index', $subject->id)
+            ->with('success', 'Assignment updated!');
+    }
+
+    public function destroy(\App\Models\Subject $subject, Assignment $assignment)
+    {
+        $assignment->delete();
+        return redirect()->route('admin.subjects.assignments.index', $subject->id)
+            ->with('success', 'Assignment deleted!');
     }
 
     // SUBMISSIONS

@@ -106,4 +106,10 @@ class FacultyController extends Controller
         return redirect()->route('admin.faculties.index')
             ->with('success', 'Faculty deleted!');
     }
+
+    public function courses($id)
+    {
+        $faculty = Faculty::with('courses.levels.semesters.subjects')->findOrFail($id);
+        return view('admin.faculty.courses', compact('faculty'));
+    }
 }

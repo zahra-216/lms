@@ -313,10 +313,7 @@ Route::prefix('admin')->group(function () {
 
     Route::get('/assignments', [AssignmentController::class, 'index'])
         ->name('admin.assignments.index');
-    Route::get('/assignments/create', [AssignmentController::class, 'create'])
-        ->name('admin.assignments.create');
-    Route::post('/assignments/store', [AssignmentController::class, 'store'])
-        ->name('admin.assignments.store');
+        
     Route::get('/assignments/{id}/submissions', [AssignmentController::class, 'submissions'])
         ->name('admin.assignments.submissions');
 
@@ -377,6 +374,12 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         'subjects' => SubjectController::class,
     ]);
 
+    Route::get('/faculties/{faculty}/courses', [FacultyController::class, 'courses'])
+    ->name('faculties.courses');
+
+    Route::get('/faculties/{faculty}/courses', [FacultyController::class, 'courses'])
+        ->name('faculties.courses');
+
     Route::get('/get-levels/{courseId}', [LevelController::class, 'getByCourse'])
         ->name('levels.byCourse');
 
@@ -386,7 +389,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/semester/{id}/subjects', [SemesterController::class, 'getSubjects'])
         ->name('semester.subjects');
 
-    // Notes (nested under subjects/{subject})
+    // Notes / Assignments / Grades (nested under subjects/{subject})
     Route::prefix('subjects/{subject}')->name('subjects.')->group(function () {
         Route::get('notes', [NoteController::class, 'index'])->name('notes.index');
         Route::get('notes/create', [NoteController::class, 'create'])->name('notes.create');
@@ -395,6 +398,16 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         Route::put('notes/{note}', [NoteController::class, 'update'])->name('notes.update');
         Route::delete('notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
         Route::get('notes/{note}/download', [NoteController::class, 'download'])->name('notes.download');
+
+        Route::get('assignments', [AssignmentController::class, 'subjectIndex'])->name('assignments.index');
+        Route::get('assignments/create', [AssignmentController::class, 'create'])->name('assignments.create');
+        Route::post('assignments', [AssignmentController::class, 'store'])->name('assignments.store');
+        Route::get('assignments/{assignment}/edit', [AssignmentController::class, 'edit'])->name('assignments.edit');
+        Route::put('assignments/{assignment}', [AssignmentController::class, 'update'])->name('assignments.update');
+        Route::delete('assignments/{assignment}', [AssignmentController::class, 'destroy'])->name('assignments.destroy');
+
+        Route::get('grades', [SubjectController::class, 'grades'])->name('grades');
+        Route::post('grades/update', [SubjectController::class, 'updateMarks'])->name('grades.update');
     });
 
     Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'show'])

@@ -1,146 +1,158 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Faculties | TT Metro Campus</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faculties | TT Metro Campus Admin</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    * { box-sizing:border-box; }
+    body { font-family:'Segoe UI', sans-serif; background:#f4f6fb; margin:0; color:#012147; }
 
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background:#f4f6f9;
-            color:#012147;
-            padding:40px;
-        }
+    /* Sidebar (identical to dashboard.blade.php — keep in sync) */
+    .sidebar {
+        width:260px; background:#012147; color:#fff; min-height:100vh;
+        position:fixed; top:0; left:0; z-index:1030; overflow-y:auto;
+        transition:transform .3s ease;
+    }
+    .sidebar-brand { padding:22px 20px; background:#01193a; text-align:center; font-weight:700; font-size:18px; letter-spacing:0.5px; }
+    .sidebar .profile { padding:16px 20px; display:flex; align-items:center; gap:12px; border-bottom:1px solid rgba(255,255,255,0.1); }
+    .sidebar .profile img { width:46px; height:46px; border-radius:50%; object-fit:cover; border:2px solid rgba(255,255,255,0.3); }
+    .sidebar .profile .name { font-weight:600; font-size:14px; }
+    .sidebar .profile .email { font-size:11px; color:#93c5fd; }
+    .sidebar-nav { padding:14px 12px; }
+    .sidebar-nav a { color:#cbd5e1; display:flex; align-items:center; gap:10px; padding:11px 14px; text-decoration:none; border-radius:10px; font-size:14px; margin-bottom:4px; transition:0.2s; }
+    .sidebar-nav a:hover, .sidebar-nav a.active { background:rgba(255,255,255,0.1); color:#fff; }
+    .sidebar-nav a i { font-size:16px; width:20px; text-align:center; }
 
-        .container {
-            max-width:700px;
-            margin:auto;
-            background:#fff;
-            padding:30px;
-            border-radius:12px;
-            box-shadow:0 4px 10px rgba(0,0,0,.1);
-        }
+    .topbar { position:fixed; top:0; left:260px; right:0; height:70px; background:#fff; box-shadow:0 2px 12px rgba(0,0,0,0.06); display:flex; align-items:center; justify-content:space-between; padding:0 26px; z-index:1020; }
+    .topbar h5 { margin:0; font-weight:700; font-size:16px; color:#012147; }
+    .menu-toggle { display:none; background:none; border:none; font-size:22px; color:#012147; }
 
-        h1 {text-align:center; margin-bottom:30px;}
+    .main { margin-left:260px; padding:96px 26px 30px; }
+    .page-title { font-weight:700; font-size:22px; margin-bottom:6px; color:#012147; }
+    .page-subtitle { color:#64748b; font-size:14px; margin-bottom:26px; }
 
-        .success {color:green;text-align:center; margin-bottom:20px;}
-        .error {color:red;text-align:center; margin-bottom:20px;}
+    .add-btn {
+        background:#012147; color:#fff; padding:10px 20px; border-radius:12px;
+        text-decoration:none; font-weight:600; font-size:14px; display:inline-flex;
+        align-items:center; gap:8px; box-shadow:0 6px 16px rgba(1,33,71,0.15); transition:.2s;
+    }
+    .add-btn:hover { background:#1e3a6e; color:#fff; }
 
-        .add-btn {
-            display:inline-block;
-            margin-bottom:20px;
-            padding:10px 20px;
-            background:#012147;
-            color:#fff;
-            border-radius:8px;
-            text-decoration:none;
-            font-weight:bold;
-        }
+    .alert-success-pill {
+        background:#d1fae5; color:#065f46; padding:12px 18px; border-radius:12px;
+        font-size:14px; font-weight:600; margin-bottom:20px; display:flex; align-items:center; gap:8px;
+    }
 
-        .add-btn:hover {background:#021634;}
+    .faculty-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:22px; }
 
-        table {
-            width:100%;
-            border-collapse:collapse;
-        }
+    .faculty-card {
+        background:#fff; border-radius:18px; overflow:hidden; text-decoration:none; color:inherit;
+        box-shadow:0 8px 24px rgba(0,0,0,.07); transition:transform .25s ease, box-shadow .25s ease;
+        display:block; position:relative;
+    }
+    .faculty-card:hover { transform:translateY(-6px); box-shadow:0 14px 32px rgba(0,0,0,.12); color:inherit; }
+    .faculty-card-img { height:150px; background:#f2f5fb; overflow:hidden; }
+    .faculty-card-img img { width:100%; height:100%; object-fit:cover; }
+    .faculty-card-body { padding:18px 20px 20px; }
+    .faculty-card-body h3 { margin:0 0 8px; font-size:17px; color:#012147; font-weight:700; }
+    .faculty-card-cta { font-size:13px; font-weight:600; color:#012147; display:inline-flex; align-items:center; gap:6px; }
 
-        th,td {
-            border:1px solid #ddd;
-            padding:10px;
-            text-align:center;
-        }
+    .card-actions {
+        position:absolute; top:12px; right:12px; display:flex; gap:6px; z-index:5;
+    }
+    .card-actions button, .card-actions a {
+        width:32px; height:32px; border-radius:9px; border:none; display:flex;
+        align-items:center; justify-content:center; font-size:13px; box-shadow:0 4px 10px rgba(0,0,0,0.15);
+    }
+    .icon-edit { background:#ffc107; color:#012147; }
+    .icon-delete { background:#ef4444; color:#fff; }
 
-        .action-btn {
-            padding:6px 12px;
-            border:none;
-            border-radius:6px;
-            cursor:pointer;
-            font-weight:bold;
-        }
-
-        .edit-btn {background:#ffc107; color:#012147;}
-        .edit-btn:hover {background:#e0a800; color:#fff;}
-
-        .delete-btn {background:#dc3545; color:#fff;}
-        .delete-btn:hover {background:#c82333;}
-
-        /* ✅ IMAGE STYLE */
-        .faculty-img {
-            width:60px;
-            height:60px;
-            border-radius:50%;
-            object-fit:cover;
-            border:2px solid #012147;
-        }
-    </style>
+    @media (max-width:992px){
+        .sidebar { transform:translateX(-100%); }
+        .sidebar.open { transform:translateX(0); }
+        .topbar { left:0; }
+        .main { margin-left:0; }
+        .menu-toggle { display:inline-block; }
+    }
+    @media (max-width:576px){
+        .main { padding:88px 14px 24px; }
+        .faculty-grid { grid-template-columns:1fr; }
+    }
+</style>
 </head>
 <body>
 
-<div class="container">
-    <h1>FACULTIES</h1>
-
-    @if(session('success'))
-        <p class="success">{{ session('success') }}</p>
-    @endif
-
-    @if($errors->any())
-        <div class="error">
-            <ul>
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-brand">TT METRO CAMPUS</div>
+    <div class="profile">
+        <img src="{{ auth('admin')->user()->profile_image ?? asset('images/logo.png.jpeg') }}">
+        <div>
+            <div class="name">{{ auth('admin')->user()->name ?? 'Admin' }}</div>
+            <div class="email">{{ auth('admin')->user()->email ?? 'admin@example.com' }}</div>
         </div>
-    @endif
-
-    <a href="{{ route('admin.faculties.create') }}" class="add-btn">
-        <i class="fa fa-plus"></i> Add Faculty
-    </a>
-
-    <table>
-        <tr>
-            <th>#</th>
-            <th>Image</th>   <!-- ✅ NEW -->
-            <th>Faculty Name</th>
-            <th>Actions</th>
-        </tr>
-
-        @foreach($faculties as $faculty)
-        <tr>
-            <td>{{ $loop->iteration }}</td>
-
-            <!-- ✅ IMAGE COLUMN -->
-            <td>
-                @php
-                    $img = $faculty->image
-                        ? asset('storage/faculty/'.$faculty->image)
-                        : 'https://via.placeholder.com/60';
-                @endphp
-
-                <img src="{{ $img }}" class="faculty-img">
-            </td>
-
-            <td>{{ $faculty->name }}</td>
-
-            <td>
-                <a href="{{ route('admin.faculties.edit', $faculty->id) }}" class="action-btn edit-btn">
-                    <i class="fa fa-edit"></i>
-                </a>
-
-                <form action="{{ route('admin.faculties.destroy', $faculty->id) }}" method="POST" style="display:inline-block;" onsubmit="return confirm('Are you sure to delete?');">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="action-btn delete-btn">
-                        <i class="fa fa-trash"></i>
-                    </button>
-                </form>
-            </td>
-        </tr>
-        @endforeach
-
-    </table>
+    </div>
+    <div class="sidebar-nav">
+        <a href="{{ route('admin.dashboard') }}"><i class="bi bi-speedometer2"></i> Dashboard</a>
+        <a href="{{ route('admin.students.index') }}"><i class="bi bi-people"></i> Students</a>
+        <a href="{{ route('admin.lecturers.index') }}"><i class="bi bi-person-workspace"></i> Lecturers</a>
+        <a href="{{ route('admin.faculties.index') }}" class="active"><i class="bi bi-person-badge"></i> Faculties</a>
+        <a href="{{ route('admin.attendance.index') }}"><i class="bi bi-calendar-check"></i> Attendance</a>
+        <a href="{{ route('admin.lecture-records.index') }}"><i class="bi bi-journal-plus"></i> Lecture Records</a>
+        <a href="{{ route('admin.payments.index') }}"><i class="bi bi-cash-coin"></i> Student Payments</a>
+        <a href="{{ route('admin.lecturer-payments.index') }}"><i class="bi bi-wallet2"></i> Lecturer Payments</a>
+    </div>
 </div>
 
+<nav class="topbar">
+    <div class="d-flex align-items-center gap-3">
+        <button class="menu-toggle" id="menuToggle"><i class="bi bi-list"></i></button>
+        <h5>Faculties</h5>
+    </div>
+</nav>
+
+<div class="main">
+    <div class="page-title">Faculties</div>
+    <div class="page-subtitle">Select a faculty to manage its courses, semesters, and subjects.</div>
+
+    @if(session('success'))
+        <div class="alert-success-pill"><i class="bi bi-check-circle-fill"></i> {{ session('success') }}</div>
+    @endif
+
+    <div class="d-flex justify-content-end mb-4">
+        <a href="{{ route('admin.faculties.create') }}" class="add-btn"><i class="bi bi-plus-lg"></i> Add Faculty</a>
+    </div>
+
+    <div class="faculty-grid">
+        @foreach($faculties as $faculty)
+            @php
+                $imgPath = $faculty->image ? asset('storage/faculty/'.$faculty->image) : 'https://picsum.photos/320/220?random='.$loop->index;
+            @endphp
+            <a href="{{ route('admin.faculties.courses', $faculty->id) }}" class="faculty-card">
+                <div class="card-actions">
+                    <a href="{{ route('admin.faculties.edit', $faculty->id) }}" class="icon-edit" onclick="event.stopPropagation()"><i class="bi bi-pencil"></i></a>
+                    <form action="{{ route('admin.faculties.destroy', $faculty->id) }}" method="POST" onsubmit="return confirm('Delete this faculty?')" onclick="event.stopPropagation()">
+                        @csrf @method('DELETE')
+                        <button type="submit" class="icon-delete"><i class="bi bi-trash"></i></button>
+                    </form>
+                </div>
+                <div class="faculty-card-img"><img src="{{ $imgPath }}" alt="{{ $faculty->name }}"></div>
+                <div class="faculty-card-body">
+                    <h3>{{ $faculty->name }}</h3>
+                    <span class="faculty-card-cta">Manage Courses <i class="bi bi-arrow-right"></i></span>
+                </div>
+            </a>
+        @endforeach
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+document.getElementById('menuToggle')?.addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+});
+</script>
 </body>
 </html>
