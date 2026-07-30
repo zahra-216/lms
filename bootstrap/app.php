@@ -22,6 +22,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return route('login');
         });
+
+        $middleware->alias([
+            'student.auth' => \App\Http\Middleware\EnsureStudentLoggedIn::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

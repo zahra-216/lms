@@ -189,7 +189,7 @@ Route::prefix('lecturer')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('student')->name('student.')->group(function () {
+Route::prefix('student')->name('student.')->middleware('student.auth')->group(function () {
 
     Route::get('/grades', [StudentStudentController::class, 'grades'])
         ->name('grades');
@@ -274,7 +274,8 @@ Route::prefix('student')->name('student.')->group(function () {
 
 // Not student-prefixed in URL — left top-level to preserve exact path
 Route::post('/assignment/submit', [AssignmentController::class, 'submit'])
-    ->name('assignment.submit');
+    ->name('assignment.submit')
+    ->middleware('student.auth');
 
 
 /*
@@ -288,9 +289,6 @@ Route::prefix('admin')->group(function () {
     Route::get('/login', [AuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AuthController::class, 'login'])->name('admin.login.submit');
 
-    Route::get('/create', [AdminController::class, 'create'])->name('admin.create');
-    Route::post('/create', [AdminController::class, 'store'])->name('admin.store');
-
     Route::get('/forgot-password', [AdminController::class, 'forgotForm'])
         ->name('admin.password.request');
     Route::post('/forgot-password', [AdminController::class, 'sendResetLink'])
@@ -300,51 +298,6 @@ Route::prefix('admin')->group(function () {
     Route::post('/reset-password', [AdminController::class, 'resetPassword'])
         ->name('admin.password.update');
 });
-
-
-/*
-|--------------------------------------------------------------------------
-| Admin Routes — Currently WITHOUT auth:admin middleware (as in original)
-| ⚠ These were unprotected in the original file too — flagging, not fixing.
-|--------------------------------------------------------------------------
-*/
-
-Route::prefix('admin')->group(function () {
-
-    Route::get('/assignments', [AssignmentController::class, 'index'])
-        ->name('admin.assignments.index');
-        
-    Route::get('/assignments/{id}/submissions', [AssignmentController::class, 'submissions'])
-        ->name('admin.assignments.submissions');
-
-    Route::get('/get-subjects', [AjaxController::class, 'getSubjects']);
-    Route::get('/get-notes/{subject_id}', [AjaxController::class, 'getNotes']);
-
-    // Enrollments
-    Route::get('enrollments/export/pdf', [EnrollmentController::class, 'exportPdf'])
-        ->name('admin.enrollments.pdf');
-    Route::get('enrollments', [EnrollmentController::class, 'index'])
-        ->name('admin.enrollments.index');
-    Route::get('enrollments/create', [EnrollmentController::class, 'create'])
-        ->name('admin.enrollments.create');
-    Route::post('enrollments', [EnrollmentController::class, 'store'])
-        ->name('admin.enrollments.store');
-    Route::get('enrollments/{id}/edit', [EnrollmentController::class, 'edit'])
-        ->name('admin.enrollments.edit');
-    Route::put('enrollments/{id}', [EnrollmentController::class, 'update'])
-        ->name('admin.enrollments.update');
-    Route::delete('enrollments/{id}', [EnrollmentController::class, 'destroy'])
-        ->name('admin.enrollments.delete');
-
-    // Marks
-    Route::get('/marks/{assignment_id}', [MarkController::class, 'create'])
-        ->name('admin.marks.create');
-    Route::post('/marks/store', [MarkController::class, 'store'])
-        ->name('admin.marks.store');
-    Route::get('/marks', [MarkController::class, 'index'])
-        ->name('admin.marks.index');
-});
-
 
 /*
 |--------------------------------------------------------------------------
@@ -356,6 +309,9 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
 
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])
         ->name('dashboard');
+
+    Route::get('/create-admin', [AdminController::class, 'create'])->name('create');
+    Route::post('/create-admin', [AdminController::class, 'store'])->name('store');
 
     Route::post('/logout', function () {
         Auth::guard('admin')->logout();
@@ -374,8 +330,22 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         'subjects' => SubjectController::class,
     ]);
 
-    Route::get('/faculties/{faculty}/courses', [FacultyController::class, 'courses'])
-    ->name('faculties.courses');
+    Route::get('/assignments', [AssignmentController::class, 'index'])
+    ->name('assignments.index');
+
+    Route::get('/assignments/{id}/submissions', [AssignmentController::class, 'submissions'])
+        ->name('assignments.submissions');
+
+    Route::get('/get-subjects', [AjaxController::class, 'getSubjects']);
+    Route::get('/get-notes/{subject_id}', [AjaxController::class, 'getNotes']);
+
+    // Marks
+    Route::get('/marks/{assignment_id}', [MarkController::class, 'create'])
+        ->name('marks.create');
+    Route::post('/marks/store', [MarkController::class, 'store'])
+        ->name('marks.store');
+    Route::get('/marks', [MarkController::class, 'index'])
+        ->name('marks.index');
 
     Route::get('/faculties/{faculty}/courses', [FacultyController::class, 'courses'])
         ->name('faculties.courses');
@@ -388,6 +358,22 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
 
     Route::get('/semester/{id}/subjects', [SemesterController::class, 'getSubjects'])
         ->name('semester.subjects');
+
+    // Enrollments (pending removal)
+    Route::get('enrollments/export/pdf', [EnrollmentController::class, 'exportPdf'])
+        ->name('enrollments.pdf');
+    Route::get('enrollments', [EnrollmentController::class, 'index'])
+        ->name('enrollments.index');
+    Route::get('enrollments/create', [EnrollmentController::class, 'create'])
+        ->name('enrollments.create');
+    Route::post('enrollments', [EnrollmentController::class, 'store'])
+        ->name('enrollments.store');
+    Route::get('enrollments/{id}/edit', [EnrollmentController::class, 'edit'])
+        ->name('enrollments.edit');
+    Route::put('enrollments/{id}', [EnrollmentController::class, 'update'])
+        ->name('enrollments.update');
+    Route::delete('enrollments/{id}', [EnrollmentController::class, 'destroy'])
+        ->name('enrollments.delete');
 
     // Notes / Assignments / Grades (nested under subjects/{subject})
     Route::prefix('subjects/{subject}')->name('subjects.')->group(function () {
