@@ -163,6 +163,11 @@
                 <textarea name="content_covered" class="form-control" rows="4">{{ old('content_covered') }}</textarea>
             </div>
 
+            <div class="mb-4">
+                <label class="form-label">Remarks (optional)</label>
+                <textarea name="remarks" class="form-control" rows="2">{{ old('remarks') }}</textarea>
+            </div>
+
             <button class="btn btn-navy w-100">Save Record(s)</button>
         </form>
     </div>

@@ -12,6 +12,7 @@
 </style>
 </head>
 <body>
+    @include('partials.pdf-header')
     <h2>{{ $subject->code }} - {{ $subject->name }}</h2>
     <div class="meta">Lecture Records</div>
 

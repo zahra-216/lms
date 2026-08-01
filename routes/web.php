@@ -445,6 +445,17 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/lecture-records/pdf-all', [App\Http\Controllers\Admin\LectureRecordController::class, 'pdfAll'])
         ->name('lecture-records.pdf-all');
 
+    Route::get('/lecture-records/reports', [App\Http\Controllers\Admin\LectureRecordController::class, 'reportsIndex'])
+        ->name('lecture-records.reports.index');
+    Route::get('/lecture-records/reports/create', [App\Http\Controllers\Admin\LectureRecordController::class, 'reportsCreate'])
+        ->name('lecture-records.reports.create');
+    Route::post('/lecture-records/reports', [App\Http\Controllers\Admin\LectureRecordController::class, 'reportsStore'])
+        ->name('lecture-records.reports.store');
+    Route::get('/lecture-records/reports/{report}/download', [App\Http\Controllers\Admin\LectureRecordController::class, 'reportsDownload'])
+        ->name('lecture-records.reports.download');
+    Route::delete('/lecture-records/reports/{report}', [App\Http\Controllers\Admin\LectureRecordController::class, 'reportsDestroy'])
+        ->name('lecture-records.reports.destroy');
+
     // Student payments
     Route::get('/payments', [App\Http\Controllers\Admin\PaymentController::class, 'index'])
         ->name('payments.index');

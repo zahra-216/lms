@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Edit Lecture Record</title>
+<title>Generate Lecture Report</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
     body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
     @media (max-width:576px){ body { padding:20px 12px; } }
-    .container { max-width:650px; margin:auto; }
+    .container { max-width:600px; margin:auto; }
     .back-btn{
         border:none; background:#fff; color:#012147; font-weight:600;
         padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
@@ -29,9 +29,6 @@
     .form-label{ font-weight:600; color:#012147; font-size:14px; }
     .form-control{ border-radius:10px; border:1px solid #e2e8f0; padding:10px 14px; }
     .form-control:focus{ border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
-    .row-2{ display:flex; gap:14px; }
-    @media (max-width:576px){ .row-2{ flex-direction:column; } }
-    .row-2 > div{ flex:1; }
     .btn-navy{ background:#012147; color:#fff; border:none; padding:12px; font-weight:600; border-radius:10px; }
     .btn-navy:hover{ background:#1e3a6e; color:#fff; }
 
@@ -54,13 +51,13 @@
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('admin.lecture-records.index') }}" class="back-btn">
+    <a href="{{ route('admin.lecture-records.reports.index') }}" class="back-btn">
         <i class="bi bi-arrow-left"></i> Back
     </a>
 
     <div class="page-header">
-        <h3><i class="bi bi-pencil-square"></i> Edit Lecture Record</h3>
-        <small>{{ $record->subject->code }} - {{ $record->subject->name }}</small>
+        <h3><i class="bi bi-file-earmark-pdf"></i> Generate Lecture Report</h3>
+        <small>Pick a lecturer and a month</small>
     </div>
 
     @if($errors->any())
@@ -74,12 +71,11 @@
     @endif
 
     <div class="card-box">
-        <form action="{{ route('admin.lecture-records.update', $record->id) }}" method="POST">
+        <form action="{{ route('admin.lecture-records.reports.store') }}" method="POST">
             @csrf
-            @method('PUT')
 
             <div class="mb-3">
-                <label class="form-label">Lecturer (optional)</label>
+                <label class="form-label">Lecturer</label>
                 <div class="lecturer-search-box">
                     <input type="text" id="lecturerSearch" class="form-control" placeholder="Search lecturer by name or username...">
                     <div id="lecturerResults" class="lecturer-results">
@@ -97,36 +93,15 @@
                     <span id="lecturerSelectedName"></span>
                     <button type="button" onclick="clearLecturer()">&times;</button>
                 </div>
-                <input type="hidden" name="lecturer_id" id="lecturer_id" value="{{ old('lecturer_id', $record->lecturer_id) }}">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Date</label>
-                <input type="date" name="date" class="form-control" value="{{ old('date', $record->date) }}">
-            </div>
-
-            <div class="row-2 mb-3">
-                <div>
-                    <label class="form-label">Start Time</label>
-                    <input type="time" name="start_time" id="start_time" class="form-control" value="{{ old('start_time', $record->start_time) }}">
-                </div>
-                <div>
-                    <label class="form-label">End Time</label>
-                    <input type="time" name="end_time" id="end_time" class="form-control" value="{{ old('end_time', $record->end_time) }}">
-                </div>
+                <input type="hidden" name="lecturer_id" id="lecturer_id" required>
             </div>
 
             <div class="mb-4">
-                <label class="form-label">Content Covered</label>
-                <textarea name="content_covered" class="form-control" rows="4">{{ old('content_covered', $record->content_covered) }}</textarea>
+                <label class="form-label">Month</label>
+                <input type="month" name="month" class="form-control" value="{{ old('month') }}" required>
             </div>
 
-            <div class="mb-4">
-                <label class="form-label">Remarks (optional)</label>
-                <textarea name="remarks" class="form-control" rows="2">{{ old('remarks', $record->remarks) }}</textarea>
-            </div>
-
-            <button class="btn btn-navy w-100">Update Record</button>
+            <button class="btn btn-navy w-100">Generate Report</button>
         </form>
     </div>
 </div>
@@ -173,18 +148,6 @@ document.addEventListener('click', function (e) {
         resultsBox.classList.remove('show');
     }
 });
-
-document.getElementById('start_time').addEventListener('change', function () {
-    document.getElementById('end_time').min = this.value;
-});
-
-// Pre-fill selected lecturer on page load
-@if($record->lecturer)
-document.addEventListener('DOMContentLoaded', function () {
-    selectedName.textContent = "{{ $record->lecturer->name }}";
-    selectedBox.style.display = 'flex';
-});
-@endif
 </script>
 </body>
 </html>

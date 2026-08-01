@@ -11,6 +11,7 @@
 </style>
 </head>
 <body>
+    @include('partials.pdf-header')
     <h2>My Lecture Records</h2>
 
     <table>

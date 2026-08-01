@@ -14,6 +14,7 @@
 </style>
 </head>
 <body>
+    @include('partials.pdf-header')
     <h1>Lecture Records — Grouped Report</h1>
 
     @foreach($grouped as $facultyName => $courses)

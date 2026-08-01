@@ -54,6 +54,9 @@
             <small>All lecture records across every module</small>
         </div>
         <div class="top-actions">
+            <a href="{{ route('admin.lecture-records.reports.index') }}" class="action-btn">
+                <i class="bi bi-file-earmark-pdf"></i> Reports
+            </a>
             <a href="{{ route('admin.lecture-records.create') }}" class="action-btn">
                 <i class="bi bi-plus-circle"></i> Add Record
             </a>
@@ -67,6 +70,10 @@
         <div class="alert alert-success rounded-3"><i class="bi bi-check-circle"></i> {{ session('success') }}</div>
     @endif
 
+    <div class="card-box" style="margin-bottom:16px; padding:14px 20px;">
+        <input type="text" id="moduleSearch" class="form-control" placeholder="Search by module name or code...">
+    </div>
+
     <div class="card-box">
         <div class="table-responsive">
         <table class="table lr-table align-middle">
@@ -79,12 +86,13 @@
                     <th>Lecturer</th>
                     <th>Content Covered</th>
                     <th>Status</th>
+                    <th>Remarks</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
                 @forelse($records as $record)
-                    <tr>
+                    <tr data-module="{{ strtolower($record->subject ? $record->subject->code.' '.$record->subject->name : '') }}">
                         <td>{{ $record->subject ? $record->subject->code . ' - ' . $record->subject->name : '—' }}</td>
                         <td>{{ $record->date ? \Carbon\Carbon::parse($record->date)->format('d M Y') : '—' }}</td>
                         <td>{{ $record->start_time ? \Carbon\Carbon::parse($record->start_time)->format('h:i A') : '—' }}</td>
@@ -98,6 +106,7 @@
                                 <span class="badge-pending">Pending</span>
                             @endif
                         </td>
+                        <td>{{ $record->remarks ?? '—' }}</td>
                         <td>
                             <a href="{{ route('admin.lecture-records.edit', $record->id) }}" class="action-btn">
                                 <i class="bi bi-pencil"></i> Edit
@@ -112,5 +121,15 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('moduleSearch').addEventListener('input', function () {
+    const query = this.value.toLowerCase().trim();
+    document.querySelectorAll('table.lr-table tbody tr[data-module]').forEach(row => {
+        row.style.display = row.dataset.module.includes(query) ? '' : 'none';
+    });
+});
+</script>
+
 </body>
 </html>
