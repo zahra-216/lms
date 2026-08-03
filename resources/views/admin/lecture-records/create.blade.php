@@ -144,7 +144,7 @@
 
             <div class="mb-3">
                 <label class="form-label">Date</label>
-                <input type="date" name="date" class="form-control" value="{{ old('date') }}">
+                <input type="date" name="date" class="form-control" value="{{ old('date') }}" max="{{ date('Y-m-d') }}">
             </div>
 
             <div class="row-2 mb-3">

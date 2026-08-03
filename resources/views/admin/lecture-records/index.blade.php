@@ -32,6 +32,16 @@
         background:#fff; padding:20px; border-radius:14px;
         box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:26px;
     }
+    .icon-btn{
+        border:none; background:#fff; color:#012147;
+        width:34px; height:34px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06);
+        display:inline-flex; align-items:center; justify-content:center;
+        text-decoration:none; transition:background .15s; font-size:14px;
+    }
+    .icon-btn:hover{ background:#012147; color:#fff; }
+    .icon-btn.text-danger:hover{ background:#ef4444; color:#fff; }
+    .actions-cell{ display:flex; gap:8px; }
+    .module-list-cell{ line-height:1.7; }
     table.lr-table{ border-collapse:separate; border-spacing:0; }
     table.lr-table thead th{
         background:#012147; color:#fff; font-weight:600; border:none;
@@ -94,12 +104,18 @@
                 @forelse($grouped as $group)
                     @php
                         $first = $group->first();
-                        $moduleNames = $group->pluck('subject')->filter()
-                            ->map(fn($s) => $s->code . ' - ' . $s->name)->implode(', ');
+                        $modules = $group->pluck('subject')->filter()->unique('id')->values();
+                        $moduleSearchText = $modules->map(fn($s) => $s->code . ' ' . $s->name)->implode(' ');
                         $idsCsv = $group->pluck('id')->implode(',');
                     @endphp
-                    <tr data-module="{{ strtolower($moduleNames) }}">
-                        <td>{{ $moduleNames ?: '—' }}</td>
+                    <tr data-module="{{ strtolower($moduleSearchText) }}">
+                        <td class="module-list-cell">
+                            @forelse($modules as $subj)
+                                {{ $subj->code }} - {{ $subj->name }}<br>
+                            @empty
+                                —
+                            @endforelse
+                        </td>
                         <td>{{ $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—' }}</td>
                         <td>{{ $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—' }}</td>
                         <td>{{ $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—' }}</td>
@@ -113,18 +129,20 @@
                             @endif
                         </td>
                         <td>{{ $first->remarks ?? '—' }}</td>
-                        <td class="d-flex gap-1">
-                            <a href="{{ route('admin.lecture-records.edit', $idsCsv) }}" class="action-btn">
-                                <i class="bi bi-pencil"></i> Edit
-                            </a>
-                            <form action="{{ route('admin.lecture-records.destroy', $idsCsv) }}" method="POST"
-                                  onsubmit="return confirm('Delete this record{{ $group->count() > 1 ? ' (all '.$group->count().' modules)' : '' }}?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="action-btn text-danger">
-                                    <i class="bi bi-trash"></i> Delete
-                                </button>
-                            </form>
+                        <td>
+                            <div class="actions-cell">
+                                <a href="{{ route('admin.lecture-records.edit', $idsCsv) }}" class="icon-btn" title="Edit">
+                                    <i class="bi bi-pencil"></i>
+                                </a>
+                                <form action="{{ route('admin.lecture-records.destroy', $idsCsv) }}" method="POST"
+                                      onsubmit="return confirm('Delete this record{{ $group->count() > 1 ? ' (all '.$group->count().' modules)' : '' }}?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="icon-btn text-danger" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
                         </td>
                     </tr>
                 @empty

@@ -3,14 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <style>
-    body { font-family: sans-serif; font-size: 12px; color:#012147; }
+    body { font-family: sans-serif; font-size: 11px; color:#012147; }
     h2 { font-size:16px; margin:4px 0 2px; }
     .meta { margin-bottom:18px; color:#555; }
-    table { width:100%; border-collapse:collapse; margin-bottom:16px; }
-    th, td { border:1px solid #ccc; padding:6px 8px; text-align:left; vertical-align:top; }
-    th { background:#012147; color:#fff; }
-    .modules-cell { font-weight:600; white-space:nowrap; font-size:10px; }
-    th:nth-child(2), td:nth-child(2) { width:auto; }
+    table { width:100%; border-collapse:collapse; margin-bottom:16px; table-layout:fixed; }
+    th, td { border:1px solid #ccc; padding:6px 8px; text-align:left; vertical-align:top; word-wrap:break-word; overflow-wrap:break-word; }
+    th { background:#012147; color:#fff; font-size:11px; }
+    .modules-cell { font-weight:600; }
 </style>
 </head>
 <body>
@@ -22,8 +21,8 @@
     <table>
         <thead>
             <tr>
-                <th style="width:35%;">Content Covered</th>
-                <th style="width:30%;">Module(s)</th>
+                <th style="width:22%;">Content Covered</th>
+                <th style="width:43%;">Module(s)</th>
                 <th style="width:20%;">Dates</th>
                 <th style="width:15%;">Remarks</th>
             </tr>
@@ -32,7 +31,13 @@
             @forelse($grouped as $group)
                 <tr>
                     <td>{{ $group['content'] ?: '—' }}</td>
-                    <td class="modules-cell">{{ $group['modules']->isNotEmpty() ? $group['modules']->implode(', ') : '—' }}</td>
+                    <td class="modules-cell">
+                        @forelse($group['modules'] as $mod)
+                            {{ $mod }}@if(!$loop->last)<br>@endif
+                        @empty
+                            —
+                        @endforelse
+                    </td>
                     <td>
                         @php
                             $uniqueDates = $group['records']->pluck('date')->filter()->unique()->values();
