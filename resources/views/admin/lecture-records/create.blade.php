@@ -186,7 +186,8 @@ document.getElementById('facultyList').innerHTML = `
 
 // ---------- Cascading multi-select logic ----------
 function checkedValues(container, cls) {
-    return [...container.querySelectorAll('.' + cls + ':checked')].map(el => el.value);
+    return [...container.querySelectorAll('.' + cls + ':checked')]
+        .flatMap(el => el.value.split(','));
 }
 
 function renderCheckboxes(container, items, cls) {
@@ -196,7 +197,7 @@ function renderCheckboxes(container, items, cls) {
     }
     container.innerHTML = items.map(i => `
         <label class="module-item">
-            <input type="checkbox" class="${cls}" value="${i.id}">
+            <input type="checkbox" class="${cls}" value="${i.ids ? i.ids.join(',') : i.id}">
             ${i.code ? i.code + ' - ' : ''}${i.name}
         </label>
     `).join('');
