@@ -9,7 +9,8 @@
     table { width:100%; border-collapse:collapse; margin-bottom:16px; }
     th, td { border:1px solid #ccc; padding:6px 8px; text-align:left; vertical-align:top; }
     th { background:#012147; color:#fff; }
-    .modules-cell { font-weight:600; }
+    .modules-cell { font-weight:600; white-space:nowrap; font-size:10px; }
+    th:nth-child(2), td:nth-child(2) { width:auto; }
 </style>
 </head>
 <body>
@@ -33,9 +34,14 @@
                     <td>{{ $group['content'] ?: '—' }}</td>
                     <td class="modules-cell">{{ $group['modules']->isNotEmpty() ? $group['modules']->implode(', ') : '—' }}</td>
                     <td>
-                        @foreach($group['records'] as $record)
-                            {{ $record->date ? \Carbon\Carbon::parse($record->date)->format('d M Y') : '—' }}@if(!$loop->last)<br>@endif
-                        @endforeach
+                        @php
+                            $uniqueDates = $group['records']->pluck('date')->filter()->unique()->values();
+                        @endphp
+                        @forelse($uniqueDates as $date)
+                            {{ \Carbon\Carbon::parse($date)->format('d M Y') }}@if(!$loop->last)<br>@endif
+                        @empty
+                            —
+                        @endforelse
                     </td>
                     <td>
                         @foreach($group['records'] as $record)
