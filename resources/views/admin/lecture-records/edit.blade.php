@@ -74,7 +74,7 @@
     @endif
 
     <div class="card-box">
-        <form action="{{ route('admin.lecture-records.update', $record->id) }}" method="POST">
+        <form action="{{ route('admin.lecture-records.update', $idsCsv) }}" method="POST">
             @csrf
             @method('PUT')
 

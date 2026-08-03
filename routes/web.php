@@ -420,7 +420,9 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     // Lecture Records
     Route::get('/lecture-records', [App\Http\Controllers\Admin\LectureRecordController::class, 'index'])
         ->name('lecture-records.index');
-
+    Route::delete('/lecture-records/{ids}', [App\Http\Controllers\Admin\LectureRecordController::class, 'destroy'])
+        ->name('lecture-records.destroy')
+        ->where('ids', '[0-9,]+');
     Route::get('/lecture-records/create', [App\Http\Controllers\Admin\LectureRecordController::class, 'create'])
         ->name('lecture-records.create');
     Route::post('/lecture-records', [App\Http\Controllers\Admin\LectureRecordController::class, 'store'])
@@ -435,10 +437,13 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/lecture-records/get-subjects', [App\Http\Controllers\Admin\LectureRecordController::class, 'getSubjects'])
         ->name('lecture-records.get-subjects');
 
-    Route::get('/lecture-records/{record}/edit', [App\Http\Controllers\Admin\LectureRecordController::class, 'edit'])
-        ->name('lecture-records.edit');
-    Route::put('/lecture-records/{record}', [App\Http\Controllers\Admin\LectureRecordController::class, 'update'])
-        ->name('lecture-records.update');
+    Route::get('/lecture-records/{ids}/edit', [App\Http\Controllers\Admin\LectureRecordController::class, 'edit'])
+        ->name('lecture-records.edit')
+        ->where('ids', '[0-9,]+');
+
+    Route::put('/lecture-records/{ids}', [App\Http\Controllers\Admin\LectureRecordController::class, 'update'])
+        ->name('lecture-records.update')
+        ->where('ids', '[0-9,]+');
 
     Route::get('/lecture-records/subject/{id}/pdf', [App\Http\Controllers\Admin\LectureRecordController::class, 'pdf'])
         ->name('lecture-records.pdf');

@@ -17,10 +17,29 @@ class LectureRecordController extends Controller
             ->orderByDesc('id')
             ->get();
 
-        return view('admin.lecture-records.index', compact('records'));
+        $grouped = $records->groupBy(function ($r) {
+            return implode('|', [
+                $r->date,
+                $r->start_time,
+                $r->end_time,
+                $r->lecturer_id,
+                trim($r->content_covered ?? ''),
+                trim($r->remarks ?? ''),
+            ]);
+        })->values();
+
+        return view('admin.lecture-records.index', compact('grouped'));
     }
 
-    // List of records for a subject
+    public function destroy($ids)
+    {
+        $idArray = array_filter(explode(',', $ids));
+        $count = LectureRecord::whereIn('id', $idArray)->delete();
+
+        return redirect()->route('admin.lecture-records.index')
+            ->with('success', "{$count} lecture record(s) deleted.");
+    }
+
     public function show($id)
     {
         $subject = Subject::with(['course.faculty', 'level'])->findOrFail($id);
@@ -76,17 +95,22 @@ class LectureRecordController extends Controller
             ->with('success', "{$count} lecture record(s) created successfully.");
     }
 
-    public function edit(LectureRecord $record)
+    public function edit($ids)
     {
+        $idArray = array_filter(explode(',', $ids));
+        $record = LectureRecord::whereIn('id', $idArray)->firstOrFail();
         $lecturers = Lecturer::orderBy('name')->get(['id', 'name', 'username']);
-        return view('admin.lecture-records.edit', compact('record', 'lecturers'));
+
+        return view('admin.lecture-records.edit', compact('record', 'lecturers'))
+            ->with('idsCsv', $ids);
     }
 
-    public function update(Request $request, LectureRecord $record)
+    public function update(Request $request, $ids)
     {
         $data = $this->validateData($request);
+        $idArray = array_filter(explode(',', $ids));
 
-        $record->update([
+        LectureRecord::whereIn('id', $idArray)->update([
             'lecturer_id' => $data['lecturer_id'] ?? null,
             'content_covered' => $data['content_covered'] ?? null,
             'date' => $data['date'] ?? null,
@@ -95,8 +119,8 @@ class LectureRecordController extends Controller
             'remarks' => $data['remarks'] ?? null,
         ]);
 
-        return redirect()->route('admin.lecture-records.show', $record->subject_id)
-            ->with('success', 'Lecture record updated successfully.');
+        return redirect()->route('admin.lecture-records.index')
+            ->with('success', count($idArray) . ' lecture record(s) updated successfully.');
     }
 
     public function pdf($id)

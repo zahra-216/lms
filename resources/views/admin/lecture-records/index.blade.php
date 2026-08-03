@@ -91,30 +91,44 @@
                 </tr>
             </thead>
             <tbody>
-                @forelse($records as $record)
-                    <tr data-module="{{ strtolower($record->subject ? $record->subject->code.' '.$record->subject->name : '') }}">
-                        <td>{{ $record->subject ? $record->subject->code . ' - ' . $record->subject->name : '—' }}</td>
-                        <td>{{ $record->date ? \Carbon\Carbon::parse($record->date)->format('d M Y') : '—' }}</td>
-                        <td>{{ $record->start_time ? \Carbon\Carbon::parse($record->start_time)->format('h:i A') : '—' }}</td>
-                        <td>{{ $record->end_time ? \Carbon\Carbon::parse($record->end_time)->format('h:i A') : '—' }}</td>
-                        <td>{{ $record->lecturer->name ?? '—' }}</td>
-                        <td>{{ $record->content_covered ?? '—' }}</td>
+                @forelse($grouped as $group)
+                    @php
+                        $first = $group->first();
+                        $moduleNames = $group->pluck('subject')->filter()
+                            ->map(fn($s) => $s->code . ' - ' . $s->name)->implode(', ');
+                        $idsCsv = $group->pluck('id')->implode(',');
+                    @endphp
+                    <tr data-module="{{ strtolower($moduleNames) }}">
+                        <td>{{ $moduleNames ?: '—' }}</td>
+                        <td>{{ $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—' }}</td>
+                        <td>{{ $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—' }}</td>
+                        <td>{{ $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—' }}</td>
+                        <td>{{ $first->lecturer->name ?? '—' }}</td>
+                        <td>{{ $first->content_covered ?? '—' }}</td>
                         <td>
-                            @if($record->content_covered && $record->date)
+                            @if($first->content_covered && $first->date)
                                 <span class="badge-complete">Complete</span>
                             @else
                                 <span class="badge-pending">Pending</span>
                             @endif
                         </td>
-                        <td>{{ $record->remarks ?? '—' }}</td>
-                        <td>
-                            <a href="{{ route('admin.lecture-records.edit', $record->id) }}" class="action-btn">
+                        <td>{{ $first->remarks ?? '—' }}</td>
+                        <td class="d-flex gap-1">
+                            <a href="{{ route('admin.lecture-records.edit', $idsCsv) }}" class="action-btn">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>
+                            <form action="{{ route('admin.lecture-records.destroy', $idsCsv) }}" method="POST"
+                                  onsubmit="return confirm('Delete this record{{ $group->count() > 1 ? ' (all '.$group->count().' modules)' : '' }}?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="action-btn text-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </form>
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="8" class="text-center text-muted">No lecture records yet.</td></tr>
+                    <tr><td colspan="9" class="text-center text-muted">No lecture records yet.</td></tr>
                 @endforelse
             </tbody>
         </table>
