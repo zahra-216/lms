@@ -12,7 +12,7 @@ class NoteController extends Controller
 {
     public function index(Subject $subject)
     {
-        $notes = $subject->notes()->latest()->paginate(10);
+        $notes = $subject->notes()->orderBy('order')->paginate(10);
         return view('admin.notes.index', compact('subject','notes'));
     }
 
