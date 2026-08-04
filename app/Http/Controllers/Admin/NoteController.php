@@ -50,35 +50,35 @@ class NoteController extends Controller
     }
 
     public function update(Request $request, Subject $subject, Note $note)
-{
-    $validated = $request->validate([
-        'title' => 'required|string',
-        'description' => 'nullable|string',
-        'type' => 'required|string',
-        'file_path' => 'nullable|file',
-        'url' => 'nullable|string',
-        'order' => 'nullable|integer',
-        'is_published' => 'required|boolean'
-    ]);
+    {
+        $validated = $request->validate([
+            'title' => 'required|string',
+            'description' => 'nullable|string',
+            'type' => 'required|string',
+            'file_path' => 'nullable|file',
+            'url' => 'nullable|string',
+            'order' => 'nullable|integer',
+            'is_published' => 'required|boolean'
+        ]);
 
-    if ($request->hasFile('file_path')) {
+        if ($request->hasFile('file_path')) {
 
-        if ($note->file_path) {
-            Storage::disk('public')->delete($note->file_path);
+            if ($note->file_path) {
+                Storage::disk('public')->delete($note->file_path);
+            }
+
+            $validated['file_path'] =
+                $request->file('file_path')->store('notes','public');
+        } else {
+            $validated['file_path'] = $note->file_path;
         }
 
-        $validated['file_path'] =
-            $request->file('file_path')->store('notes','public');
-    } else {
-        $validated['file_path'] = $note->file_path;
+        $note->update($validated);
+
+        return redirect()
+            ->route('admin.subjects.notes.index',$subject->id)
+            ->with('success','Note Updated Successfully');
     }
-
-    $note->update($validated);
-
-    return redirect()
-        ->route('subjects.notes.index',$subject->id)
-        ->with('success','Note Updated Successfully');
-}
 
     public function destroy(Subject $subject, Note $note)
     {
@@ -91,7 +91,7 @@ class NoteController extends Controller
         return back()->with('success','Note Deleted Successfully');
     }
 
-    public function download(Note $note)
+    public function download(Subject $subject, Note $note)
     {
         return Storage::disk('public')
             ->download($note->file_path);
