@@ -45,6 +45,7 @@ class LecturerLectureRecordController extends Controller
                     'date' => $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—',
                     'start' => $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—',
                     'end' => $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—',
+                    'duration' => $first->duration ?? '—',
                     'content' => $first->content_covered ?? '—',
                     'remarks' => $first->remarks ?? '—',
                     'status' => ($first->content_covered && $first->date) ? 'Complete' : 'Pending',

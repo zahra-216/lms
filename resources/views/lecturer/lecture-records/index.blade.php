@@ -103,6 +103,7 @@
                         <th>Date</th>
                         <th>Start</th>
                         <th>End</th>
+                        <th>Duration</th>
                         <th>Content Covered</th>
                         <th>Status</th>
                         <th>Remarks</th>
@@ -159,13 +160,14 @@ async function selectMonth(monthNum, btn) {
 
 function renderTable(records) {
     if (!records.length) {
-        recordsBody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">No lecture records for this month.</td></tr>';
+        recordsBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No lecture records for this month.</td></tr>';
     } else {
         recordsBody.innerHTML = records.map(r => `
             <tr data-content="${(r.content || '').toLowerCase()}">
                 <td>${r.date}</td>
                 <td>${r.start}</td>
                 <td>${r.end}</td>
+                <td>${r.duration}</td>
                 <td>${r.content}</td>
                 <td>${r.status === 'Complete' ? '<span class="badge-complete">Complete</span>' : '<span class="badge-pending">Pending</span>'}</td>
                 <td>${r.remarks}</td>

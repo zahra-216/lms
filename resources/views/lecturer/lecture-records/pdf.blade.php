@@ -19,10 +19,11 @@
     <table>
         <thead>
             <tr>
-                <th style="width:15%;">Date</th>
-                <th style="width:12%;">Start</th>
-                <th style="width:12%;">End</th>
-                <th style="width:41%;">Content Covered</th>
+                <th style="width:13%;">Date</th>
+                <th style="width:11%;">Start</th>
+                <th style="width:11%;">End</th>
+                <th style="width:12%;">Duration</th>
+                <th style="width:33%;">Content Covered</th>
                 <th style="width:10%;">Status</th>
                 <th style="width:10%;">Remarks</th>
             </tr>
@@ -34,12 +35,13 @@
                     <td>{{ $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—' }}</td>
                     <td>{{ $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—' }}</td>
                     <td>{{ $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—' }}</td>
+                    <td>{{ $first->duration ?? '—' }}</td>
                     <td>{{ $first->content_covered ?? '—' }}</td>
                     <td>{{ ($first->content_covered && $first->date) ? 'Complete' : 'Pending' }}</td>
                     <td>{{ $first->remarks ?? '—' }}</td>
                 </tr>
             @empty
-                <tr><td colspan="6" style="text-align:center; color:#888;">No records found for this month.</td></tr>
+                <tr><td colspan="7" style="text-align:center; color:#888;">No records found for this month.</td></tr>
             @endforelse
         </tbody>
     </table>

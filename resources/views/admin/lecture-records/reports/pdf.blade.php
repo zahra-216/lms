@@ -21,9 +21,10 @@
     <table>
         <thead>
             <tr>
-                <th style="width:22%;">Content Covered</th>
-                <th style="width:43%;">Module(s)</th>
-                <th style="width:20%;">Dates</th>
+                <th style="width:18%;">Content Covered</th>
+                <th style="width:35%;">Module(s)</th>
+                <th style="width:16%;">Dates</th>
+                <th style="width:16%;">Duration</th>
                 <th style="width:15%;">Remarks</th>
             </tr>
         </thead>
@@ -50,6 +51,16 @@
                     </td>
                     <td>
                         @php
+                            $uniqueDurations = $group['records']->pluck('duration')->filter()->unique()->values();
+                        @endphp
+                        @forelse($uniqueDurations as $duration)
+                            {{ $duration }}@if(!$loop->last)<br>@endif
+                        @empty
+                            —
+                        @endforelse
+                    </td>
+                    <td>
+                        @php
                             $uniqueRemarks = $group['records']->pluck('remarks')->filter()->unique()->values();
                         @endphp
                         @forelse($uniqueRemarks as $remark)
@@ -60,7 +71,7 @@
                     </td>
                 </tr>
             @empty
-                <tr><td colspan="4" style="text-align:center; color:#888;">No records found for this lecturer in this month.</td></tr>
+                <tr><td colspan="5" style="text-align:center; color:#888;">No records found for this lecturer in this month.</td></tr>
             @endforelse
         </tbody>
     </table>

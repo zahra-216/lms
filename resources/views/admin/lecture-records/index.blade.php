@@ -90,6 +90,7 @@
                     <th>Date</th>
                     <th>Start</th>
                     <th>End</th>
+                    <th>Duration</th>
                     <th>Lecturer</th>
                     <th>Content Covered</th>
                     <th>Status</th>
@@ -116,6 +117,7 @@
                         <td>{{ $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—' }}</td>
                         <td>{{ $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—' }}</td>
                         <td>{{ $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—' }}</td>
+                        <td>{{ $first->duration ?? '—' }}</td>
                         <td>{{ $first->lecturer->name ?? '—' }}</td>
                         <td>{{ $first->content_covered ?? '—' }}</td>
                         <td>
@@ -143,7 +145,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="9" class="text-center text-muted">No lecture records yet.</td></tr>
+                    <tr><td colspan="10" class="text-center text-muted">No lecture records yet.</td></tr>
                 @endforelse
             </tbody>
         </table>
