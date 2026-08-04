@@ -3,37 +3,44 @@
 <head>
 <meta charset="UTF-8">
 <style>
-    body { font-family: sans-serif; font-size: 12px; color:#012147; }
-    h2 { margin-bottom:14px; }
-    table { width:100%; border-collapse:collapse; }
-    th, td { border:1px solid #ccc; padding:6px 8px; text-align:left; }
-    th { background:#012147; color:#fff; }
+    body { font-family: sans-serif; font-size: 11px; color:#012147; }
+    h2 { margin-bottom:2px; font-size:16px; }
+    .meta { margin-bottom:14px; color:#555; }
+    table { width:100%; border-collapse:collapse; table-layout:fixed; }
+    th, td { border:1px solid #ccc; padding:6px 8px; text-align:left; word-wrap:break-word; overflow-wrap:break-word; }
+    th { background:#012147; color:#fff; font-size:11px; }
 </style>
 </head>
 <body>
     @include('partials.pdf-header')
     <h2>My Lecture Records</h2>
+    <div class="meta">{{ $month->format('F Y') }}</div>
 
     <table>
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Start</th>
-                <th>End</th>
-                <th>Lecturer</th>
-                <th>Content Covered</th>
+                <th style="width:15%;">Date</th>
+                <th style="width:12%;">Start</th>
+                <th style="width:12%;">End</th>
+                <th style="width:41%;">Content Covered</th>
+                <th style="width:10%;">Status</th>
+                <th style="width:10%;">Remarks</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($records as $record)
+            @forelse($grouped as $group)
+                @php $first = $group->first(); @endphp
                 <tr>
-                    <td>{{ $record->date ? \Carbon\Carbon::parse($record->date)->format('d M Y') : '—' }}</td>
-                    <td>{{ $record->start_time ? \Carbon\Carbon::parse($record->start_time)->format('h:i A') : '—' }}</td>
-                    <td>{{ $record->end_time ? \Carbon\Carbon::parse($record->end_time)->format('h:i A') : '—' }}</td>
-                    <td>{{ $record->lecturer->name ?? '—' }}</td>
-                    <td>{{ $record->content_covered ?? '—' }}</td>
+                    <td>{{ $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—' }}</td>
+                    <td>{{ $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—' }}</td>
+                    <td>{{ $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—' }}</td>
+                    <td>{{ $first->content_covered ?? '—' }}</td>
+                    <td>{{ ($first->content_covered && $first->date) ? 'Complete' : 'Pending' }}</td>
+                    <td>{{ $first->remarks ?? '—' }}</td>
                 </tr>
-            @endforeach
+            @empty
+                <tr><td colspan="6" style="text-align:center; color:#888;">No records found for this month.</td></tr>
+            @endforelse
         </tbody>
     </table>
 </body>

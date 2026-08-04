@@ -157,6 +157,9 @@ Route::prefix('lecturer')->group(function () {
             Route::get('/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'index'])
                 ->name('lecture-records.index');
 
+            Route::get('/lecture-records/by-month', [App\Http\Controllers\LecturerLectureRecordController::class, 'byMonth'])
+                ->name('lecture-records.by-month');
+
             Route::get('/lecture-records/pdf', [App\Http\Controllers\LecturerLectureRecordController::class, 'pdf'])
                 ->name('lecture-records.pdf');
 

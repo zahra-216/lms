@@ -8,20 +8,51 @@ use Illuminate\Support\Facades\Auth;
 
 class LecturerLectureRecordController extends Controller
 {
-    // My Lecture Records — assigned to me, or unclaimed (lecturer_id null)
     public function index()
     {
+        return view('lecturer.lecture-records.index');
+    }
+
+    // AJAX: records for a given month, grouped so multi-module entries collapse into one row
+    public function byMonth(Request $request)
+    {
+        $request->validate([
+            'month' => 'required|date_format:Y-m|before_or_equal:' . date('Y-m'),
+        ]);
+
         $lecturerId = Auth::guard('lecturer')->id();
+        $start = \Carbon\Carbon::createFromFormat('Y-m', $request->month)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
 
         $records = LectureRecord::where(function ($q) use ($lecturerId) {
                 $q->where('lecturer_id', $lecturerId)
                   ->orWhereNull('lecturer_id');
             })
+            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
             ->orderByDesc('date')
             ->orderByDesc('id')
             ->get();
 
-        return view('lecturer.lecture-records.index', compact('records'));
+        $grouped = $records->groupBy(function ($r) {
+                return implode('|', [
+                    $r->date, $r->start_time, $r->end_time,
+                    trim($r->content_covered ?? ''), trim($r->remarks ?? ''),
+                ]);
+            })
+            ->map(function ($group) {
+                $first = $group->first();
+                return [
+                    'date' => $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—',
+                    'start' => $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—',
+                    'end' => $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—',
+                    'content' => $first->content_covered ?? '—',
+                    'remarks' => $first->remarks ?? '—',
+                    'status' => ($first->content_covered && $first->date) ? 'Complete' : 'Pending',
+                ];
+            })
+            ->values();
+
+        return response()->json($grouped);
     }
 
     public function create()
@@ -65,19 +96,38 @@ class LecturerLectureRecordController extends Controller
             ->with('success', 'Content added successfully.');
     }
 
-    public function pdf()
+    public function pdf(Request $request)
     {
-        $lecturerId = Auth::guard('lecturer')->id();
+        $request->validate([
+            'month' => 'required|date_format:Y-m|before_or_equal:' . date('Y-m'),
+        ]);
 
-        $records = LectureRecord::where('lecturer_id', $lecturerId)
+        $lecturerId = Auth::guard('lecturer')->id();
+        $start = \Carbon\Carbon::createFromFormat('Y-m', $request->month)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        $records = LectureRecord::where(function ($q) use ($lecturerId) {
+                $q->where('lecturer_id', $lecturerId)
+                  ->orWhereNull('lecturer_id');
+            })
+            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
             ->orderByDesc('date')
             ->orderByDesc('id')
             ->get();
 
-        $pdf = \PDF::loadView('lecturer.lecture-records.pdf', compact('records'));
+        $grouped = $records->groupBy(function ($r) {
+                return implode('|', [
+                    $r->date, $r->start_time, $r->end_time,
+                    trim($r->content_covered ?? ''), trim($r->remarks ?? ''),
+                ]);
+            })
+            ->values();
 
-        return request()->query('download')
-            ? $pdf->download('my-lecture-records.pdf')
-            : $pdf->stream('my-lecture-records.pdf');
+        $pdf = \PDF::loadView('lecturer.lecture-records.pdf', [
+            'grouped' => $grouped,
+            'month' => $start,
+        ]);
+
+        return $pdf->download('my-lecture-records-' . $start->format('Y-m') . '.pdf');
     }
 }
