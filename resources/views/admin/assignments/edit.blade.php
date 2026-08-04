@@ -1,256 +1,120 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Edit Assignment</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        body{
-            background: linear-gradient(135deg,#f4f6ff,#eef2ff);
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .card-box{
-            max-width: 850px;
-            margin: 50px auto;
-            background: #fff;
-            border-radius: 18px;
-            padding: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        h2{
-            text-align:center;
-            font-weight:700;
-            margin-bottom:25px;
-            color:#3b3b3b;
-        }
-
-        label{
-            font-weight:600;
-            margin-bottom:6px;
-        }
-
-        .form-control{
-            border-radius:10px;
-            padding:10px;
-        }
-
-        .form-control:focus{
-            box-shadow: 0 0 0 0.2rem rgba(13,110,253,.15);
-        }
-
-        .btn-submit{
-            width:100%;
-            padding:12px;
-            border-radius:12px;
-            font-weight:600;
-            background: linear-gradient(90deg,#f59e0b,#f97316);
-            border:none;
-            color:white;
-        }
-
-        .btn-submit:hover{
-            transform: scale(1.02);
-            transition: 0.2s;
-        }
-
-        .section-title{
-            font-size:14px;
-            color:#6b7280;
-            margin-bottom:5px;
-        }
-
-        .back-btn{
-            text-decoration:none;
-            display:inline-block;
-            margin-bottom:15px;
-            color:#4f46e5;
-            font-weight:600;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit Assignment</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<style>
+    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
+    @media (max-width:576px){ body { padding:20px 12px; } }
+    .container { max-width:700px; margin:auto; }
+    .back-btn{ border:none; background:#fff; color:#012147; font-weight:600; padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06); text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+    .back-btn:hover{ background:#012147; color:#fff; }
+    .page-header{ background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff; border-radius:18px; padding:24px 28px; margin:18px 0 26px; box-shadow:0 10px 30px rgba(1,33,71,0.25); }
+    .page-header h3{ margin:0; font-weight:700; font-size:20px; }
+    .page-header small{ opacity:0.85; }
+    .card-box{ background:#fff; padding:26px; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); }
+    .form-label{ font-weight:600; color:#012147; font-size:14px; }
+    .form-control, .form-select{ border-radius:10px; border:1px solid #e2e8f0; padding:10px 14px; }
+    .form-control:focus, .form-select:focus{ border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
+    .form-check-input{ width:18px; height:18px; cursor:pointer; }
+    .form-check-label{ cursor:pointer; }
+    .btn-navy{ background:#012147; color:#fff; border:none; padding:12px; font-weight:600; border-radius:10px; }
+    .btn-navy:hover{ background:#1e3a6e; color:#fff; }
+    .current-file{ font-size:13px; color:#64748b; margin-bottom:8px; }
+</style>
 </head>
-
 <body>
-
-<div class="card-box">
-
-    <a href="{{ route('admin.assignments.index') }}" class="back-btn">
-        ⬅ Back
+<div class="container">
+    <a href="{{ route('admin.subjects.assignments.index', $subject->id) }}" class="back-btn">
+        <i class="bi bi-arrow-left"></i> Back
     </a>
 
-    <h2>✏️ Edit Assignment</h2>
+    <div class="page-header">
+        <h3><i class="bi bi-pencil-square"></i> Edit Assignment</h3>
+        <small>{{ $subject->name }}</small>
+    </div>
 
-    <form action="{{ route('admin.assignments.update', $assignment->id) }}" method="POST" enctype="multipart/form-data">
+    @if($errors->any())
+        <div class="alert alert-danger rounded-3">
+            <ul class="mb-0">
+                @foreach($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
-        @csrf
-        @method('PUT')
+    <div class="card-box">
+        <form action="{{ route('admin.subjects.assignments.update', [$subject->id, $assignment->id]) }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
 
-        <div class="row">
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" value="{{ old('title', $assignment->title) }}" required>
+            </div>
 
-            <!-- Course -->
-            <div class="col-md-6 mb-3">
-                <div class="section-title">Course</div>
-                <select name="course_id" id="course_id" class="form-control">
-                    <option value="">Select Course</option>
-                    @foreach($courses as $c)
-                        <option value="{{ $c->id }}"
-                            {{ $assignment->course_id == $c->id ? 'selected' : '' }}>
-                            {{ $c->name }}
-                        </option>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" required>{{ old('description', $assignment->description) }}</textarea>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Due Date</label>
+                <input type="datetime-local" name="due_date" class="form-control"
+                       value="{{ old('due_date', \Carbon\Carbon::parse($assignment->due_date)->format('Y-m-d\TH:i')) }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Total Points <span class="text-danger">*</span></label>
+                <input type="number" name="total_points" class="form-control" min="0" value="{{ old('total_points', $assignment->total_points) }}" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Submission Type</label>
+                <select name="submission_type" class="form-select">
+                    @foreach(['file' => 'File Upload', 'text' => 'Text', 'link' => 'Link'] as $value => $label)
+                        <option value="{{ $value }}" {{ $assignment->submission_type == $value ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>
 
-            <!-- Level -->
-            <div class="col-md-6 mb-3">
-                <div class="section-title">Level</div>
-                <select name="level_id" id="level_id" class="form-control">
-                    <option value="">Select Level</option>
-                    @foreach($levels as $l)
-                        <option value="{{ $l->id }}"
-                            {{ $assignment->level_id == $l->id ? 'selected' : '' }}>
-                            {{ $l->name }}
-                        </option>
-                    @endforeach
-                </select>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="allow_late" value="1" class="form-check-input" id="allowLate" {{ $assignment->allow_late ? 'checked' : '' }}>
+                <label class="form-check-label" for="allowLate">Allow late submissions</label>
             </div>
 
-        </div>
-
-        <div class="row">
-
-            <!-- Subject -->
-            <div class="col-md-6 mb-3">
-                <div class="section-title">Subject</div>
-                <select name="subject_id" id="subject_id" class="form-control">
-                    <option value="">Select Subject</option>
-
-                    @foreach($subjects as $s)
-                        <option value="{{ $s->id }}"
-                            {{ $assignment->subject_id == $s->id ? 'selected' : '' }}>
-                            {{ $s->name }}
-                        </option>
-                    @endforeach
-                </select>
+            <div class="mb-3">
+                <label class="form-label">Late Penalty (%)</label>
+                <input type="number" name="late_penalty" class="form-control" min="0" max="100" value="{{ old('late_penalty', $assignment->late_penalty) }}">
             </div>
 
-            <!-- Note -->
-            <div class="col-md-6 mb-3">
-                <div class="section-title">Note</div>
-                <select name="note_id" id="note_id" class="form-control">
-                    <option value="">Select Note</option>
-
-                    @foreach($notes as $n)
-                        <option value="{{ $n->id }}"
-                            {{ $assignment->note_id == $n->id ? 'selected' : '' }}>
-                            {{ $n->title ?? $n->name }}
-                        </option>
-                    @endforeach
-                </select>
+            <div class="mb-3 form-check">
+                <input type="checkbox" name="is_published" value="1" class="form-check-input" id="isPublished" {{ $assignment->is_published ? 'checked' : '' }}>
+                <label class="form-check-label" for="isPublished">Publish immediately</label>
             </div>
 
-        </div>
+            <div class="mb-3">
+                <label class="form-label">Attachment (assignment brief / instructions document)</label>
 
-        <!-- Title -->
-        <div class="mb-3">
-            <div class="section-title">Title</div>
-            <input type="text" name="title" class="form-control"
-                   value="{{ $assignment->title }}" required>
-        </div>
+                @if($assignment->file_path)
+                    <div class="current-file">
+                        Current file:
+                        <a href="{{ Storage::disk('public')->url($assignment->file_path) }}" target="_blank">
+                            {{ basename($assignment->file_path) }}
+                        </a>
+                    </div>
+                @endif
 
-        <!-- Description -->
-        <div class="mb-3">
-            <div class="section-title">Description</div>
-            <textarea name="description" class="form-control" rows="3">{{ $assignment->description }}</textarea>
-        </div>
+                <input type="file" name="assignment_file" class="form-control">
+            </div>
 
-        <!-- Due Date -->
-        <div class="mb-3">
-            <div class="section-title">Due Date</div>
-            <input type="datetime-local" name="due_date" class="form-control"
-                   value="{{ \Carbon\Carbon::parse($assignment->due_date)->format('Y-m-d\TH:i') }}">
-        </div>
-
-        <!-- File -->
-        <div class="mb-3">
-            <div class="section-title">Attachment</div>
-
-            @if($assignment->file)
-                <p class="text-muted">Current File: {{ $assignment->file }}</p>
-            @endif
-
-            <input type="file" name="assignment_file" class="form-control">
-        </div>
-
-        <!-- Submit -->
-        <button class="btn btn-submit mt-3">
-            💾 Update Assignment
-        </button>
-
-    </form>
-
+            <button class="btn btn-navy w-100">Update Assignment</button>
+        </form>
+    </div>
 </div>
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-<script>
-// OPTIONAL AJAX (same like create page)
-
-// SUBJECT LOAD
-$('#course_id, #level_id').on('change', function(){
-
-    let course = $('#course_id').val();
-    let level = $('#level_id').val();
-
-    $('#subject_id').html('<option>Loading...</option>');
-
-    if(course && level){
-
-        $.ajax({
-            url: '/admin/get-subjects',
-            type: 'GET',
-            data: { course_id: course, level_id: level },
-
-            success: function(data){
-
-                $('#subject_id').empty().append('<option value="">Select Subject</option>');
-
-                data.forEach(function(s){
-                    $('#subject_id').append(`<option value="${s.id}">${s.name}</option>`);
-                });
-            }
-        });
-    }
-});
-
-// NOTES LOAD
-$('#subject_id').on('change', function(){
-
-    let id = $(this).val();
-
-    $('#note_id').html('<option>Loading...</option>');
-
-    if(id){
-
-        $.ajax({
-            url: '/admin/get-notes/' + id,
-            type: 'GET',
-
-            success: function(data){
-
-                $('#note_id').empty().append('<option value="">Select Note</option>');
-
-                data.forEach(function(n){
-                    let title = n.title ?? n.name;
-                    $('#note_id').append(`<option value="${n.id}">${title}</option>`);
-                });
-            }
-        });
-    }
-});
-</script>
-
 </body>
 </html>
