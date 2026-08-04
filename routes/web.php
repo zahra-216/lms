@@ -436,20 +436,12 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('lecture-records.get-semesters');
     Route::get('/lecture-records/get-subjects', [App\Http\Controllers\Admin\LectureRecordController::class, 'getSubjects'])
         ->name('lecture-records.get-subjects');
-
     Route::get('/lecture-records/{ids}/edit', [App\Http\Controllers\Admin\LectureRecordController::class, 'edit'])
         ->name('lecture-records.edit')
         ->where('ids', '[0-9,]+');
-
     Route::put('/lecture-records/{ids}', [App\Http\Controllers\Admin\LectureRecordController::class, 'update'])
         ->name('lecture-records.update')
         ->where('ids', '[0-9,]+');
-
-    Route::get('/lecture-records/subject/{id}/pdf', [App\Http\Controllers\Admin\LectureRecordController::class, 'pdf'])
-        ->name('lecture-records.pdf');
-    Route::get('/lecture-records/pdf-all', [App\Http\Controllers\Admin\LectureRecordController::class, 'pdfAll'])
-        ->name('lecture-records.pdf-all');
-
     Route::get('/lecture-records/reports', [App\Http\Controllers\Admin\LectureRecordController::class, 'reportsIndex'])
         ->name('lecture-records.reports.index');
     Route::get('/lecture-records/reports/create', [App\Http\Controllers\Admin\LectureRecordController::class, 'reportsCreate'])
@@ -490,7 +482,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('lecturer-payments.update');
     Route::delete('/lecturer-payments/payment/{id}', [App\Http\Controllers\Admin\LecturerPaymentController::class, 'destroy'])
         ->name('lecturer-payments.destroy');
-
     Route::post('/students/bulk-semester-update', [App\Http\Controllers\Admin\StudentController::class, 'bulkUpdateSemester'])
         ->name('students.bulk.semester.update');
 });

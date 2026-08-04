@@ -40,19 +40,6 @@ class LectureRecordController extends Controller
             ->with('success', "{$count} lecture record(s) deleted.");
     }
 
-    public function show($id)
-    {
-        $subject = Subject::with(['course.faculty', 'level'])->findOrFail($id);
-
-        $records = LectureRecord::where('subject_id', $id)
-            ->with('lecturer')
-            ->orderByDesc('date')
-            ->orderByDesc('id')
-            ->get();
-
-        return view('admin.lecture-records.show', compact('subject', 'records'));
-    }
-
     public function create()
     {
         $faculties = \App\Models\Faculty::orderBy('name')->get(['id', 'name']);
@@ -121,46 +108,6 @@ class LectureRecordController extends Controller
 
         return redirect()->route('admin.lecture-records.index')
             ->with('success', count($idArray) . ' lecture record(s) updated successfully.');
-    }
-
-    public function pdf($id)
-    {
-        $subject = Subject::findOrFail($id);
-
-        $records = LectureRecord::where('subject_id', $id)
-            ->with('lecturer')
-            ->orderByDesc('date')
-            ->orderByDesc('id')
-            ->get();
-
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('admin.lecture-records.pdf', compact('subject', 'records'));
-
-        return $pdf->download('lecture-records-' . $subject->code . '.pdf');
-    }
-
-    public function pdfAll()
-    {
-        $records = LectureRecord::with(['subject.course.faculty', 'subject.level', 'lecturer'])
-            ->orderBy('date')
-            ->get();
-
-        $grouped = $records
-            ->groupBy(fn($r) => optional(optional($r->subject->course)->faculty)->name ?? 'Unassigned Faculty')
-            ->map(fn($facultyRecords) => $facultyRecords
-                ->groupBy(fn($r) => optional($r->subject->course)->name ?? 'Unassigned Course')
-                ->map(fn($courseRecords) => $courseRecords
-                    ->groupBy(fn($r) => optional($r->subject->level)->name ?? 'Unassigned Level')
-                    ->map(fn($levelRecords) => $levelRecords
-                        ->groupBy(fn($r) => $r->subject->code . ' - ' . $r->subject->name)
-                    )
-                )
-            );
-
-        $pdf = app('dompdf.wrapper');
-        $pdf->loadView('admin.lecture-records.pdf-grouped', compact('grouped'));
-
-        return $pdf->download('lecture-records-grouped.pdf');
     }
 
     private function validateData(Request $request)

@@ -70,9 +70,6 @@
             <a href="{{ route('admin.lecture-records.create') }}" class="action-btn">
                 <i class="bi bi-plus-circle"></i> Add Record
             </a>
-            <a href="{{ route('admin.lecture-records.pdf-all') }}" class="action-btn">
-                <i class="bi bi-download"></i> Download All (Grouped PDF)
-            </a>
         </div>
     </div>
 
