@@ -19,7 +19,10 @@ class MarkController extends Controller
             ->where('assignment_id', $assignment_id)
             ->get();
 
-        return view('admin.marks.create', compact('submissions','assignment'));
+        $existingMarks = Mark::where('assignment_id', $assignment_id)
+            ->pluck('marks', 'student_id');
+
+        return view('admin.marks.create', compact('submissions','assignment','existingMarks'));
     }
 
     // STORE MARKS
