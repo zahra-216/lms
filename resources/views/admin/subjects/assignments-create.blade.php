@@ -66,8 +66,8 @@
             </div>
 
             <div class="mb-3">
-                <label class="form-label">Total Points</label>
-                <input type="number" name="total_points" class="form-control" min="0">
+                <label class="form-label">Total Points <span class="text-danger">*</span></label>
+                <input type="number" name="total_points" class="form-control" min="0" required>
             </div>
 
             <div class="mb-3">
