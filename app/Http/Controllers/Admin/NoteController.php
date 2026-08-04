@@ -25,9 +25,12 @@ class NoteController extends Controller
     {
         $validated = $request->validate([
             'title' => 'required|string',
+            'description' => 'nullable|string',
             'type' => 'required|string',
             'file_path' => 'nullable|file',
-            'url' => 'nullable|string'
+            'url' => 'nullable|string',
+            'order' => 'nullable|integer',
+            'is_published' => 'nullable|boolean'
         ]);
 
         if($request->hasFile('file_path')){

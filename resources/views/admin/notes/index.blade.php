@@ -83,6 +83,7 @@
             <thead>
                 <tr>
                     <th>Title</th>
+                    <th>Description</th>
                     <th>Type</th>
                     <th>File / URL</th>
                     <th>Order</th>
