@@ -25,7 +25,17 @@ class MarkController extends Controller
     // STORE MARKS
     public function store(Request $request)
     {
+        $request->validate([
+            'assignment_id' => 'required|exists:assignments,id',
+            'marks' => 'required|array',
+            'marks.*' => 'nullable|numeric|min:0|max:100',
+        ]);
+
         foreach ($request->marks as $student_id => $mark) {
+
+            if ($mark === null || $mark === '') {
+                continue;
+            }
 
             Mark::updateOrCreate(
                 [
