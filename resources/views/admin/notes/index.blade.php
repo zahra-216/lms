@@ -95,6 +95,7 @@
                 @foreach($notes as $note)
                     <tr>
                         <td><b>{{ $note->title }}</b></td>
+                        <td>{{ $note->description }}</td>
                         <td>{{ ucfirst($note->type) }}</td>
                         <td>
                             @if($note->url)
