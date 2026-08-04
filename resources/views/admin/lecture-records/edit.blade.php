@@ -108,11 +108,11 @@
             <div class="row-2 mb-3">
                 <div>
                     <label class="form-label">Start Time</label>
-                    <input type="time" name="start_time" id="start_time" class="form-control" value="{{ old('start_time', $record->start_time) }}">
+                    <input type="time" name="start_time" id="start_time" class="form-control" value="{{ old('start_time', $record->start_time ? \Carbon\Carbon::parse($record->start_time)->format('H:i') : '') }}">
                 </div>
                 <div>
                     <label class="form-label">End Time</label>
-                    <input type="time" name="end_time" id="end_time" class="form-control" value="{{ old('end_time', $record->end_time) }}">
+                    <input type="time" name="end_time" id="end_time" class="form-control" value="{{ old('end_time', $record->end_time ? \Carbon\Carbon::parse($record->end_time)->format('H:i') : '') }}">
                 </div>
             </div>
 

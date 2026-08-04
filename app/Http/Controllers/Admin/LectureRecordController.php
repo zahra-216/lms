@@ -260,7 +260,7 @@ class LectureRecordController extends Controller
     {
         $data = $request->validate([
             'lecturer_id' => 'required|exists:lecturers,id',
-            'month' => 'required|date_format:Y-m',
+            'month' => 'required|date_format:Y-m|before_or_equal:' . date('Y-m'),
         ]);
 
         $lecturer = Lecturer::findOrFail($data['lecturer_id']);

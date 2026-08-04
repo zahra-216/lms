@@ -98,7 +98,7 @@
 
             <div class="mb-4">
                 <label class="form-label">Month</label>
-                <input type="month" name="month" class="form-control" value="{{ old('month') }}" required>
+                <input type="month" name="month" class="form-control" value="{{ old('month') }}" max="{{ date('Y-m') }}" required>
             </div>
 
             <button class="btn btn-navy w-100">Generate Report</button>

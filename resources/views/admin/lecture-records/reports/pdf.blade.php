@@ -49,9 +49,14 @@
                         @endforelse
                     </td>
                     <td>
-                        @foreach($group['records'] as $record)
-                            {{ $record->remarks ?? '—' }}@if(!$loop->last)<br>@endif
-                        @endforeach
+                        @php
+                            $uniqueRemarks = $group['records']->pluck('remarks')->filter()->unique()->values();
+                        @endphp
+                        @forelse($uniqueRemarks as $remark)
+                            {{ $remark }}@if(!$loop->last)<br>@endif
+                        @empty
+                            —
+                        @endforelse
                     </td>
                 </tr>
             @empty
