@@ -90,7 +90,7 @@
             @if($note->file_path)
                 <div class="mb-3">
                     <label class="form-label">Current File</label><br>
-                    <a href="{{ route('notes.download',$note->id) }}" class="btn-download">
+                    <a href="{{ route('admin.subjects.notes.download', [$subject->id, $note->id]) }}" class="btn-download">
                         <i class="bi bi-download"></i> Download Existing File
                     </a>
                 </div>
