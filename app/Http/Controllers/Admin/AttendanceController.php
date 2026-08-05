@@ -99,7 +99,7 @@ class AttendanceController extends Controller
         return view('admin.attendance.history', compact('subject', 'months'));
     }
 
-    public function monthlyPdf($id, $month)
+    public function monthlyPdf(Request $request, $id, $month)
     {
         $subject = Subject::findOrFail($id);
 
@@ -128,6 +128,10 @@ class AttendanceController extends Controller
         $pdf->setPaper('a4', 'landscape');
         $pdf->loadView('admin.attendance.monthly-pdf', compact('subject', 'students', 'dates', 'records', 'start'));
 
-        return $pdf->download('attendance-' . $subject->code . '-' . $start->format('Y-m') . '.pdf');
+        $filename = 'attendance-' . $subject->code . '-' . $start->format('Y-m') . '.pdf';
+
+        return $request->query('download')
+            ? $pdf->download($filename)
+            : $pdf->stream($filename);
     }
 }

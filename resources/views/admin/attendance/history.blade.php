@@ -46,7 +46,10 @@
             <div class="month-card">
                 <span><i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('F Y') }}</span>
                 <span class="icons">
-                    <a href="{{ route('admin.attendance.monthly.pdf', ['id' => $subject->id, 'month' => $month]) }}" target="_blank" title="View / Download">
+                    <a href="{{ route('admin.attendance.monthly.pdf', ['id' => $subject->id, 'month' => $month]) }}" target="_blank" title="View">
+                        <i class="bi bi-eye"></i>
+                    </a>
+                    <a href="{{ route('admin.attendance.monthly.pdf', ['id' => $subject->id, 'month' => $month]) }}?download=1" title="Download">
                         <i class="bi bi-download"></i>
                     </a>
                 </span>
