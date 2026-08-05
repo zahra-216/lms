@@ -161,6 +161,25 @@ class AssignmentController extends Controller
             ->with('success', 'Assignment deleted!');
     }
 
+    public function browse()
+    {
+        $subjects = Subject::with(['course.faculty', 'level', 'semester'])->get();
+
+        $grouped = $subjects
+            ->groupBy(function ($s) { return optional(optional($s->course)->faculty)->name ?? 'Unassigned Faculty'; })
+            ->map(function ($facultySubjects) {
+                return $facultySubjects->groupBy(function ($s) { return optional($s->course)->name ?? 'Unassigned Course'; })
+                    ->map(function ($courseSubjects) {
+                        return $courseSubjects->groupBy(function ($s) { return optional($s->level)->name ?? 'Unassigned Level'; })
+                            ->map(function ($levelSubjects) {
+                                return $levelSubjects->groupBy(function ($s) { return optional($s->semester)->name ?? 'Unassigned Semester'; });
+                            });
+                    });
+            });
+
+        return view('admin.assignments.browse', compact('grouped'));
+    }
+
     // SUBMISSIONS
     public function submissions($id)
     {

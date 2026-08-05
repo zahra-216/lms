@@ -315,7 +315,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     ]);
 
     Route::get('/assignments', [AssignmentController::class, 'index'])
-    ->name('assignments.index');
+        ->name('assignments.index');
+
+    Route::get('/assignments/browse', [AssignmentController::class, 'browse'])
+        ->name('assignments.browse');
 
     Route::get('/assignments/{id}/submissions', [AssignmentController::class, 'submissions'])
         ->name('assignments.submissions');
