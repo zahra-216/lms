@@ -8,7 +8,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
     body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-    .container { max-width:700px; margin:auto; }
+    .container { max-width:900px; margin:auto; }
     .back-btn{
         border:none; background:#fff; color:#012147; font-weight:600;
         padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
@@ -29,6 +29,7 @@
     }
     .month-card:hover{ background:#eef2f9; color:#012147; }
     .month-card .icons a{ color:#012147; margin-left:14px; font-size:18px; }
+    .month-card .icons button{ background:none; border:none; color:#dc2626; margin-left:14px; font-size:18px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -41,17 +42,26 @@
         <h2><i class="bi bi-clock-history"></i> {{ $subject->code }} - Attendance History</h2>
     </div>
 
+    @if(session('success'))
+        <div class="alert alert-success rounded-3 mb-3"><i class="bi bi-check-circle"></i> {{ session('success') }}</div>
+    @endif
+
     <div class="d-flex flex-column gap-3">
         @forelse($months as $month)
             <div class="month-card">
                 <span><i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('F Y') }}</span>
-                <span class="icons">
+                <span class="icons d-flex align-items-center">
                     <a href="{{ route('admin.attendance.monthly.pdf', ['id' => $subject->id, 'month' => $month]) }}" target="_blank" title="View">
                         <i class="bi bi-eye"></i>
                     </a>
                     <a href="{{ route('admin.attendance.monthly.pdf', ['id' => $subject->id, 'month' => $month]) }}?download=1" title="Download">
                         <i class="bi bi-download"></i>
                     </a>
+                    <form action="{{ route('admin.attendance.monthly.destroy', ['id' => $subject->id, 'month' => $month]) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete all attendance records for {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('F Y') }}? This cannot be undone.')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" title="Delete"><i class="bi bi-trash"></i></button>
+                    </form>
                 </span>
             </div>
         @empty

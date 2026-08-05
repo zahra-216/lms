@@ -416,6 +416,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('attendance.history');
     Route::get('/attendance/{id}/history/{month}/pdf', [App\Http\Controllers\Admin\AttendanceController::class, 'monthlyPdf'])
         ->name('attendance.monthly.pdf');
+    Route::delete('/attendance/{id}/history/{month}', [App\Http\Controllers\Admin\AttendanceController::class, 'deleteMonth'])
+        ->name('attendance.monthly.destroy');
 
     // Lecture Records
     Route::get('/lecture-records', [App\Http\Controllers\Admin\LectureRecordController::class, 'index'])

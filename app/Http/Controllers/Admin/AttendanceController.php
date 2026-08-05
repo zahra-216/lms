@@ -134,4 +134,17 @@ class AttendanceController extends Controller
             ? $pdf->download($filename)
             : $pdf->stream($filename);
     }
+
+    public function deleteMonth($id, $month)
+    {
+        $start = Carbon::createFromFormat('Y-m', $month)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        Attendance::where('subject_id', $id)
+            ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
+            ->delete();
+
+        return redirect()->route('admin.attendance.history', $id)
+            ->with('success', 'Attendance for ' . $start->format('F Y') . ' deleted.');
+    }
 }
