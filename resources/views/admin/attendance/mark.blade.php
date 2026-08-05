@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ $subject->name }} - Attendance</title>
+<title>{{ $subject->name }} - Mark Attendance</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
@@ -32,7 +32,6 @@
         display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
     }
     .page-header h2{ margin:0; font-weight:700; font-size:22px; }
-    .page-header small{ opacity:0.85; }
 
     .card-box{
         background:#fff; padding:20px; border-radius:14px;
@@ -65,10 +64,10 @@
 <body>
 <div class="container">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn">
+        <a href="{{ route('admin.attendance.show', $subject->id) }}" class="back-btn">
             <i class="bi bi-arrow-left"></i> Back
         </a>
-        <a href="{{ route('lecturer.subject.attendance.history', $subject->id) }}" class="back-btn">
+        <a href="{{ route('admin.attendance.history', $subject->id) }}" class="back-btn">
             <i class="bi bi-clock-history"></i> View History
         </a>
     </div>
@@ -76,7 +75,7 @@
     <div class="page-header">
         <div>
             <h2><i class="bi bi-calendar-check"></i> {{ $subject->code }} - {{ $subject->name }}</h2>
-            <small>Attendance</small>
+            <small>Mark Attendance</small>
         </div>
         <i class="bi bi-clipboard2-check" style="font-size:44px; opacity:0.85;"></i>
     </div>
@@ -92,14 +91,14 @@
     @endif
 
     <div class="card-box">
-        <form method="GET" action="{{ route('lecturer.subject.attendance', $subject->id) }}" class="date-form mb-4 d-flex gap-2 align-items-end">
+        <form method="GET" action="{{ route('admin.attendance.mark', $subject->id) }}" class="date-form mb-4 d-flex gap-2 align-items-end">
             <div>
                 <label>Select Date</label>
                 <input type="date" name="date" value="{{ $date }}" max="{{ now()->toDateString() }}" class="form-control" onchange="this.form.submit()">
             </div>
         </form>
 
-        <form method="POST" action="{{ route('lecturer.subject.attendance.store', $subject->id) }}">
+        <form method="POST" action="{{ route('admin.attendance.mark.store', $subject->id) }}">
             @csrf
             <input type="hidden" name="date" value="{{ $date }}">
 
@@ -127,17 +126,18 @@
                 </thead>
                 <tbody id="attendanceTableBody">
                     @foreach($students as $student)
+                        @php $status = $attendance->get($student->id)?->status; @endphp
                         <tr>
                             <td>{{ $student->registration_no }}</td>
                             <td>{{ $student->name }}</td>
                             <td>
-                                <input class="form-check-input" type="radio" name="status[{{ $student->id }}]" value="present">
+                                <input class="form-check-input" type="radio" name="status[{{ $student->id }}]" value="present" {{ $status === 'present' ? 'checked' : '' }}>
                             </td>
                             <td>
-                                <input class="form-check-input" type="radio" name="status[{{ $student->id }}]" value="absent">
+                                <input class="form-check-input" type="radio" name="status[{{ $student->id }}]" value="absent" {{ $status === 'absent' ? 'checked' : '' }}>
                             </td>
                             <td>
-                                <input class="form-check-input" type="radio" name="status[{{ $student->id }}]" value="" checked>
+                                <input class="form-check-input" type="radio" name="status[{{ $student->id }}]" value="" {{ !$status ? 'checked' : '' }}>
                             </td>
                         </tr>
                     @endforeach
@@ -164,6 +164,5 @@ document.getElementById('studentSearch').addEventListener('input', function () {
     });
 });
 </script>
-
 </body>
 </html>

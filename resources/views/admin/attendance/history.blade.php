@@ -8,7 +8,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
 <style>
     body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-    .container { max-width:900px; margin:auto; }
+    .container { max-width:700px; margin:auto; }
     .back-btn{
         border:none; background:#fff; color:#012147; font-weight:600;
         padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
@@ -21,19 +21,19 @@
         box-shadow:0 10px 30px rgba(1,33,71,0.25);
     }
     .page-header h2{ margin:0; font-weight:700; font-size:22px; }
-    .date-card{
+    .month-card{
         background:#fff; border-radius:14px; padding:18px 20px;
         box-shadow:0 6px 20px rgba(0,0,0,0.06); text-decoration:none; color:#012147;
         display:flex; justify-content:space-between; align-items:center;
         transition:0.15s;
     }
-    .date-card:hover{ background:#eef2f9; color:#012147; }
-    .date-card .icons a{ color:#012147; margin-left:14px; font-size:18px; }
+    .month-card:hover{ background:#eef2f9; color:#012147; }
+    .month-card .icons a{ color:#012147; margin-left:14px; font-size:18px; }
 </style>
 </head>
 <body>
 <div class="container">
-    <a href="{{ route('lecturer.subject.attendance', $subject->id) }}" class="back-btn">
+    <a href="{{ route('admin.attendance.show', $subject->id) }}" class="back-btn">
         <i class="bi bi-arrow-left"></i> Back
     </a>
 
@@ -42,20 +42,17 @@
     </div>
 
     <div class="d-flex flex-column gap-3">
-        @forelse($dates as $date)
-            <div class="date-card">
-                <span><i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::parse($date)->format('D, d M Y') }}</span>
+        @forelse($months as $month)
+            <div class="month-card">
+                <span><i class="bi bi-calendar-event"></i> {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('F Y') }}</span>
                 <span class="icons">
-                    <a href="{{ route('lecturer.subject.attendance.history.pdf', ['id' => $subject->id, 'date' => $date]) }}" target="_blank" title="View">
-                        <i class="bi bi-eye"></i>
-                    </a>
-                    <a href="{{ route('lecturer.subject.attendance.history.pdf', ['id' => $subject->id, 'date' => $date]) }}?download=1" title="Download">
+                    <a href="{{ route('admin.attendance.monthly.pdf', ['id' => $subject->id, 'month' => $month]) }}" target="_blank" title="View / Download">
                         <i class="bi bi-download"></i>
                     </a>
                 </span>
             </div>
         @empty
-            <div class="date-card justify-content-center text-muted">No attendance records yet.</div>
+            <div class="month-card justify-content-center text-muted">No attendance records yet.</div>
         @endforelse
     </div>
 </div>

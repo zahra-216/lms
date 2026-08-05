@@ -143,16 +143,6 @@ Route::prefix('lecturer')->group(function () {
             Route::post('/subject/{subject}/assignments', [App\Http\Controllers\LecturerAssignmentController::class, 'store'])
                 ->name('assignments.store');
 
-            // Attendance
-            Route::get('/subject/{id}/attendance', [App\Http\Controllers\LecturerAttendanceController::class, 'show'])
-                ->name('subject.attendance');
-            Route::post('/subject/{id}/attendance', [App\Http\Controllers\LecturerAttendanceController::class, 'store'])
-                ->name('subject.attendance.store');
-            Route::get('/subject/{id}/attendance/history', [App\Http\Controllers\LecturerAttendanceController::class, 'history'])
-                ->name('subject.attendance.history');
-            Route::get('/subject/{id}/attendance/history/{date}/pdf', [App\Http\Controllers\LecturerAttendanceController::class, 'historyPdf'])
-                ->name('subject.attendance.history.pdf');
-
             // Lecture Records — read-only history + add content
             Route::get('/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'index'])
                 ->name('lecture-records.index');
@@ -415,10 +405,14 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('attendance.index');
     Route::get('/attendance/{id}', [App\Http\Controllers\Admin\AttendanceController::class, 'show'])
         ->name('attendance.show');
-    Route::get('/attendance/{id}/pdf', [App\Http\Controllers\Admin\AttendanceController::class, 'exportPdf'])
-        ->name('attendance.pdf');
-    Route::get('/attendance/{id}/summary-pdf', [App\Http\Controllers\Admin\AttendanceController::class, 'exportSummaryPdf'])
-        ->name('attendance.summary.pdf');
+    Route::get('/attendance/{id}/mark', [App\Http\Controllers\Admin\AttendanceController::class, 'mark'])
+        ->name('attendance.mark');
+    Route::post('/attendance/{id}/mark', [App\Http\Controllers\Admin\AttendanceController::class, 'markStore'])
+        ->name('attendance.mark.store');
+    Route::get('/attendance/{id}/history', [App\Http\Controllers\Admin\AttendanceController::class, 'history'])
+        ->name('attendance.history');
+    Route::get('/attendance/{id}/history/{month}/pdf', [App\Http\Controllers\Admin\AttendanceController::class, 'monthlyPdf'])
+        ->name('attendance.monthly.pdf');
 
     // Lecture Records
     Route::get('/lecture-records', [App\Http\Controllers\Admin\LectureRecordController::class, 'index'])
