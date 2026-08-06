@@ -50,6 +50,7 @@
     .icon-assignments{ background:#f59e0b; }
     .icon-grades{ background:#10b981; }
     .icon-attendance{ background:#ef4444; }
+    .icon-timetable{ background:#06b6d4; }
 </style>
 </head>
 <body>
@@ -84,6 +85,12 @@
             <a href="{{ route('lecturer.subject.grades', $subject->id) }}" class="module-card">
                 <i class="bi bi-clipboard-data icon-grades"></i>
                 <span>Grades</span>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ route('lecturer.subject.timetable', $subject->id) }}" class="module-card">
+                <i class="bi bi-calendar-week icon-timetable"></i>
+                <span>Timetable</span>
             </a>
         </div>
     </div>

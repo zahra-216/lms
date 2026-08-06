@@ -102,6 +102,19 @@ Route::prefix('lecturer')->group(function () {
             Route::get('/subject/{id}/grades', [App\Http\Controllers\LecturerSubjectController::class, 'grades'])
                 ->name('subject.grades');
 
+            Route::get('/subject/{id}/timetable', [App\Http\Controllers\LecturerSubjectController::class, 'timetable'])
+                ->name('subject.timetable');
+
+            Route::post('/notification/read/{id}', function ($id) {
+                auth('lecturer')->user()->notifications()->where('id', $id)->update(['read_at' => now()]);
+                return response()->json(['success' => true]);
+            })->name('notification.read');
+
+            Route::post('/notification/read-all', function () {
+                auth('lecturer')->user()->unreadNotifications->markAsRead();
+                return response()->json(['success' => true]);
+            })->name('notification.readAll');
+
             Route::get('/assignment/{assignment}/marks/create', [App\Http\Controllers\Admin\MarkController::class, 'lecturerCreate'])
                 ->name('marks.create');
 
@@ -381,6 +394,14 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
 
         Route::get('grades', [SubjectController::class, 'grades'])->name('grades');
         Route::post('grades/update', [SubjectController::class, 'updateMarks'])->name('grades.update');
+
+        // Timetable
+        Route::get('timetables', [App\Http\Controllers\Admin\TimetableController::class, 'index'])->name('timetables.index');
+        Route::get('timetables/create', [App\Http\Controllers\Admin\TimetableController::class, 'create'])->name('timetables.create');
+        Route::post('timetables', [App\Http\Controllers\Admin\TimetableController::class, 'store'])->name('timetables.store');
+        Route::get('timetables/{groupId}/edit', [App\Http\Controllers\Admin\TimetableController::class, 'edit'])->name('timetables.edit');
+        Route::put('timetables/{groupId}', [App\Http\Controllers\Admin\TimetableController::class, 'update'])->name('timetables.update');
+        Route::delete('timetables/{groupId}', [App\Http\Controllers\Admin\TimetableController::class, 'destroy'])->name('timetables.destroy');
     });
 
     Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'show'])

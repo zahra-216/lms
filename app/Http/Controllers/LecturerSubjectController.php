@@ -107,4 +107,20 @@ class LecturerSubjectController extends Controller
             default => 'F',
         };
     }
+
+    public function timetable($id)
+    {
+        $subject = Subject::findOrFail($id);
+        $lecturerId = auth('lecturer')->id();
+
+        $entries = \App\Models\Timetable::where('subject_id', $id)
+            ->where('lecturer_id', $lecturerId)
+            ->get()
+            ->groupBy('group_id')
+            ->map(function ($rows) {
+                return $rows->sortBy(fn($r) => \App\Models\Timetable::DAY_ORDER[$r->day] ?? 99)->values();
+            });
+
+        return view('lecturer.subject.timetable', compact('subject', 'entries'));
+    }
 }
