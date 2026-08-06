@@ -43,7 +43,7 @@
     }
     .course-pill:hover { background:#e2e8f0; }
     .course-pill input { display:none; }
-    .course-pill.checked { background:#012147; color:#fff; border-color:#012147; }
+    .course-pill:has(input:checked) { background:#012147; color:#fff; border-color:#012147; }
 
     .form-label { font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:4px; }
     .form-control, .form-select { border-radius:10px; border:1px solid #e2e8f0; padding:9px 12px; }
@@ -104,7 +104,7 @@
             <label class="form-label">Course(s)</label>
             <div class="course-pills">
                 @foreach($courses as $course)
-                    <label class="course-pill" onclick="this.classList.toggle('checked')">
+                    <label class="course-pill">
                         <input type="checkbox" name="course_ids[]" value="{{ $course->id }}">
                         {{ $course->name }}
                     </label>
