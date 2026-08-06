@@ -117,11 +117,18 @@
                     @endif
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end p-2 notif-dropdown">
+                    @if($lecturer->unreadNotifications->count())
+                        <li class="d-flex justify-content-end mb-1">
+                            <button type="button" class="btn btn-link btn-sm text-decoration-none p-0" style="font-size:12px;" onclick="markAllRead(this)">
+                                Mark all as read
+                            </button>
+                        </li>
+                    @endif
                     @forelse($lecturer->notifications->take(10) as $note)
                         <li class="mb-1">
                             <a href="{{ isset($note->data['subject_id']) ? route('lecturer.subject.timetable', $note->data['subject_id']) : '#' }}"
-                               class="dropdown-item rounded {{ $note->read_at ? '' : 'bg-light fw-semibold' }}"
-                               onclick="event.preventDefault();
+                            class="dropdown-item rounded {{ $note->read_at ? '' : 'bg-light fw-semibold' }}"
+                            onclick="event.preventDefault();
                                         fetch('{{ route('lecturer.notification.read', $note->id) }}', {
                                             method:'POST',
                                             headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'}
@@ -190,5 +197,13 @@
     </section>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+    function markAllRead(btn) {
+        fetch('{{ route('lecturer.notification.readAll') }}', {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': '{{ csrf_token() }}', 'Accept': 'application/json' }
+        }).then(() => window.location.reload());
+    }
+    </script>
 </body>
 </html>
