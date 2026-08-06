@@ -59,6 +59,8 @@
     .semester-btn { border-radius:10px !important; border:1px solid #e2e8f0 !important; color:#012147 !important; background:#f8fafc !important; font-weight:600; padding:10px 14px !important; }
     .semester-btn:hover { background:#eef2f9 !important; }
 
+    .semester-item { margin-bottom:14px; }
+
     .subject-list .list-group-item { border:none; border-bottom:1px solid #f1f5f9; padding:11px 14px; }
     .subject-list .list-group-item:hover { background:#f8fafc; }
     .subject-list a { color:#012147; font-weight:500; text-decoration:none; }
@@ -177,7 +179,7 @@
 
                         @foreach($level->semesters as $semester)
                             @php $collapseId = 'semester-'.$course->id.'-'.$level->id.'-'.$semester->id; @endphp
-                            <div class="mb-2 ps-3">
+                            <div class="semester-item ps-3">
                                 <button class="btn semester-btn w-100 text-start d-flex justify-content-between align-items-center"
                                         type="button" data-bs-toggle="collapse" data-bs-target="#{{ $collapseId }}" aria-expanded="false">
                                     <span>{{ $semester->name }}</span>
