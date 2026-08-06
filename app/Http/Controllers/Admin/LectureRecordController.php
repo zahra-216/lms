@@ -220,12 +220,18 @@ class LectureRecordController extends Controller
             ->orderBy('date')
             ->get();
 
-        // Merge rows that share identical content_covered text, combining module codes
+        // Merge rows that share identical date/time/lecturer/content/remarks
         $grouped = $records
-            ->groupBy(fn($r) => trim($r->content_covered ?? '—'))
-            ->map(function ($group, $content) {
+            ->groupBy(function ($r) {
+                return implode('|', [
+                    $r->date, $r->start_time, $r->end_time, $r->lecturer_id,
+                    trim($r->content_covered ?? ''), trim($r->remarks ?? ''),
+                ]);
+            })
+            ->map(function ($group) {
+                $first = $group->first();
                 return [
-                    'content' => $content,
+                    'content' => trim($first->content_covered ?? '') ?: '—',
                     'modules' => $group->pluck('subject')->filter()
                         ->map(fn($s) => $s->code . ' - ' . $s->name)
                         ->unique()->values(),
