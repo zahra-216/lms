@@ -124,15 +124,15 @@
                             </button>
                         </li>
                     @endif
-                    @forelse($lecturer->notifications->take(10) as $note)
+                    @forelse($lecturer->unreadNotifications->take(10) as $note)
                         <li class="mb-1">
                             <a href="{{ isset($note->data['subject_id']) ? route('lecturer.subject.timetable', $note->data['subject_id']) : '#' }}"
-                            class="dropdown-item rounded {{ $note->read_at ? '' : 'bg-light fw-semibold' }}"
-                            onclick="event.preventDefault();
-                                        fetch('{{ route('lecturer.notification.read', $note->id) }}', {
-                                            method:'POST',
-                                            headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'}
-                                        }).then(()=> window.location = this.href);">
+                                class="dropdown-item rounded bg-light fw-semibold"
+                                onclick="event.preventDefault();
+                                            fetch('{{ route('lecturer.notification.read', $note->id) }}', {
+                                                method:'POST',
+                                                headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'}
+                                            }).then(()=> window.location = this.href);">
                                 <div>{{ $note->data['title'] ?? 'Notification' }}</div>
                                 <div class="text-muted" style="font-size:12px;">{{ $note->data['message'] ?? '' }}</div>
                             </a>
