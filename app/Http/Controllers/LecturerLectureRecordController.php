@@ -35,7 +35,7 @@ class LecturerLectureRecordController extends Controller
 
         $grouped = $records->groupBy(function ($r) {
                 return implode('|', [
-                    $r->date, $r->start_time, $r->end_time,
+                    $r->date, $r->start_time, $r->end_time, $r->lecturer_id,
                     trim($r->content_covered ?? ''), trim($r->remarks ?? ''),
                 ]);
             })
@@ -89,9 +89,33 @@ class LecturerLectureRecordController extends Controller
             'content_covered' => 'required|string',
         ]);
 
-        $record->update([
+        $lecturerId = Auth::guard('lecturer')->id();
+
+        // Find every sibling row in the same "session" group as $record
+        // (same date/start/end/lecturer_id/remarks, still pending content)
+        $query = LectureRecord::where('date', $record->date)
+            ->where('start_time', $record->start_time)
+            ->where('end_time', $record->end_time)
+            ->where(function ($q) use ($record) {
+                $record->remarks
+                    ? $q->where('remarks', $record->remarks)
+                    : $q->whereNull('remarks');
+            })
+            ->where(function ($q) use ($record) {
+                $record->content_covered
+                    ? $q->where('content_covered', $record->content_covered)
+                    : $q->whereNull('content_covered');
+            });
+
+        if ($record->lecturer_id) {
+            $query->where('lecturer_id', $record->lecturer_id);
+        } else {
+            $query->whereNull('lecturer_id');
+        }
+
+        $query->update([
             'content_covered' => $request->content_covered,
-            'lecturer_id' => $record->lecturer_id ?? Auth::guard('lecturer')->id(),
+            'lecturer_id' => $lecturerId,
         ]);
 
         return redirect()->route('lecturer.lecture-records.index')
@@ -119,7 +143,7 @@ class LecturerLectureRecordController extends Controller
 
         $grouped = $records->groupBy(function ($r) {
                 return implode('|', [
-                    $r->date, $r->start_time, $r->end_time,
+                    $r->date, $r->start_time, $r->end_time, $r->lecturer_id,
                     trim($r->content_covered ?? ''), trim($r->remarks ?? ''),
                 ]);
             })
