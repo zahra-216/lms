@@ -87,6 +87,12 @@
             display: inline-flex; align-items: center; gap: 6px;
         }
 
+        .notif-badge{
+            font-size: 10px; padding: 3px 6px;
+        }
+        .notif-dropdown{ min-width: 300px; max-height: 360px; overflow-y: auto; }
+        .notif-dropdown .dropdown-item{ white-space: normal; font-size: 13px; }
+
         @media (max-width:576px){
             .topbar{ flex-direction:column; align-items:flex-start; gap:10px; padding:14px 16px; }
             .topbar .actions{ width:100%; justify-content:space-between; }
@@ -101,6 +107,34 @@
     <div class="topbar">
         <h1><i class="bi bi-speedometer2"></i> Lecturer Dashboard</h1>
         <div class="actions">
+            <div class="dropdown">
+                <button class="btn-pill-light position-relative" type="button" data-bs-toggle="dropdown">
+                    <i class="bi bi-bell"></i>
+                    @if($lecturer->unreadNotifications->count())
+                        <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle notif-badge">
+                            {{ $lecturer->unreadNotifications->count() }}
+                        </span>
+                    @endif
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end p-2 notif-dropdown">
+                    @forelse($lecturer->notifications->take(10) as $note)
+                        <li class="mb-1">
+                            <a href="{{ isset($note->data['subject_id']) ? route('lecturer.subject.timetable', $note->data['subject_id']) : '#' }}"
+                               class="dropdown-item rounded {{ $note->read_at ? '' : 'bg-light fw-semibold' }}"
+                               onclick="event.preventDefault();
+                                        fetch('{{ route('lecturer.notification.read', $note->id) }}', {
+                                            method:'POST',
+                                            headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'}
+                                        }).then(()=> window.location = this.href);">
+                                <div>{{ $note->data['title'] ?? 'Notification' }}</div>
+                                <div class="text-muted" style="font-size:12px;">{{ $note->data['message'] ?? '' }}</div>
+                            </a>
+                        </li>
+                    @empty
+                        <li class="text-center text-muted p-2" style="font-size:13px;">No notifications</li>
+                    @endforelse
+                </ul>
+            </div>
             <span class="welcome-text">Welcome, {{ $lecturer->name }}</span>
             <form method="POST" action="{{ route('lecturer.logout') }}">
                 @csrf
@@ -154,5 +188,7 @@
             @endforeach
         </div>
     </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
