@@ -107,6 +107,7 @@
                         <th>Content Covered</th>
                         <th>Status</th>
                         <th>Remarks</th>
+                        <th>Action</th>
                     </tr>
                 </thead>
                 <tbody id="recordsBody"></tbody>
@@ -160,7 +161,7 @@ async function selectMonth(monthNum, btn) {
 
 function renderTable(records) {
     if (!records.length) {
-        recordsBody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">No lecture records for this month.</td></tr>';
+        recordsBody.innerHTML = '<tr><td colspan="8" class="text-center text-muted">No lecture records for this month.</td></tr>';
     } else {
         recordsBody.innerHTML = records.map(r => `
             <tr data-content="${(r.content || '').toLowerCase()}">
@@ -171,6 +172,7 @@ function renderTable(records) {
                 <td>${r.content}</td>
                 <td>${r.status === 'Complete' ? '<span class="badge-complete">Complete</span>' : '<span class="badge-pending">Pending</span>'}</td>
                 <td>${r.remarks}</td>
+                <td>${r.status === 'Pending' ? `<a href="/lecturer/lecture-record/${r.id}/add-content" class="action-btn" style="padding:6px 12px;font-size:12px;"><i class="bi bi-pencil-square"></i> Add Content</a>` : '—'}</td>
             </tr>
         `).join('');
     }

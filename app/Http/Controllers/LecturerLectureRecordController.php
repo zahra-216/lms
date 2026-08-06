@@ -42,6 +42,7 @@ class LecturerLectureRecordController extends Controller
             ->map(function ($group) {
                 $first = $group->first();
                 return [
+                    'id' => $first->id, 
                     'date' => $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—',
                     'start' => $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—',
                     'end' => $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—',
