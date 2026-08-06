@@ -59,13 +59,13 @@
     .semester-btn { border-radius:10px !important; border:1px solid #e2e8f0 !important; color:#012147 !important; background:#f8fafc !important; font-weight:600; padding:10px 14px !important; }
     .semester-btn:hover { background:#eef2f9 !important; }
 
-    .semester-item { margin-bottom:14px; }
+    .semester-item { margin-bottom:8px; }
 
     .subject-list .list-group-item { border:none; border-bottom:1px solid #f1f5f9; padding:11px 14px; }
     .subject-list .list-group-item:hover { background:#f8fafc; }
     .subject-list a { color:#012147; font-weight:500; text-decoration:none; }
 
-    .quick-add-row { display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+    .quick-add-row { display:flex; gap:8px; margin-top:8px; margin-bottom:12px; flex-wrap:wrap; }
     .quick-add-row select, .quick-add-row input { border-radius:8px; border:1px solid #e2e8f0; padding:8px 10px; font-size:13px; flex:1; min-width:120px; }
     .quick-add-row button { border:none; background:#012147; color:#fff; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; }
     .quick-add-row button:hover { background:#1e3a6e; }
