@@ -19,7 +19,7 @@ class LecturerAssignmentController extends Controller
             'title' => 'required|string|max:255',
             'description' => 'required|string',
             'due_date' => 'required|date',
-            'total_points' => 'nullable|numeric|min:0',
+            'total_points' => 'required|numeric|min:0',
             'allow_late' => 'nullable|boolean',
             'late_penalty' => 'nullable|numeric|min:0|max:100',
             'submission_type' => 'nullable|string',
@@ -42,5 +42,42 @@ class LecturerAssignmentController extends Controller
         return redirect()
             ->route('lecturer.subject.assignments', $subject->id)
             ->with('success', 'Assignment created successfully');
+    }
+
+    public function edit(Subject $subject, Assignment $assignment)
+    {
+        return view('lecturer.assignments.edit', compact('subject', 'assignment'));
+    }
+
+    public function update(Request $request, Subject $subject, Assignment $assignment)
+    {
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'due_date' => 'required|date',
+            'total_points' => 'required|numeric|min:0',
+            'allow_late' => 'nullable|boolean',
+            'late_penalty' => 'nullable|numeric|min:0|max:100',
+            'submission_type' => 'nullable|string',
+            'is_published' => 'nullable|boolean',
+            'assignment_file' => 'nullable|file|max:10240',
+        ]);
+
+        $validated['allow_late'] = $request->boolean('allow_late');
+        $validated['is_published'] = $request->boolean('is_published', true);
+
+        if ($request->hasFile('assignment_file')) {
+            $validated['file_path'] = $request->file('assignment_file')->store('assignments', 'public');
+        } else {
+            unset($validated['file_path']);
+        }
+
+        unset($validated['assignment_file']);
+
+        $assignment->update($validated);
+
+        return redirect()
+            ->route('lecturer.subject.assignments', $subject->id)
+            ->with('success', 'Assignment updated successfully');
     }
 }
