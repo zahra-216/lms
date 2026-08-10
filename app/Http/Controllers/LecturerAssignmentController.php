@@ -28,8 +28,9 @@ class LecturerAssignmentController extends Controller
         ]);
 
         $validated['subject_id'] = $subject->id;
-        $validated['allow_late'] = $request->boolean('allow_late');
-        $validated['is_published'] = $request->boolean('is_published', true);
+        $validated['allow_late'] = true;
+        $validated['is_published'] = true;
+        $validated['late_penalty'] = $validated['late_penalty'] ?? 0;
 
         if ($request->hasFile('assignment_file')) {
             $validated['file_path'] = $request->file('assignment_file')->store('assignments', 'public');
@@ -63,8 +64,9 @@ class LecturerAssignmentController extends Controller
             'assignment_file' => 'nullable|file|max:10240',
         ]);
 
-        $validated['allow_late'] = $request->boolean('allow_late');
-        $validated['is_published'] = $request->boolean('is_published', true);
+        $validated['allow_late'] = true;
+        $validated['is_published'] = true;
+        $validated['late_penalty'] = $validated['late_penalty'] ?? 0;
 
         if ($request->hasFile('assignment_file')) {
             $validated['file_path'] = $request->file('assignment_file')->store('assignments', 'public');

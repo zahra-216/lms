@@ -75,23 +75,12 @@
                 <select name="submission_type" class="form-select">
                     <option value="file">File Upload</option>
                     <option value="text">Text</option>
-                    <option value="link">Link</option>
                 </select>
-            </div>
-
-            <div class="mb-3 form-check">
-                <input type="checkbox" name="allow_late" value="1" class="form-check-input" id="allowLate">
-                <label class="form-check-label" for="allowLate">Allow late submissions</label>
             </div>
 
             <div class="mb-3">
                 <label class="form-label">Late Penalty (%)</label>
                 <input type="number" name="late_penalty" class="form-control" min="0" max="100">
-            </div>
-
-            <div class="mb-3 form-check">
-                <input type="checkbox" name="is_published" value="1" class="form-check-input" id="isPublished" checked>
-                <label class="form-check-label" for="isPublished">Publish immediately</label>
             </div>
 
             <div class="mb-3">

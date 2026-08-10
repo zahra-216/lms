@@ -76,25 +76,15 @@
             <div class="mb-3">
                 <label class="form-label">Submission Type</label>
                 <select name="submission_type" class="form-select">
-                    @foreach(['file' => 'File Upload', 'text' => 'Text', 'link' => 'Link'] as $value => $label)
+                    @foreach(['file' => 'File Upload', 'text' => 'Text'] as $value => $label)
                         <option value="{{ $value }}" {{ $assignment->submission_type == $value ? 'selected' : '' }}>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>
 
-            <div class="mb-3 form-check">
-                <input type="checkbox" name="allow_late" value="1" class="form-check-input" id="allowLate" {{ $assignment->allow_late ? 'checked' : '' }}>
-                <label class="form-check-label" for="allowLate">Allow late submissions</label>
-            </div>
-
             <div class="mb-3">
                 <label class="form-label">Late Penalty (%)</label>
                 <input type="number" name="late_penalty" class="form-control" min="0" max="100" value="{{ old('late_penalty', $assignment->late_penalty) }}">
-            </div>
-
-            <div class="mb-3 form-check">
-                <input type="checkbox" name="is_published" value="1" class="form-check-input" id="isPublished" {{ $assignment->is_published ? 'checked' : '' }}>
-                <label class="form-check-label" for="isPublished">Publish immediately</label>
             </div>
 
             <div class="mb-3">
