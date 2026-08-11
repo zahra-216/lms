@@ -79,6 +79,7 @@
             <select name="payment_type" class="form-select" required>
                 <option value="per_month" {{ $payment->payment_type === 'per_month' ? 'selected' : '' }}>Per Month</option>
                 <option value="per_hour" {{ $payment->payment_type === 'per_hour' ? 'selected' : '' }}>Per Hour</option>
+                <option value="per_day" {{ $payment->payment_type === 'per_day' ? 'selected' : '' }}>Per Day</option>
             </select>
 
             <label class="form-label">Rate Amount</label>

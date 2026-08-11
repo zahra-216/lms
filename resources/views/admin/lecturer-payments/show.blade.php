@@ -132,6 +132,7 @@
                     <select name="payment_type" class="form-select" required>
                         <option value="per_month">Per Month</option>
                         <option value="per_hour">Per Hour</option>
+                        <option value="per_day">Per Day</option>
                     </select>
                 </div>
                 <div class="col-md-2">
