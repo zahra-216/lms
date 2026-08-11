@@ -15,7 +15,7 @@
 
     /* Sidebar */
     .sidebar {
-        width:260px; background:#012147; color:#fff; min-height:100vh;
+        width:260px; background:#012147; color:#fff; height:100vh;
         position:fixed; top:0; left:0; z-index:1030; overflow-y:auto;
         transition:transform .3s ease;
     }
