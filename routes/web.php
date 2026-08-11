@@ -64,6 +64,9 @@ Route::get('/student-grade', function () {
     return view('student-grade');
 });
 
+Route::get('/verify', [App\Http\Controllers\VerifyController::class, 'show'])->name('verify.show');
+Route::post('/verify', [App\Http\Controllers\VerifyController::class, 'check'])->name('verify.check');
+
 
 /*
 |--------------------------------------------------------------------------
@@ -512,4 +515,20 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('lecturer-payments.destroy');
     Route::post('/students/bulk-semester-update', [App\Http\Controllers\Admin\StudentController::class, 'bulkUpdateSemester'])
         ->name('students.bulk.semester.update');
+
+    // Certificate Verification
+    Route::get('/certificates', [App\Http\Controllers\Admin\CertificateController::class, 'index'])
+        ->name('certificates.index');
+    Route::get('/certificates/student/{student}', [App\Http\Controllers\Admin\CertificateController::class, 'studentCertificates'])
+        ->name('certificates.student');
+    Route::get('/certificates/create/{student}', [App\Http\Controllers\Admin\CertificateController::class, 'create'])
+        ->name('certificates.create');
+    Route::post('/certificates/{student}', [App\Http\Controllers\Admin\CertificateController::class, 'store'])
+        ->name('certificates.store');
+    Route::get('/certificates/{certificate}/edit', [App\Http\Controllers\Admin\CertificateController::class, 'edit'])
+        ->name('certificates.edit');
+    Route::put('/certificates/{certificate}', [App\Http\Controllers\Admin\CertificateController::class, 'update'])
+        ->name('certificates.update');
+    Route::delete('/certificates/{certificate}', [App\Http\Controllers\Admin\CertificateController::class, 'destroy'])
+        ->name('certificates.destroy');
 });

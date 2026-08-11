@@ -46,6 +46,10 @@ class Student extends Authenticatable
     {
         return $this->hasMany(\App\Models\Mark::class);
     }
+        public function certificates()
+    {
+        return $this->hasMany(\App\Models\Certificate::class);
+    }
     public function getIntakeAttribute()
     {
         $parts = explode('/', $this->registration_no);
@@ -55,4 +59,5 @@ class Student extends Authenticatable
     {
         return $this->belongsTo(Semester::class);
     }
+
 }

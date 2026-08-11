@@ -149,6 +149,7 @@
         <a href="{{ route('admin.lecture-records.index') }}"><i class="bi bi-journal-plus"></i> Lecture Records</a>
         <a href="{{ route('admin.payments.index') }}"><i class="bi bi-cash-coin"></i> Student Payments</a>
         <a href="{{ route('admin.lecturer-payments.index') }}"><i class="bi bi-wallet2"></i> Lecturer Payments</a>
+        <a href="{{ route('admin.certificates.index') }}"><i class="bi bi-patch-check"></i> Certificate Verification</a>
     </div>
 </div>
 
