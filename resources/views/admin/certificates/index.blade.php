@@ -73,38 +73,41 @@
         </div>
     </form>
 
-    <div class="card-box">
-        <div class="table-responsive">
-        <table>
-            <tr>
-                <th>Reg No</th>
-                <th>Name</th>
-                <th>Course</th>
-                <th>Certificates</th>
-                <th>Action</th>
-            </tr>
-            @forelse($students as $student)
+    @if($search)
+        <div class="card-box">
+            <div class="table-responsive">
+            <table>
                 <tr>
-                    <td>{{ $student->registration_no }}</td>
-                    <td>{{ $student->name }}</td>
-                    <td>{{ $student->course->name ?? '—' }}</td>
-                    <td><span class="cert-badge">{{ $student->certificates_count }}</span></td>
-                    <td>
-                        <a href="{{ route('admin.certificates.student', $student->id) }}" class="manage-btn">
-                            <i class="bi bi-folder2-open"></i> Manage
-                        </a>
-                    </td>
+                    <th>Reg No</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Certificates</th>
+                    <th>Action</th>
                 </tr>
-            @empty
-                <tr><td colspan="5" class="text-center text-muted py-4">No students found.</td></tr>
-            @endforelse
-        </table>
+                @forelse($students as $student)
+                    <tr>
+                        <td>{{ $student->registration_no }}</td>
+                        <td>{{ $student->name }}</td>
+                        <td>{{ $student->course->name ?? '—' }}</td>
+                        <td><span class="cert-badge">{{ $student->certificates_count }}</span></td>
+                        <td>
+                            <a href="{{ route('admin.certificates.student', $student->id) }}" class="manage-btn">
+                                <i class="bi bi-folder2-open"></i> Manage
+                            </a>
+                        </td>
+                    </tr>
+                @empty
+                    <tr><td colspan="5" class="text-center text-muted py-4">No students found matching "{{ $search }}".</td></tr>
+                @endforelse
+            </table>
+            </div>
         </div>
-    </div>
-
-    <div class="pagination">
-        {{ $students->links() }}
-    </div>
+    @else
+        <div class="card-box text-center py-5 text-muted">
+            <i class="bi bi-search" style="font-size:32px;"></i>
+            <p class="mt-3 mb-0">Search for a student by name or registration number to get started.</p>
+        </div>
+    @endif
 </div>
 </body>
 </html>

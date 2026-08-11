@@ -13,17 +13,17 @@ class CertificateController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
+        $students = collect();
 
-        $students = Student::withCount('certificates')
-            ->when($search, function ($q) use ($search) {
-                $q->where(function ($q2) use ($search) {
-                    $q2->where('name', 'like', "%{$search}%")
-                       ->orWhere('registration_no', 'like', "%{$search}%");
-                });
-            })
-            ->orderBy('name')
-            ->paginate(20)
-            ->withQueryString();
+        if ($search) {
+            $students = Student::withCount('certificates')
+                ->where(function ($q) use ($search) {
+                    $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('registration_no', 'like', "%{$search}%");
+                })
+                ->orderBy('name')
+                ->get();
+        }
 
         return view('admin.certificates.index', compact('students', 'search'));
     }
