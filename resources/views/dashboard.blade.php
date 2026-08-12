@@ -332,6 +332,26 @@
             </div>
 
             <div class="card-box mt-4">
+                <div class="section-title"><i class="bi bi-calendar-week"></i> Upcoming Classes</div>
+
+                @if($upcomingClasses->count() > 0)
+                    <div class="list-group">
+                        @foreach($upcomingClasses as $class)
+                            <div class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    <b>{{ $class->subject->name ?? 'N/A' }}</b><br>
+                                    <span>{{ $class->day }}, {{ \Carbon\Carbon::parse($class->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($class->end_time)->format('h:i A') }}</span>
+                                </div>
+                                <span class="badge bg-primary">{{ $class->day }}</span>
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <p class="text-muted mb-0">No upcoming classes</p>
+                @endif
+            </div>
+
+            <div class="card-box mt-4">
                 <div class="section-title"><i class="bi bi-clipboard-check"></i> Pending Assignments</div>
 
                 @if($pendingAssignments->count() > 0)

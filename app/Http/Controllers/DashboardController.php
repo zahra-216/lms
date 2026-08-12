@@ -56,12 +56,29 @@ class DashboardController extends Controller
             ->orderBy('due_date')
             ->get();
 
+        $upcomingClasses = \App\Models\Timetable::with('subject')
+            ->whereHas('subject', function ($q) use ($student) {
+                $q->where('course_id', $student->course_id)
+                ->where('level_id', $student->level_id)
+                ->where('semester_id', $student->semester_id);
+            })
+            ->get()
+            ->sortBy(function ($t) {
+                $today = now()->dayOfWeekIso; // 1 (Mon) - 7 (Sun)
+                $classDay = \App\Models\Timetable::DAY_ORDER[$t->day] ?? 8;
+                $diff = $classDay - $today;
+                if ($diff < 0) $diff += 7;
+                return $diff * 1440 + (int) str_replace(':', '', substr($t->start_time, 0, 5));
+            })
+            ->values();
+
         return view('dashboard', compact(
             'student',
             'course',
             'level',
             'semesters',
             'pendingAssignments',
+            'upcomingClasses'
         ));
     }
 
