@@ -142,6 +142,50 @@
         .accordion-button:not(.collapsed){ background:#012147 !important; color:#fff !important; }
         .accordion-button:focus{ box-shadow:none; }
 
+        .upcoming-class-item{
+            display:flex;
+            align-items:center;
+            gap:14px;
+            padding:14px 16px;
+            border-radius:12px;
+            background:#f8fafc;
+            transition:0.2s;
+        }
+        .upcoming-class-item:hover{
+            background:#eef2f9;
+        }
+        .upcoming-class-icon{
+            width:42px; height:42px;
+            border-radius:10px;
+            background:linear-gradient(135deg,#012147,#1e3a6e);
+            color:#fff;
+            display:flex; align-items:center; justify-content:center;
+            font-size:18px;
+            flex-shrink:0;
+        }
+        .upcoming-class-title{
+            font-weight:600;
+            color:#012147;
+            font-size:15px;
+        }
+        .upcoming-class-time{
+            font-size:13px;
+            color:#64748b;
+            margin-top:2px;
+        }
+        .upcoming-class-time i{
+            margin-right:4px;
+        }
+        .upcoming-class-day{
+            background:#e0e7ff;
+            color:#1e3a6e;
+            font-size:12px;
+            font-weight:700;
+            padding:5px 12px;
+            border-radius:20px;
+            white-space:nowrap;
+        }
+
         /* Calendar */
         #calendar{ text-align:center; font-size:14px; }
         #calendar table{ width:100%; border-collapse:collapse; }
@@ -335,14 +379,20 @@
                 <div class="section-title"><i class="bi bi-calendar-week"></i> Upcoming Classes</div>
 
                 @if($upcomingClasses->count() > 0)
-                    <div class="list-group">
+                    <div class="d-flex flex-column gap-2">
                         @foreach($upcomingClasses as $class)
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <b>{{ $class->subject->name ?? 'N/A' }}</b><br>
-                                    <span>{{ $class->day }}, {{ \Carbon\Carbon::parse($class->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($class->end_time)->format('h:i A') }}</span>
+                            <div class="upcoming-class-item">
+                                <div class="upcoming-class-icon">
+                                    <i class="bi bi-book"></i>
                                 </div>
-                                <span class="badge bg-primary">{{ $class->day }}</span>
+                                <div class="flex-grow-1">
+                                    <div class="upcoming-class-title">{{ $class->subject->name ?? 'N/A' }}</div>
+                                    <div class="upcoming-class-time">
+                                        <i class="bi bi-clock"></i>
+                                        {{ \Carbon\Carbon::parse($class->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($class->end_time)->format('h:i A') }}
+                                    </div>
+                                </div>
+                                <span class="upcoming-class-day">{{ $class->day }}</span>
                             </div>
                         @endforeach
                     </div>
