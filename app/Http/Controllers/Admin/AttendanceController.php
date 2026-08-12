@@ -44,6 +44,7 @@ class AttendanceController extends Controller
 
         $students = Student::where('course_id', $subject->course_id)
             ->where('level_id', $subject->level_id)
+            ->where('semester_id', $subject->semester_id)
             ->get();
 
         $attendance = Attendance::where('subject_id', $id)
@@ -108,6 +109,7 @@ class AttendanceController extends Controller
 
         $students = Student::where('course_id', $subject->course_id)
             ->where('level_id', $subject->level_id)
+            ->where('semester_id', $subject->semester_id)
             ->orderBy('name')
             ->get();
 
