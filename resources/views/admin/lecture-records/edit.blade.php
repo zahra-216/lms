@@ -60,7 +60,7 @@
 
     <div class="page-header">
         <h3><i class="bi bi-pencil-square"></i> Edit Lecture Record</h3>
-        <small>{{ $record->subject->code }} - {{ $record->subject->name }}</small>
+        <small>{{ $record->subject?->code ?? 'No Subject' }} - {{ $record->subject?->name ?? '' }}</small>
     </div>
 
     @if($errors->any())
