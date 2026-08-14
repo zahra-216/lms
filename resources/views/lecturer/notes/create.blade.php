@@ -81,10 +81,11 @@
             <div class="mb-3">
                 <label class="form-label">Type</label>
                 <select name="type" class="form-select" required>
-                    <option value="pdf">PDF</option>
-                    <option value="doc">Document</option>
+                    <option value="document">Document</option>
+                    <option value="video">Video</option>
                     <option value="link">Link</option>
-                    <option value="other">Other</option>
+                    <option value="text">Text</option>
+                    <option value="image">Image</option>
                 </select>
             </div>
 

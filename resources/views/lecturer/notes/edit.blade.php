@@ -83,7 +83,7 @@
             <div class="mb-3">
                 <label class="form-label">Type</label>
                 <select name="type" class="form-select" required>
-                    @foreach(['pdf','doc','link','other'] as $t)
+                    @foreach(['document','video','link','text','image'] as $t)
                         <option value="{{ $t }}" {{ $note->type == $t ? 'selected' : '' }}>{{ ucfirst($t) }}</option>
                     @endforeach
                 </select>
