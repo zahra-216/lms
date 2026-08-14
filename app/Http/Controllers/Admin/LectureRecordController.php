@@ -85,10 +85,31 @@ class LectureRecordController extends Controller
     public function edit($ids)
     {
         $idArray = array_filter(explode(',', $ids));
-        $record = LectureRecord::whereIn('id', $idArray)->firstOrFail();
-        $lecturers = Lecturer::orderBy('name')->get(['id', 'name', 'username']);
+        $records = LectureRecord::with(['subject.course'])->whereIn('id', $idArray)->get();
 
-        return view('admin.lecture-records.edit', compact('record', 'lecturers'))
+        if ($records->isEmpty()) {
+            abort(404);
+        }
+
+        $record = $records->first(); // shared fields (lecturer/date/time/content/remarks) come from here
+        $lecturers = Lecturer::orderBy('name')->get(['id', 'name', 'username']);
+        $faculties = \App\Models\Faculty::orderBy('name')->get(['id', 'name']);
+
+        $withSubject = $records->filter(fn($r) => $r->subject);
+        $firstSubject = $withSubject->first()?->subject;
+
+        $selected = null;
+        if ($firstSubject) {
+            $selected = [
+                'faculty_id' => optional($firstSubject->course)->faculty_id,
+                'course_id' => $firstSubject->course_id,
+                'level_id' => $firstSubject->level_id,
+                'semester_id' => $firstSubject->semester_id,
+                'subject_ids' => $withSubject->pluck('subject_id')->values(),
+            ];
+        }
+
+        return view('admin.lecture-records.edit', compact('record', 'lecturers', 'faculties', 'selected'))
             ->with('idsCsv', $ids);
     }
 
@@ -97,22 +118,62 @@ class LectureRecordController extends Controller
         $data = $this->validateData($request);
         $idArray = array_filter(explode(',', $ids));
 
-        LectureRecord::whereIn('id', $idArray)->update([
+        $records = LectureRecord::whereIn('id', $idArray)->get();
+        $newSubjectIds = collect($data['subject_ids'] ?? [])->map(fn($id) => (int) $id)->unique()->values();
+
+        $shared = [
             'lecturer_id' => $data['lecturer_id'] ?? null,
             'content_covered' => $data['content_covered'] ?? null,
             'date' => $data['date'] ?? null,
             'start_time' => $data['start_time'] ?? null,
             'end_time' => $data['end_time'] ?? null,
             'remarks' => $data['remarks'] ?? null,
-        ]);
+        ];
+
+        $existingBySubject = $records->whereNotNull('subject_id')->keyBy('subject_id');
+        $nullSubjectRecords = $records->whereNull('subject_id')->values(); // e.g. record #55-style rows
+
+        if ($newSubjectIds->isEmpty()) {
+            // No modules selected — just update shared fields on all rows as-is (subject stays whatever it was)
+            LectureRecord::whereIn('id', $idArray)->update($shared);
+        } else {
+            foreach ($newSubjectIds as $subjectId) {
+                if ($existingBySubject->has($subjectId)) {
+                    $existingBySubject[$subjectId]->update($shared);
+                } elseif ($nullSubjectRecords->isNotEmpty()) {
+                    // Reuse a null-subject row instead of leaving it orphaned
+                    $reuse = $nullSubjectRecords->shift();
+                    $reuse->update(array_merge($shared, ['subject_id' => $subjectId]));
+                } else {
+                    LectureRecord::create(array_merge($shared, [
+                        'subject_id' => $subjectId,
+                        'created_by' => 'admin',
+                    ]));
+                }
+            }
+
+            // Delete rows for subjects that were unchecked
+            $toDelete = $records->filter(fn($r) => $r->subject_id && !$newSubjectIds->contains($r->subject_id))
+                ->pluck('id');
+            if ($toDelete->isNotEmpty()) {
+                LectureRecord::whereIn('id', $toDelete)->delete();
+            }
+
+            // Any leftover unused null-subject rows get removed too
+            if ($nullSubjectRecords->isNotEmpty()) {
+                LectureRecord::whereIn('id', $nullSubjectRecords->pluck('id'))->delete();
+            }
+        }
 
         return redirect()->route('admin.lecture-records.index')
-            ->with('success', count($idArray) . ' lecture record(s) updated successfully.');
+            ->with('success', 'Lecture record(s) updated successfully.');
     }
 
     private function validateData(Request $request)
     {
         return $request->validate([
+            'subject_ids' => 'nullable|array',
+            'subject_ids.*' => 'exists:subjects,id',
             'lecturer_id' => 'nullable|exists:lecturers,id',
             'content_covered' => 'nullable|string',
             'remarks' => 'nullable|string',

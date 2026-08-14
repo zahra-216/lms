@@ -9,7 +9,7 @@
 <style>
     body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
     @media (max-width:576px){ body { padding:20px 12px; } }
-    .container { max-width:650px; margin:auto; }
+    .container { max-width:700px; margin:auto; }
     .back-btn{
         border:none; background:#fff; color:#012147; font-weight:600;
         padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
@@ -27,13 +27,21 @@
         box-shadow:0 6px 20px rgba(0,0,0,0.06);
     }
     .form-label{ font-weight:600; color:#012147; font-size:14px; }
-    .form-control{ border-radius:10px; border:1px solid #e2e8f0; padding:10px 14px; }
-    .form-control:focus{ border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
+    .form-control, .form-select{ border-radius:10px; border:1px solid #e2e8f0; padding:10px 14px; }
+    .form-control:focus, .form-select:focus{ border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
     .row-2{ display:flex; gap:14px; }
     @media (max-width:576px){ .row-2{ flex-direction:column; } }
     .row-2 > div{ flex:1; }
     .btn-navy{ background:#012147; color:#fff; border:none; padding:12px; font-weight:600; border-radius:10px; }
     .btn-navy:hover{ background:#1e3a6e; color:#fff; }
+
+    .module-list{
+        border:1px solid #e2e8f0; border-radius:10px; max-height:220px;
+        overflow-y:auto; padding:10px 14px;
+    }
+    .module-item{ display:flex; align-items:center; gap:10px; padding:6px 0; font-size:14px; }
+    .module-item input{ width:16px; height:16px; }
+    .module-empty{ color:#94a3b8; font-size:13px; padding:6px 0; }
 
     .lecturer-search-box{ position:relative; }
     .lecturer-results{
@@ -77,6 +85,41 @@
         <form action="{{ route('admin.lecture-records.update', $idsCsv) }}" method="POST">
             @csrf
             @method('PUT')
+
+            <div class="mb-3">
+                <label class="form-label">Faculty</label>
+                <div id="facultyList" class="module-list"></div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Course</label>
+                <div id="courseList" class="module-list">
+                    <div class="module-empty">Select a faculty first.</div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Level</label>
+                <div id="levelList" class="module-list">
+                    <div class="module-empty">Select a course first.</div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Semester</label>
+                <div id="semesterList" class="module-list">
+                    <div class="module-empty">Select a level first.</div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Module</label>
+                <div id="moduleList" class="module-list">
+                    <div class="module-empty">Select a semester first.</div>
+                </div>
+            </div>
+
+            <hr class="mb-4">
 
             <div class="mb-3">
                 <label class="form-label">Lecturer (optional)</label>
@@ -132,6 +175,153 @@
 </div>
 
 <script>
+const preselected = @json($selected);
+
+// ---------- Seed faculty checkboxes on page load ----------
+document.getElementById('facultyList').innerHTML = `
+    @foreach($faculties as $faculty)
+        <label class="module-item">
+            <input type="checkbox" class="lvl-faculty" value="{{ $faculty->id }}">
+            {{ $faculty->name }}
+        </label>
+    @endforeach
+`;
+
+// ---------- Cascading logic (same as create) ----------
+function checkedValues(container, cls) {
+    return [...container.querySelectorAll('.' + cls + ':checked')]
+        .flatMap(el => el.value.split(','));
+}
+
+function renderCheckboxes(container, items, cls) {
+    if (!items.length) {
+        container.innerHTML = '<div class="module-empty">No options found.</div>';
+        return;
+    }
+    container.innerHTML = items.map(i => `
+        <label class="module-item">
+            <input type="checkbox" class="${cls}" value="${i.ids ? i.ids.join(',') : i.id}">
+            ${i.code ? i.code + ' - ' : ''}${i.name}
+        </label>
+    `).join('');
+}
+
+function resetBelow(containers, message) {
+    containers.forEach(c => c.innerHTML = `<div class="module-empty">${message}</div>`);
+}
+
+const facultyList = document.getElementById('facultyList');
+const courseList = document.getElementById('courseList');
+const levelList = document.getElementById('levelList');
+const semesterList = document.getElementById('semesterList');
+const moduleList = document.getElementById('moduleList');
+
+async function fetchIds(routeName, ids) {
+    const params = new URLSearchParams();
+    ids.forEach(id => params.append('ids[]', id));
+    const res = await fetch(`/admin/lecture-records/${routeName}?${params.toString()}`);
+    return res.json();
+}
+
+function renderModuleCheckboxes(modules, selectedSubjectIds = []) {
+    if (!modules.length) {
+        moduleList.innerHTML = '<div class="module-empty">No modules found.</div>';
+        return;
+    }
+    const selectedSet = (selectedSubjectIds || []).map(String);
+    moduleList.innerHTML = modules.map(s => `
+        <label class="module-item">
+            <input type="checkbox" name="subject_ids[]" value="${s.id}" ${selectedSet.includes(String(s.id)) ? 'checked' : ''}>
+            ${s.code} - ${s.name}
+        </label>
+    `).join('');
+}
+
+facultyList.addEventListener('change', async function () {
+    const ids = checkedValues(facultyList, 'lvl-faculty');
+    resetBelow([levelList, semesterList], 'Select a course first.');
+    moduleList.innerHTML = '<div class="module-empty">Select a semester first.</div>';
+
+    if (!ids.length) {
+        resetBelow([courseList], 'Select a faculty first.');
+        return;
+    }
+    const courses = await fetchIds('get-courses', ids);
+    renderCheckboxes(courseList, courses, 'lvl-course');
+});
+
+courseList.addEventListener('change', async function () {
+    const ids = checkedValues(courseList, 'lvl-course');
+    resetBelow([semesterList], 'Select a level first.');
+    moduleList.innerHTML = '<div class="module-empty">Select a semester first.</div>';
+
+    if (!ids.length) {
+        resetBelow([levelList], 'Select a course first.');
+        return;
+    }
+    const levels = await fetchIds('get-levels', ids);
+    renderCheckboxes(levelList, levels, 'lvl-level');
+});
+
+levelList.addEventListener('change', async function () {
+    const ids = checkedValues(levelList, 'lvl-level');
+    moduleList.innerHTML = '<div class="module-empty">Select a semester first.</div>';
+
+    if (!ids.length) {
+        resetBelow([semesterList], 'Select a level first.');
+        return;
+    }
+    const semesters = await fetchIds('get-semesters', ids);
+    renderCheckboxes(semesterList, semesters, 'lvl-semester');
+});
+
+semesterList.addEventListener('change', async function () {
+    const ids = checkedValues(semesterList, 'lvl-semester');
+
+    if (!ids.length) {
+        moduleList.innerHTML = '<div class="module-empty">Select a semester first.</div>';
+        return;
+    }
+    const modules = await fetchIds('get-subjects', ids);
+    renderModuleCheckboxes(modules);
+});
+
+// ---------- Pre-fill the cascade with the record's current subject ----------
+async function prefillModules() {
+    if (!preselected || !preselected.faculty_id) return;
+
+    const facultyBox = facultyList.querySelector(`.lvl-faculty[value="${preselected.faculty_id}"]`);
+    if (!facultyBox) return;
+    facultyBox.checked = true;
+
+    const courses = await fetchIds('get-courses', [preselected.faculty_id]);
+    renderCheckboxes(courseList, courses, 'lvl-course');
+    const courseBox = [...courseList.querySelectorAll('.lvl-course')]
+        .find(cb => cb.value.split(',').includes(String(preselected.course_id)));
+    if (!courseBox) return;
+    courseBox.checked = true;
+
+    const levels = await fetchIds('get-levels', courseBox.value.split(','));
+    renderCheckboxes(levelList, levels, 'lvl-level');
+    const levelBox = [...levelList.querySelectorAll('.lvl-level')]
+        .find(cb => cb.value.split(',').includes(String(preselected.level_id)));
+    if (!levelBox) return;
+    levelBox.checked = true;
+
+    const semesters = await fetchIds('get-semesters', levelBox.value.split(','));
+    renderCheckboxes(semesterList, semesters, 'lvl-semester');
+    const semesterBox = [...semesterList.querySelectorAll('.lvl-semester')]
+        .find(cb => cb.value.split(',').includes(String(preselected.semester_id)));
+    if (!semesterBox) return;
+    semesterBox.checked = true;
+
+    const modules = await fetchIds('get-subjects', semesterBox.value.split(','));
+    renderModuleCheckboxes(modules, preselected.subject_ids);
+}
+
+document.addEventListener('DOMContentLoaded', prefillModules);
+
+// ---------- Lecturer search ----------
 const searchInput = document.getElementById('lecturerSearch');
 const resultsBox = document.getElementById('lecturerResults');
 const lecturerIdInput = document.getElementById('lecturer_id');
