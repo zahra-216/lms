@@ -74,14 +74,31 @@
 
         @foreach($subject->assignments as $assignment)
         <div class="card assignment-card">
-            <div class="assignment-header d-flex justify-content-between align-items-center">
+            <div class="assignment-header d-flex justify-content-between align-items-center flex-wrap gap-2">
                 <div>
                     <h5 class="mb-1">{{ $assignment->title }}</h5>
                     <small><i class="bi bi-clock"></i> Due: {{ $assignment->due_date?->format('d M Y, h:i A') ?? 'No due date set' }}</small>
                 </div>
-                <span class="badge bg-{{ $assignment->is_published ? 'success' : 'secondary' }}">
-                    {{ $assignment->is_published ? 'Published' : 'Draft' }}
-                </span>
+
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-{{ $assignment->is_published ? 'success' : 'secondary' }}">
+                        {{ $assignment->is_published ? 'Published' : 'Draft' }}
+                    </span>
+
+                    <a href="{{ route('lecturer.assignments.edit', [$subject->id, $assignment->id]) }}"
+                    class="btn btn-sm btn-light" title="Edit">
+                        <i class="bi bi-pencil-square"></i>
+                    </a>
+
+                    <form action="{{ route('lecturer.assignments.destroy', [$subject->id, $assignment->id]) }}"
+                        method="POST" onsubmit="return confirm('Delete this assignment? This cannot be undone.');" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-light text-danger" title="Delete">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </form>
+                </div>
             </div>
 
             <div class="assignment-body">

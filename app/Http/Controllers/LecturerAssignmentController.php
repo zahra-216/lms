@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Subject;
 use App\Models\Assignment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class LecturerAssignmentController extends Controller
 {
@@ -81,5 +82,21 @@ class LecturerAssignmentController extends Controller
         return redirect()
             ->route('lecturer.subject.assignments', $subject->id)
             ->with('success', 'Assignment updated successfully');
+    }
+
+    public function destroy(Subject $subject, Assignment $assignment)
+    {
+        // Optional safety check: make sure this assignment belongs to this subject
+        abort_if($assignment->subject_id !== $subject->id, 404);
+
+        if ($assignment->file_path) {
+            Storage::disk('public')->delete($assignment->file_path);
+        }
+
+        $assignment->delete();
+
+        return redirect()
+            ->route('lecturer.subject.assignments', $subject->id)
+            ->with('success', 'Assignment deleted successfully');
     }
 }

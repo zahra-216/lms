@@ -162,7 +162,8 @@ Route::prefix('lecturer')->group(function () {
                 ->name('assignments.edit');
             Route::put('/subject/{subject}/assignments/{assignment}', [App\Http\Controllers\LecturerAssignmentController::class, 'update'])
                 ->name('assignments.update');
-            
+            Route::delete('/subject/{subject}/assignments/{assignment}', [App\Http\Controllers\LecturerAssignmentController::class, 'destroy'])
+                ->name('assignments.destroy');
 
             // Lecture Records — read-only history + add content
             Route::get('/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'index'])
