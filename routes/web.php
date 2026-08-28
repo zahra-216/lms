@@ -282,7 +282,12 @@ Route::prefix('student')->name('student.')->middleware('student.auth')->group(fu
 Route::post('/assignment/submit', [AssignmentController::class, 'submit'])
     ->name('assignment.submit')
     ->middleware('student.auth');
-
+Route::put('/assignment/submission/{submission}', [AssignmentController::class, 'updateSubmission'])
+    ->name('assignment.submission.update')
+    ->middleware('student.auth');
+Route::delete('/assignment/submission/{submission}', [AssignmentController::class, 'destroySubmission'])
+    ->name('assignment.submission.destroy')
+    ->middleware('student.auth');
 
 /*
 |--------------------------------------------------------------------------

@@ -140,6 +140,36 @@
                         <strong>{{ $isLate ? 'Late by ' . $durationText : 'Early by ' . $durationText }}</strong>
                         <br>
                         <a href="{{ asset('storage/' . $submission->file) }}" target="_blank">View my submission</a>
+
+                                @if(now()->lte($assignment->due_date))
+                                    <div class="mt-2 d-flex gap-2">
+                                        <button type="button" class="btn btn-sm btn-outline-secondary"
+                                                onclick="document.getElementById('edit-sub-{{ $submission->id }}').classList.toggle('d-none')">
+                                            <i class="bi bi-pencil-square"></i> Edit
+                                        </button>
+
+                                        <form action="{{ route('assignment.submission.destroy', $submission->id) }}" method="POST"
+                                            onsubmit="return confirm('Delete your submission? This cannot be undone.');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash"></i> Delete
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                    <form id="edit-sub-{{ $submission->id }}" action="{{ route('assignment.submission.update', $submission->id) }}"
+                                        method="POST" enctype="multipart/form-data" class="d-none mt-2">
+                                        @csrf
+                                        @method('PUT')
+                                        <input type="file" name="file" class="form-control form-control-sm mb-2" required>
+                                        <button class="btn btn-sm btn-primary">Replace File</button>
+                                    </form>
+                                @else
+                                    <div class="text-muted small mt-2">
+                                        <i class="bi bi-lock"></i> Deadline passed — submission is locked.
+                                    </div>
+                                @endif
                     </div>
                 @elseif(now()->lte($assignment->due_date) || $assignment->allow_late)
                     <form action="{{ route('assignment.submit') }}" method="POST" enctype="multipart/form-data" class="submit-form">

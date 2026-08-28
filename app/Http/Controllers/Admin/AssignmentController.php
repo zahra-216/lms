@@ -14,6 +14,7 @@ use App\Models\Subject;
 use App\Events\AssignmentCreated;
 use App\Notifications\AssignmentSubmitted;
 use App\Notifications\AssignmentSubmissionConfirmed;
+use Illuminate\Support\Facades\Storage;
 
 class AssignmentController extends Controller
 {
@@ -189,5 +190,50 @@ class AssignmentController extends Controller
             ->findOrFail($id);
 
         return view('admin.assignments.submissions', compact('assignment'));
+    }
+
+    public function updateSubmission(Request $request, AssignmentSubmission $submission)
+    {
+        $studentId = session('student_id');
+        abort_if(!$studentId || $submission->student_id != $studentId, 403);
+
+        $submission->load('assignment');
+        if ($submission->assignment && now()->gt($submission->assignment->due_date)) {
+            return back()->with('error', 'Deadline has passed — you can no longer edit your submission.');
+        }
+
+        $request->validate([
+            'file' => 'required|file',
+        ]);
+
+        if ($submission->file) {
+            Storage::disk('public')->delete($submission->file);
+        }
+
+        $submission->update([
+            'file' => $request->file('file')->store('submissions', 'public'),
+            'submitted_at' => now(),
+        ]);
+
+        return back()->with('success', 'Submission updated!');
+    }
+
+    public function destroySubmission(AssignmentSubmission $submission)
+    {
+        $studentId = session('student_id');
+        abort_if(!$studentId || $submission->student_id != $studentId, 403);
+
+        $submission->load('assignment');
+        if ($submission->assignment && now()->gt($submission->assignment->due_date)) {
+            return back()->with('error', 'Deadline has passed — you can no longer delete your submission.');
+        }
+
+        if ($submission->file) {
+            Storage::disk('public')->delete($submission->file);
+        }
+
+        $submission->delete();
+
+        return back()->with('success', 'Submission deleted!');
     }
 }
