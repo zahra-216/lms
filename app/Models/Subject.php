@@ -48,6 +48,12 @@ class Subject extends Model
     {
         return $this->hasMany(LectureVideo::class);
     }
+
+    public function quizzes()
+    {
+        return $this->hasMany(Quiz::class);
+    }
+
     public function subjectMarks()
     {
         return $this->hasMany(SubjectMark::class);

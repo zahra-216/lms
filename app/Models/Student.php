@@ -60,4 +60,9 @@ class Student extends Authenticatable
         return $this->belongsTo(Semester::class);
     }
 
+    public function quizSubmissions()
+    {
+        return $this->hasMany(\App\Models\QuizSubmission::class);
+    }
+
 }

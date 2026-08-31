@@ -165,6 +165,36 @@ Route::prefix('lecturer')->group(function () {
             Route::delete('/subject/{subject}/assignments/{assignment}', [App\Http\Controllers\LecturerAssignmentController::class, 'destroy'])
                 ->name('assignments.destroy');
 
+            // Quiz creation
+            Route::get('/subject/{subject}/quizzes', [App\Http\Controllers\LecturerQuizController::class, 'index'])
+                ->name('quizzes.index');
+            Route::get('/subject/{subject}/quizzes/create', [App\Http\Controllers\LecturerQuizController::class, 'create'])
+                ->name('quizzes.create');
+            Route::post('/subject/{subject}/quizzes', [App\Http\Controllers\LecturerQuizController::class, 'store'])
+                ->name('quizzes.store');
+            Route::get('/subject/{subject}/quizzes/{quiz}', [App\Http\Controllers\LecturerQuizController::class, 'show'])
+                ->name('quizzes.show');
+            Route::get('/subject/{subject}/quizzes/{quiz}/edit', [App\Http\Controllers\LecturerQuizController::class, 'edit'])
+                ->name('quizzes.edit');
+            Route::put('/subject/{subject}/quizzes/{quiz}', [App\Http\Controllers\LecturerQuizController::class, 'update'])
+                ->name('quizzes.update');
+            Route::delete('/subject/{subject}/quizzes/{quiz}', [App\Http\Controllers\LecturerQuizController::class, 'destroy'])
+                ->name('quizzes.destroy');
+            
+            // Quiz questions
+            Route::post('/subject/{subject}/quizzes/{quiz}/questions', [App\Http\Controllers\LecturerQuizController::class, 'storeQuestion'])
+                ->name('quizzes.questions.store');
+            Route::put('/subject/{subject}/quizzes/{quiz}/questions/{question}', [App\Http\Controllers\LecturerQuizController::class, 'updateQuestion'])
+                ->name('quizzes.questions.update');
+            Route::delete('/subject/{subject}/quizzes/{quiz}/questions/{question}', [App\Http\Controllers\LecturerQuizController::class, 'destroyQuestion'])
+                ->name('quizzes.questions.destroy');
+            
+            // Quiz grading
+            Route::get('/subject/{subject}/quizzes/{quiz}/submissions/{submission}/grade', [App\Http\Controllers\LecturerQuizController::class, 'gradeSubmission'])
+                ->name('quizzes.submissions.grade');
+            Route::post('/subject/{subject}/quizzes/{quiz}/submissions/{submission}/grades', [App\Http\Controllers\LecturerQuizController::class, 'saveGrades'])
+                ->name('quizzes.submissions.saveGrades');
+
             // Lecture Records — read-only history + add content
             Route::get('/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'index'])
                 ->name('lecture-records.index');
@@ -217,6 +247,20 @@ Route::prefix('student')->name('student.')->middleware('student.auth')->group(fu
 
     Route::get('/subject/{id}/portal-assignments', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'assignments'])
         ->name('subject.portal.assignments');
+
+    Route::get('/subject/{id}/portal-quizzes', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'quizzes'])
+        ->name('subject.portal.quizzes');
+
+    Route::get('/subject/{id}/quizzes', [App\Http\Controllers\Student\QuizController::class, 'index'])
+        ->name('quiz.index');
+    Route::post('/quiz/{quiz}/start', [App\Http\Controllers\Student\QuizController::class, 'start'])
+        ->name('quiz.start');
+    Route::get('/quiz/{submission}/attempt', [App\Http\Controllers\Student\QuizController::class, 'attempt'])
+        ->name('quiz.attempt');
+    Route::post('/quiz/{submission}/submit', [App\Http\Controllers\Student\QuizController::class, 'submit'])
+        ->name('quiz.submit');
+    Route::get('/quiz/{submission}/result', [App\Http\Controllers\Student\QuizController::class, 'result'])
+        ->name('quiz.result');
 
     Route::get('/subject/{id}/portal-grades', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'grades'])
         ->name('subject.portal.grades');
@@ -405,6 +449,24 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         Route::get('assignments/{assignment}/edit', [AssignmentController::class, 'edit'])->name('assignments.edit');
         Route::put('assignments/{assignment}', [AssignmentController::class, 'update'])->name('assignments.update');
         Route::delete('assignments/{assignment}', [AssignmentController::class, 'destroy'])->name('assignments.destroy');
+
+        // Quizzes
+        Route::get('quizzes', [App\Http\Controllers\Admin\QuizController::class, 'index'])->name('quizzes.index');
+        Route::get('quizzes/create', [App\Http\Controllers\Admin\QuizController::class, 'create'])->name('quizzes.create');
+        Route::post('quizzes', [App\Http\Controllers\Admin\QuizController::class, 'store'])->name('quizzes.store');
+        Route::get('quizzes/{quiz}', [App\Http\Controllers\Admin\QuizController::class, 'show'])->name('quizzes.show');
+        Route::get('quizzes/{quiz}/edit', [App\Http\Controllers\Admin\QuizController::class, 'edit'])->name('quizzes.edit');
+        Route::put('quizzes/{quiz}', [App\Http\Controllers\Admin\QuizController::class, 'update'])->name('quizzes.update');
+        Route::delete('quizzes/{quiz}', [App\Http\Controllers\Admin\QuizController::class, 'destroy'])->name('quizzes.destroy');
+        
+        // Quiz questions
+        Route::post('quizzes/{quiz}/questions', [App\Http\Controllers\Admin\QuizController::class, 'storeQuestion'])->name('quizzes.questions.store');
+        Route::put('quizzes/{quiz}/questions/{question}', [App\Http\Controllers\Admin\QuizController::class, 'updateQuestion'])->name('quizzes.questions.update');
+        Route::delete('quizzes/{quiz}/questions/{question}', [App\Http\Controllers\Admin\QuizController::class, 'destroyQuestion'])->name('quizzes.questions.destroy');
+        
+        // Quiz grading
+        Route::get('quizzes/{quiz}/submissions/{submission}/grade', [App\Http\Controllers\Admin\QuizController::class, 'gradeSubmission'])->name('quizzes.submissions.grade');
+        Route::post('quizzes/{quiz}/submissions/{submission}/grades', [App\Http\Controllers\Admin\QuizController::class, 'saveGrades'])->name('quizzes.submissions.saveGrades');
 
         Route::get('grades', [SubjectController::class, 'grades'])->name('grades');
         Route::post('grades/update', [SubjectController::class, 'updateMarks'])->name('grades.update');
