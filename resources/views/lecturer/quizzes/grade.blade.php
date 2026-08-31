@@ -6,87 +6,111 @@
 <title>Grade Submission - {{ $quiz->title }}</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-    :root{ --navy:#0a2452; --navy-light:#153a7a; --blue:#2563eb; --bg:#f5f7fb; --border:#e6eaf1; --muted:#64748b; }
-    *{ font-family:'Inter', sans-serif; }
-    body{ background:var(--bg); padding:36px 16px 60px; }
-    .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
+    @media (max-width:576px){ body { padding:20px 12px; } }
+
+    .container { max-width:1200px; margin:auto; }
+
+    .back-btn{
+        border:none; background:#fff; color:#012147; font-weight:600;
+        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
+        text-decoration:none; display:inline-flex; align-items:center; gap:6px;
     }
-    .page-header h3 { margin: 0; }
-    .page-header p { margin: 8px 0 0 0; }
+    .back-btn:hover{ background:#012147; color:#fff; }
+
+    .page-header{
+        background:linear-gradient(120deg,#012147,#1e3a6e);
+        color:#fff; border-radius:18px; padding:24px 28px; margin:18px 0 26px;
+        box-shadow:0 10px 30px rgba(1,33,71,0.25);
+    }
+    .page-header h3{ margin:0; font-weight:700; font-size:20px; }
+    .page-header small{ opacity:0.85; }
+
+    .section-card{
+        background:#fff; border-radius:14px; padding:22px;
+        box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:20px;
+    }
+    .section-card h6{ font-weight:700; color:#012147; font-size:14px; margin-bottom:16px; display:flex; align-items:center; gap:6px; }
+
+    .info-row{ display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #f1f5f9; font-size:13.5px; }
+    .info-row:last-child{ border-bottom:none; }
+    .info-row span:first-child{ color:#64748b; }
+    .info-row span:last-child{ font-weight:600; color:#012147; }
+
+    .score-box{ border-radius:10px; padding:12px 14px; font-size:13.5px; margin-bottom:12px; }
+    .score-box-auto{ background:#e6f0ff; color:#0a3d91; }
+    .score-box-manual{ background:#e7f8ee; color:#0f5c33; }
+    .score-box-status{ background:#fff4e0; color:#8a5b00; }
+
+    .form-label{ font-weight:600; color:#012147; font-size:14px; }
+    .form-control, .form-select{ border-radius:10px; border:1px solid #e2e8f0; padding:10px 14px; }
+    .form-control:focus, .form-select:focus{ border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
+    .input-group-text{ border-radius:0 10px 10px 0; background:#f8fafc; font-weight:600; color:#012147; }
+
+    .btn-navy{ background:#012147; color:#fff; border:none; padding:13px; font-weight:600; border-radius:10px; width:100%; }
+    .btn-navy:hover{ background:#1e3a6e; color:#fff; }
+
+    .answer-block{ padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid #f1f5f9; }
+    .answer-block:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
+    .pts-badge{ font-size:11px; font-weight:700; padding:4px 9px; border-radius:8px; background:#64748b; color:#fff; }
+
+    .answer-box{ background:#f8fafc; border-radius:10px; padding:14px; margin-top:8px; font-size:13.5px; }
+    .answer-tag{ font-size:11.5px; font-weight:600; color:#8a5b00; background:#fff4e0; padding:4px 10px; border-radius:20px; display:inline-flex; align-items:center; gap:4px; }
+    .answer-tag-correct{ color:#0f5c33; background:#e7f8ee; }
+    .answer-tag-incorrect{ color:#8a1f1f; background:#fdeaea; }
 </style>
 </head>
 <body>
-
-<div class="container-fluid mt-4">
-    <a href="{{ route('lecturer.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="btn btn-outline-secondary mb-3">
+<div class="container">
+    <a href="{{ route('lecturer.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="back-btn">
         <i class="bi bi-arrow-left"></i> Back to Quiz
     </a>
 
-    <div class="page-header mb-4">
+    <div class="page-header">
         <h3><i class="bi bi-clipboard-check"></i> Grade Submission</h3>
-        <p class="text-muted">{{ $subject->name }} | {{ $quiz->title }}</p>
+        <small>{{ $subject->name }} | {{ $quiz->title }}</small>
     </div>
 
     <div class="row">
         <div class="col-lg-3">
-            <div class="card border-0 shadow-sm mb-3">
-                <div class="card-body">
-                    <h6 class="card-title text-primary"><i class="bi bi-person-circle"></i> Student Info</h6>
-                    <hr>
-                    <div class="mb-3">
-                        <strong>{{ $submission->student->name }}</strong><br>
-                        <small class="text-muted">{{ $submission->student->email }}</small>
-                    </div>
-                    <dl class="row small mb-0">
-                        <dt class="col-6">Attempt:</dt>
-                        <dd class="col-6">{{ $submission->attempt_number }} / {{ $quiz->max_attempts }}</dd>
-                        <dt class="col-6">Started:</dt>
-                        <dd class="col-6">{{ $submission->started_at->format('M d H:i') }}</dd>
-                        <dt class="col-6">Submitted:</dt>
-                        <dd class="col-6">{{ $submission->submitted_at?->format('M d H:i') ?? 'N/A' }}</dd>
-                        <dt class="col-6">Duration:</dt>
-                        <dd class="col-6">
-                            @if($submission->submitted_at)
-                                {{ $submission->started_at->diffInMinutes($submission->submitted_at) }} min
-                            @else
-                                —
-                            @endif
-                        </dd>
-                    </dl>
+            <div class="section-card">
+                <h6><i class="bi bi-person-circle"></i> Student Info</h6>
+                <div class="mb-2">
+                    <strong>{{ $submission->student->name }}</strong><br>
+                    <small class="text-muted">{{ $submission->student->email }}</small>
+                </div>
+                <div class="info-row"><span>Attempt</span><span>{{ $submission->attempt_number }} / {{ $quiz->max_attempts }}</span></div>
+                <div class="info-row"><span>Started</span><span>{{ $submission->started_at->format('M d H:i') }}</span></div>
+                <div class="info-row"><span>Submitted</span><span>{{ $submission->submitted_at?->format('M d H:i') ?? 'N/A' }}</span></div>
+                <div class="info-row">
+                    <span>Duration</span>
+                    <span>
+                        @if($submission->submitted_at)
+                            {{ $submission->started_at->diffInMinutes($submission->submitted_at) }} min
+                        @else
+                            —
+                        @endif
+                    </span>
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm">
-                <div class="card-body">
-                    <h6 class="card-title text-info"><i class="bi bi-info-circle"></i> Scoring</h6>
-                    <hr>
-                    @if($quiz->grading_type !== 'manual')
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Auto Score</label>
-                        <div class="alert alert-info mb-0">
-                            <strong>{{ $submission->automatic_score ?? 'N/A' }}</strong> / {{ $quiz->total_points }}
-                        </div>
-                    </div>
-                    @endif
-                    @if($quiz->grading_type !== 'automatic')
-                    <div class="mb-3">
-                        <label class="form-label small fw-bold">Manual Score</label>
-                        <div class="alert alert-success mb-0">
-                            <strong>{{ $submission->manual_score ?? 'Not graded' }}</strong> / {{ $quiz->total_points }}
-                        </div>
-                    </div>
-                    @endif
-                    <hr>
-                    <div class="alert alert-warning small mb-0">
-                        <strong>Status:</strong> {{ ucfirst($submission->status) }}
-                    </div>
+            <div class="section-card">
+                <h6><i class="bi bi-info-circle"></i> Scoring</h6>
+                @if($quiz->grading_type !== 'manual')
+                <div class="score-box score-box-auto">
+                    <div class="mb-1" style="font-size:12px; font-weight:600;">Auto Score</div>
+                    <strong>{{ $submission->automatic_score ?? 'N/A' }}</strong> / {{ $quiz->total_points }}
+                </div>
+                @endif
+                @if($quiz->grading_type !== 'automatic')
+                <div class="score-box score-box-manual">
+                    <div class="mb-1" style="font-size:12px; font-weight:600;">Manual Score</div>
+                    <strong>{{ $submission->manual_score ?? 'Not graded' }}</strong> / {{ $quiz->total_points }}
+                </div>
+                @endif
+                <div class="score-box score-box-status mb-0">
+                    <strong>Status:</strong> {{ ucfirst($submission->status) }}
                 </div>
             </div>
         </div>
@@ -96,7 +120,7 @@
                 @csrf
 
                 @if($errors->any())
-                <div class="alert alert-danger">
+                <div class="alert alert-danger rounded-3">
                     <ul class="mb-0">
                         @foreach($errors->all() as $error)
                             <li>{{ $error }}</li>
@@ -105,106 +129,85 @@
                 </div>
                 @endif
 
-                <div class="card border-0 shadow-sm mb-4">
-                    <div class="card-header bg-primary text-white">
-                        <h6 class="mb-0"><i class="bi bi-file-earmark"></i> Student Answers</h6>
-                    </div>
-                    <div class="card-body">
-                        @php $qIndex = 1; @endphp
-                        @foreach($submission->answers as $answer)
-                        @php
-                            $question = $answer->question;
-                            $isCorrect = $answer->is_correct;
-                        @endphp
-                        <div class="mb-4 pb-4 border-bottom" @if($loop->last) style="border-bottom:none!important;" @endif>
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <h6 class="mb-0">Q{{ $qIndex }}. {{ $question->question_text }}</h6>
-                                <span class="badge bg-secondary">{{ $question->points }} pts</span>
-                            </div>
-
-                            @if($question->type === 'multiple_choice')
-                                <div class="bg-light p-3 rounded mb-2">
-                                    <small class="d-block text-muted mb-2">Student's Answer:</small>
-                                    <strong>{{ $answer->answer?->answer_text ?? 'Not answered' }}</strong>
-                                    @php
-                                        $correctAnswer = $question->answers()->where('is_correct', true)->first();
-                                    @endphp
-                                    <div class="mt-2">
-                                        <strong class="text-success"><i class="bi bi-check-circle"></i> Correct Answer:</strong> {{ $correctAnswer->answer_text }}
-                                    </div>
-                                    <div class="mt-2">
-                                        @if($isCorrect)
-                                            <span class="badge bg-success"><i class="bi bi-check"></i> Correct</span>
-                                        @else
-                                            <span class="badge bg-danger"><i class="bi bi-x"></i> Incorrect</span>
-                                        @endif
-                                    </div>
-                                </div>
-
-                            @elseif($question->type === 'true_false')
-                                <div class="bg-light p-3 rounded mb-2">
-                                    <small class="d-block text-muted mb-2">Student's Answer:</small>
-                                    <strong>{{ ucfirst($answer->answer?->answer_text ?? 'Not answered') }}</strong>
-                                    <div class="mt-2">
-                                        <strong class="text-success"><i class="bi bi-check-circle"></i> Correct Answer:</strong> {{ ucfirst($question->correct_answer) }}
-                                    </div>
-                                    <div class="mt-2">
-                                        @if($isCorrect)
-                                            <span class="badge bg-success"><i class="bi bi-check"></i> Correct</span>
-                                        @else
-                                            <span class="badge bg-danger"><i class="bi bi-x"></i> Incorrect</span>
-                                        @endif
-                                    </div>
-                                </div>
-
-                            @else
-                                <div class="bg-light p-3 rounded mb-2">
-                                    <small class="d-block text-muted mb-2">Student's Answer:</small>
-                                    <p class="mb-0 border-bottom pb-2">{{ $answer->answer_text ?? 'Not answered' }}</p>
-                                    <small class="d-block text-muted mt-2 mb-2">Model Answer:</small>
-                                    <p class="mb-2 text-success">{{ $question->correct_answer }}</p>
-
-                                    <div class="form-check mt-3">
-                                        <input class="form-check-input" type="checkbox" name="answer_corrections[{{ $answer->id }}]" value="1"
-                                               id="correct{{ $answer->id }}" {{ $isCorrect ? 'checked' : '' }}>
-                                        <label class="form-check-label" for="correct{{ $answer->id }}">
-                                            Mark as Correct
-                                        </label>
-                                    </div>
-                                </div>
-                            @endif
+                <div class="section-card">
+                    <h6><i class="bi bi-file-earmark"></i> Student Answers</h6>
+                    @php $qIndex = 1; @endphp
+                    @foreach($submission->answers as $answer)
+                    @php
+                        $question = $answer->question;
+                        $isCorrect = $answer->is_correct;
+                    @endphp
+                    <div class="answer-block">
+                        <div class="d-flex justify-content-between align-items-start mb-1">
+                            <strong>Q{{ $qIndex }}. {{ $question->question_text }}</strong>
+                            <span class="pts-badge">{{ $question->points }} pts</span>
                         </div>
-                        @php $qIndex++; @endphp
-                        @endforeach
+
+                        @if($question->type === 'multiple_choice')
+                            <div class="answer-box">
+                                <small class="d-block text-muted mb-2">Student's Answer:</small>
+                                <strong>{{ $answer->answer?->answer_text ?? 'Not answered' }}</strong>
+                                @php $correctAnswer = $question->answers()->where('is_correct', true)->first(); @endphp
+                                <div class="mt-2"><strong class="text-success">Correct Answer:</strong> {{ $correctAnswer->answer_text }}</div>
+                                <div class="mt-2">
+                                    @if($isCorrect)
+                                        <span class="answer-tag answer-tag-correct"><i class="bi bi-check"></i> Correct</span>
+                                    @else
+                                        <span class="answer-tag answer-tag-incorrect"><i class="bi bi-x"></i> Incorrect</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @elseif($question->type === 'true_false')
+                            <div class="answer-box">
+                                <small class="d-block text-muted mb-2">Student's Answer:</small>
+                                <strong>{{ ucfirst($answer->answer?->answer_text ?? 'Not answered') }}</strong>
+                                <div class="mt-2"><strong class="text-success">Correct Answer:</strong> {{ ucfirst($question->correct_answer) }}</div>
+                                <div class="mt-2">
+                                    @if($isCorrect)
+                                        <span class="answer-tag answer-tag-correct"><i class="bi bi-check"></i> Correct</span>
+                                    @else
+                                        <span class="answer-tag answer-tag-incorrect"><i class="bi bi-x"></i> Incorrect</span>
+                                    @endif
+                                </div>
+                            </div>
+                        @else
+                            <div class="answer-box">
+                                <small class="d-block text-muted mb-2">Student's Answer:</small>
+                                <p class="mb-2 pb-2 border-bottom">{{ $answer->answer_text ?? 'Not answered' }}</p>
+                                <small class="d-block text-muted mb-1">Model Answer:</small>
+                                <p class="mb-2 text-success">{{ $question->correct_answer }}</p>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="answer_corrections[{{ $answer->id }}]" value="1"
+                                           id="correct{{ $answer->id }}" {{ $isCorrect ? 'checked' : '' }}>
+                                    <label class="form-check-label" for="correct{{ $answer->id }}">Mark as Correct</label>
+                                </div>
+                            </div>
+                        @endif
                     </div>
+                    @php $qIndex++; @endphp
+                    @endforeach
                 </div>
 
-                <div class="card border-0 shadow-sm">
-                    <div class="card-header bg-success text-white">
-                        <h6 class="mb-0"><i class="bi bi-pencil-square"></i> Grading</h6>
+                <div class="section-card">
+                    <h6><i class="bi bi-pencil-square"></i> Grading</h6>
+                    <div class="mb-4">
+                        <label class="form-label">Manual Score <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <input type="number" name="manual_score" class="form-control" min="0" max="{{ $quiz->total_points }}"
+                                   value="{{ $submission->manual_score ?? '' }}" step="0.1" required>
+                            <span class="input-group-text">/ {{ $quiz->total_points }}</span>
+                        </div>
+                        <small class="d-block mt-1 text-muted">Enter the manual score for this submission</small>
                     </div>
-                    <div class="card-body">
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Manual Score <span class="text-danger">*</span></label>
-                            <div class="input-group">
-                                <input type="number" name="manual_score" class="form-control" min="0" max="{{ $quiz->total_points }}"
-                                       value="{{ $submission->manual_score ?? '' }}" step="0.1" required>
-                                <span class="input-group-text">/ {{ $quiz->total_points }}</span>
-                            </div>
-                            <small class="d-block mt-1 text-muted">Enter the manual score for this submission</small>
-                        </div>
 
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Remarks/Feedback</label>
-                            <textarea name="lecturer_remarks" class="form-control" rows="5" placeholder="Enter any feedback for the student...">{{ $submission->lecturer_remarks }}</textarea>
-                        </div>
-
-                        <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-success btn-lg">
-                                <i class="bi bi-check-circle"></i> Save Grade & Remarks
-                            </button>
-                        </div>
+                    <div class="mb-4">
+                        <label class="form-label">Remarks/Feedback</label>
+                        <textarea name="lecturer_remarks" class="form-control" rows="5" placeholder="Enter any feedback for the student...">{{ $submission->lecturer_remarks }}</textarea>
                     </div>
+
+                    <button type="submit" class="btn-navy">
+                        <i class="bi bi-check-circle"></i> Save Grade & Remarks
+                    </button>
                 </div>
             </form>
         </div>

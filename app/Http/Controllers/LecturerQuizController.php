@@ -149,50 +149,59 @@ class LecturerQuizController extends Controller
             return back()->with('error', 'Cannot add questions after quiz has started');
         }
 
-        $validated = $request->validate([
+        $request->validate([
             'type' => 'required|in:multiple_choice,true_false,short_answer',
             'question_text' => 'required|string',
             'points' => 'required|integer|min:1',
-            'correct_answer' => 'required_if:type,true_false,short_answer|string',
-            'answers' => 'required_if:type,multiple_choice|array|min:2',
-            'answers.*' => 'required|string',
-            'correct_answer_index' => 'required_if:type,multiple_choice|integer',
         ]);
 
-        // Get next order
+        if ($request->type === 'multiple_choice') {
+            $request->validate([
+                'answers' => 'required|array|min:2',
+                'answers.*' => 'required|string',
+                'correct_answer_index' => 'required|integer',
+            ]);
+        } elseif ($request->type === 'true_false') {
+            $request->validate([
+                'correct_answer' => 'required|in:true,false',
+            ]);
+        } else {
+            $request->validate([
+                'correct_answer' => 'required|string',
+            ]);
+        }
+
         $order = $quiz->questions()->max('order') + 1 ?? 0;
 
         $question = QuizQuestion::create([
             'quiz_id' => $quiz->id,
-            'type' => $validated['type'],
-            'question_text' => $validated['question_text'],
-            'points' => $validated['points'],
+            'type' => $request->type,
+            'question_text' => $request->question_text,
+            'points' => $request->points,
             'order' => $order,
-            'correct_answer' => $validated['type'] === 'multiple_choice' ? null : $validated['correct_answer'],
+            'correct_answer' => $request->type === 'multiple_choice' ? null : $request->correct_answer,
         ]);
 
-        // Create answers for multiple choice
-        if ($validated['type'] === 'multiple_choice') {
-            foreach ($validated['answers'] as $index => $answer) {
+        if ($request->type === 'multiple_choice') {
+            foreach ($request->answers as $index => $answer) {
                 QuizAnswer::create([
                     'quiz_question_id' => $question->id,
                     'answer_text' => $answer,
-                    'is_correct' => $index == $validated['correct_answer_index'],
+                    'is_correct' => $index == $request->correct_answer_index,
                     'order' => $index,
                 ]);
             }
-        } elseif ($validated['type'] === 'true_false') {
-            // Create True/False options
+        } elseif ($request->type === 'true_false') {
             QuizAnswer::create([
                 'quiz_question_id' => $question->id,
                 'answer_text' => 'True',
-                'is_correct' => $validated['correct_answer'] === 'true',
+                'is_correct' => $request->correct_answer === 'true',
                 'order' => 0,
             ]);
             QuizAnswer::create([
                 'quiz_question_id' => $question->id,
                 'answer_text' => 'False',
-                'is_correct' => $validated['correct_answer'] === 'false',
+                'is_correct' => $request->correct_answer === 'false',
                 'order' => 1,
             ]);
         }
@@ -211,34 +220,59 @@ class LecturerQuizController extends Controller
             return back()->with('error', 'Cannot edit questions after quiz has started');
         }
 
-        $validated = $request->validate([
+        $request->validate([
             'type' => 'required|in:multiple_choice,true_false,short_answer',
             'question_text' => 'required|string',
             'points' => 'required|integer|min:1',
-            'correct_answer' => 'required_if:type,true_false,short_answer|string',
-            'answers' => 'required_if:type,multiple_choice|array|min:2',
-            'answers.*' => 'required|string',
-            'correct_answer_index' => 'required_if:type,multiple_choice|integer',
         ]);
+
+        if ($request->type === 'multiple_choice') {
+            $request->validate([
+                'answers' => 'required|array|min:2',
+                'answers.*' => 'required|string',
+                'correct_answer_index' => 'required|integer',
+            ]);
+        } elseif ($request->type === 'true_false') {
+            $request->validate([
+                'correct_answer' => 'required|in:true,false',
+            ]);
+        } else {
+            $request->validate([
+                'correct_answer' => 'required|string',
+            ]);
+        }
 
         $question->update([
-            'type' => $validated['type'],
-            'question_text' => $validated['question_text'],
-            'points' => $validated['points'],
-            'correct_answer' => $validated['type'] === 'multiple_choice' ? null : $validated['correct_answer'],
+            'type' => $request->type,
+            'question_text' => $request->question_text,
+            'points' => $request->points,
+            'correct_answer' => $request->type === 'multiple_choice' ? null : $request->correct_answer,
         ]);
 
-        // Update answers for multiple choice
-        if ($validated['type'] === 'multiple_choice') {
+        if ($request->type === 'multiple_choice') {
             $question->answers()->delete();
-            foreach ($validated['answers'] as $index => $answer) {
+            foreach ($request->answers as $index => $answer) {
                 QuizAnswer::create([
                     'quiz_question_id' => $question->id,
                     'answer_text' => $answer,
-                    'is_correct' => $index == $validated['correct_answer_index'],
+                    'is_correct' => $index == $request->correct_answer_index,
                     'order' => $index,
                 ]);
             }
+        } elseif ($request->type === 'true_false') {
+            $question->answers()->delete();
+            QuizAnswer::create([
+                'quiz_question_id' => $question->id,
+                'answer_text' => 'True',
+                'is_correct' => $request->correct_answer === 'true',
+                'order' => 0,
+            ]);
+            QuizAnswer::create([
+                'quiz_question_id' => $question->id,
+                'answer_text' => 'False',
+                'is_correct' => $request->correct_answer === 'false',
+                'order' => 1,
+            ]);
         }
 
         return back()->with('success', 'Question updated successfully');
