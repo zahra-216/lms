@@ -47,7 +47,7 @@
             </a>
         </div>
         <div class="col-md-4 col-6">
-            <a href="{{ route('admin.quizzes.index', $subject->id) }}" class="module-card">
+            <a href="{{ route('admin.subjects.quizzes.index', ['subject' => $subject->id]) }}" class="module-card">
                 <i class="bi bi-puzzle icon-quizzes"></i><span>Quizzes</span>
             </a>
         </div>
