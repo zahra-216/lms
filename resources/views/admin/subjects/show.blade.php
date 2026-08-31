@@ -20,6 +20,7 @@
     .module-card i{ font-size:1.8rem; margin-bottom:12px; display:flex; align-items:center; justify-content:center; width:56px; height:56px; border-radius:14px; color:#fff; margin:0 auto 12px; }
     .icon-notes{ background:#3b82f6; }
     .icon-assignments{ background:#f59e0b; }
+    .icon-quizzes{ background:#ec4899; }
     .icon-grades{ background:#10b981; }
     .icon-attendance{ background:#ef4444; }
     .icon-timetable{ background:#8b5cf6; }
@@ -43,6 +44,11 @@
         <div class="col-md-4 col-6">
             <a href="{{ route('admin.subjects.assignments.index', $subject->id) }}" class="module-card">
                 <i class="bi bi-journal-text icon-assignments"></i><span>Assignments</span>
+            </a>
+        </div>
+        <div class="col-md-4 col-6">
+            <a href="{{ route('admin.quizzes.index', $subject->id) }}" class="module-card">
+                <i class="bi bi-puzzle icon-quizzes"></i><span>Quizzes</span>
             </a>
         </div>
         <div class="col-md-4 col-6">

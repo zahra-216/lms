@@ -48,6 +48,7 @@
     .icon-notes{ background:#3b82f6; }
     .icon-videos{ background:#8b5cf6; }
     .icon-assignments{ background:#f59e0b; }
+    .icon-quizzes{ background:#ec4899; }
     .icon-grades{ background:#10b981; }
     .icon-attendance{ background:#ef4444; }
     .icon-timetable{ background:#06b6d4; }
@@ -79,6 +80,12 @@
             <a href="{{ route('lecturer.subject.assignments', $subject->id) }}" class="module-card">
                 <i class="bi bi-journal-text icon-assignments"></i>
                 <span>Assignments</span>
+            </a>
+        </div>
+        <div class="col-md-3 col-6">
+            <a href="{{ route('lecturer.quizzes.index', $subject->id) }}" class="module-card">
+                <i class="bi bi-puzzle icon-quizzes"></i>
+                <span>Quizzes</span>
             </a>
         </div>
         <div class="col-md-3 col-6">
