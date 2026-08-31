@@ -1,6 +1,29 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grade Submission - {{ $quiz->title }}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root{ --navy:#0a2452; --navy-light:#153a7a; --blue:#2563eb; --bg:#f5f7fb; --border:#e6eaf1; --muted:#64748b; }
+    *{ font-family:'Inter', sans-serif; }
+    body{ background:var(--bg); padding:36px 16px 60px; }
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .page-header h3 { margin: 0; }
+    .page-header p { margin: 8px 0 0 0; }
+</style>
+</head>
+<body>
 
-@section('content')
 <div class="container-fluid mt-4">
     <a href="{{ route('lecturer.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="btn btn-outline-secondary mb-3">
         <i class="bi bi-arrow-left"></i> Back to Quiz
@@ -12,7 +35,6 @@
     </div>
 
     <div class="row">
-        <!-- Student Info -->
         <div class="col-lg-3">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-body">
@@ -69,7 +91,6 @@
             </div>
         </div>
 
-        <!-- Answers & Grading Form -->
         <div class="col-lg-9">
             <form action="{{ route('lecturer.quizzes.submissions.saveGrades', ['subject' => $subject->id, 'quiz' => $quiz->id, 'submission' => $submission->id]) }}" method="POST">
                 @csrf
@@ -84,7 +105,6 @@
                 </div>
                 @endif
 
-                <!-- Student Answers Review -->
                 <div class="card border-0 shadow-sm mb-4">
                     <div class="card-header bg-primary text-white">
                         <h6 class="mb-0"><i class="bi bi-file-earmark"></i> Student Answers</h6>
@@ -143,9 +163,9 @@
                                     <p class="mb-0 border-bottom pb-2">{{ $answer->answer_text ?? 'Not answered' }}</p>
                                     <small class="d-block text-muted mt-2 mb-2">Model Answer:</small>
                                     <p class="mb-2 text-success">{{ $question->correct_answer }}</p>
-                                    
+
                                     <div class="form-check mt-3">
-                                        <input class="form-check-input" type="checkbox" name="answer_corrections[{{ $answer->id }}]" value="1" 
+                                        <input class="form-check-input" type="checkbox" name="answer_corrections[{{ $answer->id }}]" value="1"
                                                id="correct{{ $answer->id }}" {{ $isCorrect ? 'checked' : '' }}>
                                         <label class="form-check-label" for="correct{{ $answer->id }}">
                                             Mark as Correct
@@ -159,7 +179,6 @@
                     </div>
                 </div>
 
-                <!-- Grading Section -->
                 <div class="card border-0 shadow-sm">
                     <div class="card-header bg-success text-white">
                         <h6 class="mb-0"><i class="bi bi-pencil-square"></i> Grading</h6>
@@ -168,7 +187,7 @@
                         <div class="mb-4">
                             <label class="form-label fw-bold">Manual Score <span class="text-danger">*</span></label>
                             <div class="input-group">
-                                <input type="number" name="manual_score" class="form-control" min="0" max="{{ $quiz->total_points }}" 
+                                <input type="number" name="manual_score" class="form-control" min="0" max="{{ $quiz->total_points }}"
                                        value="{{ $submission->manual_score ?? '' }}" step="0.1" required>
                                 <span class="input-group-text">/ {{ $quiz->total_points }}</span>
                             </div>
@@ -192,15 +211,6 @@
     </div>
 </div>
 
-<style>
-    .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .page-header h3 { margin: 0; }
-    .page-header p { margin: 8px 0 0 0; }
-</style>
-@endsection
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

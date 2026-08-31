@@ -1,6 +1,31 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Edit Quiz - {{ $quiz->title }}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root{ --navy:#0a2452; --navy-light:#153a7a; --blue:#2563eb; --bg:#f5f7fb; --border:#e6eaf1; --muted:#64748b; }
+    *{ font-family:'Inter', sans-serif; }
+    body{ background:var(--bg); padding:36px 16px 60px; }
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .page-header h3 { margin: 0; }
+    .page-header p { margin: 8px 0 0 0; }
+    .question-item { transition: all 0.3s; }
+    .question-item:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+</style>
+</head>
+<body>
 
-@section('content')
 <div class="container-fluid mt-4">
     <a href="{{ route('lecturer.quizzes.index', $subject->id) }}" class="btn btn-outline-secondary mb-3">
         <i class="bi bi-arrow-left"></i> Back
@@ -29,7 +54,6 @@
     @endif
 
     <div class="row">
-        <!-- Quiz Details Column -->
         <div class="col-lg-4">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-primary text-white">
@@ -76,7 +100,7 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Start Date & Time</label>
-                            <input type="datetime-local" name="start_date" class="form-control" 
+                            <input type="datetime-local" name="start_date" class="form-control"
                                    value="{{ $quiz->start_date ? $quiz->start_date->format('Y-m-d\TH:i') : '' }}">
                         </div>
 
@@ -87,13 +111,13 @@
                         </div>
 
                         <div class="form-check mb-2">
-                            <input class="form-check-input" type="checkbox" name="show_correct_answers" value="1" 
+                            <input class="form-check-input" type="checkbox" name="show_correct_answers" value="1"
                                    id="showAnswers" {{ $quiz->show_correct_answers ? 'checked' : '' }}>
                             <label class="form-check-label" for="showAnswers">Show correct answers</label>
                         </div>
 
                         <div class="form-check mb-3">
-                            <input class="form-check-input" type="checkbox" name="is_published" value="1" 
+                            <input class="form-check-input" type="checkbox" name="is_published" value="1"
                                    id="publishQuiz" {{ $quiz->is_published ? 'checked' : '' }}>
                             <label class="form-check-label" for="publishQuiz">Publish</label>
                         </div>
@@ -111,7 +135,6 @@
             </div>
         </div>
 
-        <!-- Questions Column -->
         <div class="col-lg-8">
             <div class="card border-0 shadow-sm mb-3">
                 <div class="card-header bg-success text-white">
@@ -129,11 +152,11 @@
                                             <span class="badge bg-secondary">{{ $question->points }} pts</span>
                                         </div>
                                         <div class="btn-group btn-group-sm">
-                                            <button class="btn btn-outline-warning" data-bs-toggle="modal" 
+                                            <button class="btn btn-outline-warning" data-bs-toggle="modal"
                                                     data-bs-target="#editQuestion{{ $question->id }}">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
-                                            <form action="{{ route('lecturer.quizzes.questions.destroy', ['subject' => $subject->id, 'quiz' => $quiz->id, 'question' => $question->id]) }}" 
+                                            <form action="{{ route('lecturer.quizzes.questions.destroy', ['subject' => $subject->id, 'quiz' => $quiz->id, 'question' => $question->id]) }}"
                                                   method="POST" style="display:inline;">
                                                 @csrf
                                                 @method('DELETE')
@@ -167,7 +190,6 @@
                 </div>
             </div>
 
-            <!-- Add Question Form -->
             <div class="card border-0 shadow-sm">
                 <div class="card-header bg-info text-white">
                     <h6 class="mb-0"><i class="bi bi-plus-circle"></i> Add New Question</h6>
@@ -196,7 +218,6 @@
                             <input type="number" name="points" class="form-control" min="1" value="1" required>
                         </div>
 
-                        <!-- Multiple Choice Section -->
                         <div id="mcSection" style="display:none;">
                             <div class="alert alert-light border">
                                 <label class="form-label fw-bold">Answer Options <span class="text-danger">*</span></label>
@@ -222,7 +243,6 @@
                             </div>
                         </div>
 
-                        <!-- True/False Section -->
                         <div id="tfSection" style="display:none;">
                             <div class="alert alert-light border">
                                 <label class="form-label fw-bold">Correct Answer <span class="text-danger">*</span></label>
@@ -237,7 +257,6 @@
                             </div>
                         </div>
 
-                        <!-- Short Answer Section -->
                         <div id="saSection" style="display:none;">
                             <div class="alert alert-light border">
                                 <label class="form-label fw-bold">Model Answer <span class="text-danger">*</span></label>
@@ -255,7 +274,6 @@
     </div>
 </div>
 
-<!-- Edit Question Modals (created dynamically for each question) -->
 @foreach($questions as $question)
 <div class="modal fade" id="editQuestion{{ $question->id }}" tabindex="-1">
     <div class="modal-dialog modal-lg">
@@ -280,7 +298,6 @@
                         <label class="form-label fw-bold">Points</label>
                         <input type="number" name="points" class="form-control" min="1" value="{{ $question->points }}" required>
                     </div>
-                    <!-- Additional fields based on question type -->
                     @if($question->type === 'multiple_choice')
                         <div class="alert alert-light border">
                             @foreach($question->answers as $index => $answer)
@@ -320,20 +337,7 @@
 </div>
 @endforeach
 
-<style>
-    .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .page-header h3 { margin: 0; }
-    .page-header p { margin: 8px 0 0 0; }
-    .question-item { transition: all 0.3s; }
-    .question-item:hover { box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-</style>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 function updateQuestionForm() {
     const type = document.getElementById('questionType').value;
@@ -357,4 +361,5 @@ function addAnswerOption() {
     container.insertAdjacentHTML('beforeend', html);
 }
 </script>
-@endsection
+</body>
+</html>

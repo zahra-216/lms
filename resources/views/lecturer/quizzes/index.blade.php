@@ -1,8 +1,22 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ $subject->name }} - Quizzes</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root{ --navy:#0a2452; --navy-light:#153a7a; --blue:#2563eb; --bg:#f5f7fb; --border:#e6eaf1; --muted:#64748b; }
+    *{ font-family:'Inter', sans-serif; }
+    body{ background:var(--bg); padding:36px 16px 60px; }
+    .btn-group form { display: inline; margin: 0; }
+</style>
+</head>
+<body>
 
-@section('content')
 <div class="container mt-4">
-    <!-- Header -->
     <div class="row mb-4">
         <div class="col-md-8">
             <h2><i class="bi bi-puzzle"></i> Quizzes - {{ $subject->name }}</h2>
@@ -30,7 +44,6 @@
         </div>
     @endif
 
-    <!-- Quizzes List -->
     @if($quizzes->count() > 0)
         <div class="row">
             @foreach($quizzes as $quiz)
@@ -65,20 +78,20 @@
                         @endif
 
                         <div class="btn-group w-100" role="group">
-                            <a href="{{ route('lecturer.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" 
+                            <a href="{{ route('lecturer.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}"
                                class="btn btn-sm btn-outline-primary">
                                 <i class="bi bi-eye"></i> View
                             </a>
                             @if($quiz->canBeEdited())
-                            <a href="{{ route('lecturer.quizzes.edit', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" 
+                            <a href="{{ route('lecturer.quizzes.edit', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}"
                                class="btn btn-sm btn-outline-warning">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>
-                            <form action="{{ route('lecturer.quizzes.destroy', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" 
+                            <form action="{{ route('lecturer.quizzes.destroy', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}"
                                   method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn btn-sm btn-outline-danger" 
+                                <button type="submit" class="btn btn-sm btn-outline-danger"
                                         onclick="return confirm('Are you sure?')">
                                     <i class="bi bi-trash"></i> Delete
                                 </button>
@@ -98,7 +111,6 @@
     @endif
 </div>
 
-<style>
-    .btn-group form { display: inline; margin: 0; }
-</style>
-@endsection
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

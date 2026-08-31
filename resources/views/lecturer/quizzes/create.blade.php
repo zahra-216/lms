@@ -1,6 +1,29 @@
-@extends('layouts.app')
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create Quiz - {{ $subject->name }}</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+    :root{ --navy:#0a2452; --navy-light:#153a7a; --blue:#2563eb; --bg:#f5f7fb; --border:#e6eaf1; --muted:#64748b; }
+    *{ font-family:'Inter', sans-serif; }
+    body{ background:var(--bg); padding:36px 16px 60px; }
+    .page-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    .page-header h3 { margin: 0; }
+    .page-header p { margin: 8px 0 0 0; }
+</style>
+</head>
+<body>
 
-@section('content')
 <div class="container mt-4">
     <a href="{{ route('lecturer.quizzes.index', $subject->id) }}" class="btn btn-outline-secondary mb-3">
         <i class="bi bi-arrow-left"></i> Back to Quizzes
@@ -100,15 +123,6 @@
     </div>
 </div>
 
-<style>
-    .page-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 25px;
-        border-radius: 15px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    .page-header h3 { margin: 0; }
-    .page-header p { margin: 8px 0 0 0; }
-</style>
-@endsection
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
