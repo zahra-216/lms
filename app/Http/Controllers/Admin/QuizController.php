@@ -16,13 +16,13 @@ class QuizController extends Controller
     public function index(Subject $subject)
     {
         $quizzes = $subject->quizzes()->orderBy('created_at', 'desc')->get();
-        return view('admin.subjects.quizzes.index', compact('subject', 'quizzes'));
+        return view('admin.quizzes.index', compact('subject', 'quizzes'));
     }
 
     // Show create quiz form
     public function create(Subject $subject)
     {
-        return view('admin.subjects.quizzes.create', compact('subject'));
+        return view('admin.quizzes.create', compact('subject'));
     }
 
     // Store new quiz
@@ -65,7 +65,7 @@ class QuizController extends Controller
         }
 
         $questions = $quiz->questions()->get();
-        return view('admin.subjects.quizzes.edit', compact('subject', 'quiz', 'questions'));
+        return view('admin.quizzes.edit', compact('subject', 'quiz', 'questions'));
     }
 
     // Update quiz
@@ -118,7 +118,7 @@ class QuizController extends Controller
             'average_score' => $submissions->avg('manual_score') ?? 0,
         ];
 
-        return view('admin.subjects.quizzes.show', compact('subject', 'quiz', 'questions', 'submissions', 'analytics'));
+        return view('admin.quizzes.show', compact('subject', 'quiz', 'questions', 'submissions', 'analytics'));
     }
 
     // Delete quiz
@@ -304,7 +304,7 @@ class QuizController extends Controller
         $submission = $quiz->submissions()->findOrFail($submissionId);
         $submission->load('student', 'answers.question', 'answers.answer');
 
-        return view('admin.subjects.quizzes.grade', compact('subject', 'quiz', 'submission'));
+        return view('admin.quizzes.grade', compact('subject', 'quiz', 'submission'));
     }
 
     // Save grades for a submission
@@ -339,4 +339,5 @@ class QuizController extends Controller
         return back()->with('success', 'Grades saved successfully');
     }
 }
+
 
