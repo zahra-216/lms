@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Http\Controllers\Controller;
+
 use App\Models\Quiz;
 use App\Models\Subject;
 use App\Models\QuizQuestion;
@@ -14,13 +16,13 @@ class QuizController extends Controller
     public function index(Subject $subject)
     {
         $quizzes = $subject->quizzes()->orderBy('created_at', 'desc')->get();
-        return view('admin.quizzes.index', compact('subject', 'quizzes'));
+        return view('admin.subjects.quizzes.index', compact('subject', 'quizzes'));
     }
 
     // Show create quiz form
     public function create(Subject $subject)
     {
-        return view('admin.quizzes.create', compact('subject'));
+        return view('admin.subjects.quizzes.create', compact('subject'));
     }
 
     // Store new quiz
@@ -44,7 +46,7 @@ class QuizController extends Controller
 
         $quiz = Quiz::create($validated);
 
-        return redirect()->route('admin.quizzes.edit', ['subject' => $subject->id, 'quiz' => $quiz->id])
+        return redirect()->route('admin.subjects.quizzes.edit', ['subject' => $subject->id, 'quiz' => $quiz->id])
             ->with('success', 'Quiz created successfully. Add questions now.');
     }
 
@@ -58,12 +60,12 @@ class QuizController extends Controller
 
         // Can't edit if quiz has started
         if (!$quiz->canBeEdited()) {
-            return redirect()->route('admin.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id])
+            return redirect()->route('admin.subjects.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id])
                 ->with('error', 'Cannot edit quiz after start date');
         }
 
         $questions = $quiz->questions()->get();
-        return view('admin.quizzes.edit', compact('subject', 'quiz', 'questions'));
+        return view('admin.subjects.quizzes.edit', compact('subject', 'quiz', 'questions'));
     }
 
     // Update quiz
@@ -95,7 +97,7 @@ class QuizController extends Controller
 
         $quiz->update($validated);
 
-        return redirect()->route('admin.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id])
+        return redirect()->route('admin.subjects.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id])
             ->with('success', 'Quiz updated successfully');
     }
 
@@ -116,7 +118,7 @@ class QuizController extends Controller
             'average_score' => $submissions->avg('manual_score') ?? 0,
         ];
 
-        return view('admin.quizzes.show', compact('subject', 'quiz', 'questions', 'submissions', 'analytics'));
+        return view('admin.subjects.quizzes.show', compact('subject', 'quiz', 'questions', 'submissions', 'analytics'));
     }
 
     // Delete quiz
@@ -133,7 +135,7 @@ class QuizController extends Controller
 
         $quiz->delete();
 
-        return redirect()->route('admin.quizzes.index', $subject->id)
+        return redirect()->route('admin.subjects.quizzes.index', $subject->id)
             ->with('success', 'Quiz deleted successfully');
     }
 
@@ -148,50 +150,59 @@ class QuizController extends Controller
             return back()->with('error', 'Cannot add questions after quiz has started');
         }
 
-        $validated = $request->validate([
+        $request->validate([
             'type' => 'required|in:multiple_choice,true_false,short_answer',
             'question_text' => 'required|string',
             'points' => 'required|integer|min:1',
-            'correct_answer' => 'required_if:type,true_false,short_answer|string',
-            'answers' => 'required_if:type,multiple_choice|array|min:2',
-            'answers.*' => 'required|string',
-            'correct_answer_index' => 'required_if:type,multiple_choice|integer',
         ]);
 
-        // Get next order
+        if ($request->type === 'multiple_choice') {
+            $request->validate([
+                'answers' => 'required|array|min:2',
+                'answers.*' => 'required|string',
+                'correct_answer_index' => 'required|integer',
+            ]);
+        } elseif ($request->type === 'true_false') {
+            $request->validate([
+                'correct_answer' => 'required|in:true,false',
+            ]);
+        } else {
+            $request->validate([
+                'correct_answer' => 'required|string',
+            ]);
+        }
+
         $order = $quiz->questions()->max('order') + 1 ?? 0;
 
         $question = QuizQuestion::create([
             'quiz_id' => $quiz->id,
-            'type' => $validated['type'],
-            'question_text' => $validated['question_text'],
-            'points' => $validated['points'],
+            'type' => $request->type,
+            'question_text' => $request->question_text,
+            'points' => $request->points,
             'order' => $order,
-            'correct_answer' => $validated['type'] === 'multiple_choice' ? null : $validated['correct_answer'],
+            'correct_answer' => $request->type === 'multiple_choice' ? null : $request->correct_answer,
         ]);
 
-        // Create answers for multiple choice
-        if ($validated['type'] === 'multiple_choice') {
-            foreach ($validated['answers'] as $index => $answer) {
+        if ($request->type === 'multiple_choice') {
+            foreach ($request->answers as $index => $answer) {
                 QuizAnswer::create([
                     'quiz_question_id' => $question->id,
                     'answer_text' => $answer,
-                    'is_correct' => $index == $validated['correct_answer_index'],
+                    'is_correct' => $index == $request->correct_answer_index,
                     'order' => $index,
                 ]);
             }
-        } elseif ($validated['type'] === 'true_false') {
-            // Create True/False options
+        } elseif ($request->type === 'true_false') {
             QuizAnswer::create([
                 'quiz_question_id' => $question->id,
                 'answer_text' => 'True',
-                'is_correct' => $validated['correct_answer'] === 'true',
+                'is_correct' => $request->correct_answer === 'true',
                 'order' => 0,
             ]);
             QuizAnswer::create([
                 'quiz_question_id' => $question->id,
                 'answer_text' => 'False',
-                'is_correct' => $validated['correct_answer'] === 'false',
+                'is_correct' => $request->correct_answer === 'false',
                 'order' => 1,
             ]);
         }
@@ -210,34 +221,59 @@ class QuizController extends Controller
             return back()->with('error', 'Cannot edit questions after quiz has started');
         }
 
-        $validated = $request->validate([
+        $request->validate([
             'type' => 'required|in:multiple_choice,true_false,short_answer',
             'question_text' => 'required|string',
             'points' => 'required|integer|min:1',
-            'correct_answer' => 'required_if:type,true_false,short_answer|string',
-            'answers' => 'required_if:type,multiple_choice|array|min:2',
-            'answers.*' => 'required|string',
-            'correct_answer_index' => 'required_if:type,multiple_choice|integer',
         ]);
+
+        if ($request->type === 'multiple_choice') {
+            $request->validate([
+                'answers' => 'required|array|min:2',
+                'answers.*' => 'required|string',
+                'correct_answer_index' => 'required|integer',
+            ]);
+        } elseif ($request->type === 'true_false') {
+            $request->validate([
+                'correct_answer' => 'required|in:true,false',
+            ]);
+        } else {
+            $request->validate([
+                'correct_answer' => 'required|string',
+            ]);
+        }
 
         $question->update([
-            'type' => $validated['type'],
-            'question_text' => $validated['question_text'],
-            'points' => $validated['points'],
-            'correct_answer' => $validated['type'] === 'multiple_choice' ? null : $validated['correct_answer'],
+            'type' => $request->type,
+            'question_text' => $request->question_text,
+            'points' => $request->points,
+            'correct_answer' => $request->type === 'multiple_choice' ? null : $request->correct_answer,
         ]);
 
-        // Update answers for multiple choice
-        if ($validated['type'] === 'multiple_choice') {
+        if ($request->type === 'multiple_choice') {
             $question->answers()->delete();
-            foreach ($validated['answers'] as $index => $answer) {
+            foreach ($request->answers as $index => $answer) {
                 QuizAnswer::create([
                     'quiz_question_id' => $question->id,
                     'answer_text' => $answer,
-                    'is_correct' => $index == $validated['correct_answer_index'],
+                    'is_correct' => $index == $request->correct_answer_index,
                     'order' => $index,
                 ]);
             }
+        } elseif ($request->type === 'true_false') {
+            $question->answers()->delete();
+            QuizAnswer::create([
+                'quiz_question_id' => $question->id,
+                'answer_text' => 'True',
+                'is_correct' => $request->correct_answer === 'true',
+                'order' => 0,
+            ]);
+            QuizAnswer::create([
+                'quiz_question_id' => $question->id,
+                'answer_text' => 'False',
+                'is_correct' => $request->correct_answer === 'false',
+                'order' => 1,
+            ]);
         }
 
         return back()->with('success', 'Question updated successfully');
@@ -268,7 +304,7 @@ class QuizController extends Controller
         $submission = $quiz->submissions()->findOrFail($submissionId);
         $submission->load('student', 'answers.question', 'answers.answer');
 
-        return view('admin.quizzes.grade', compact('subject', 'quiz', 'submission'));
+        return view('admin.subjects.quizzes.grade', compact('subject', 'quiz', 'submission'));
     }
 
     // Save grades for a submission
@@ -303,3 +339,4 @@ class QuizController extends Controller
         return back()->with('success', 'Grades saved successfully');
     }
 }
+
