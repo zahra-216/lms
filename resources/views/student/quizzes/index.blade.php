@@ -91,6 +91,22 @@
                             <i class="bi bi-play-circle"></i> Start Quiz
                         </button>
                     </form>
+                    @elseif($quiz->student_attempt > 0)
+                    @php
+                        $lastSubmission = $quiz->submissions()
+                            ->where('student_id', session('student_id'))
+                            ->latest('started_at')
+                            ->first();
+                    @endphp
+                    @if($lastSubmission)
+                    <a href="{{ route('student.quiz.result', $lastSubmission->id) }}" class="btn-navy" style="text-align:center;">
+                        <i class="bi bi-clipboard-check"></i> View Result
+                    </a>
+                    @else
+                    <button class="btn-navy" disabled>
+                        <i class="bi bi-lock"></i> Not Available
+                    </button>
+                    @endif
                     @else
                     <button class="btn-navy" disabled>
                         <i class="bi bi-lock"></i> Not Available

@@ -45,11 +45,18 @@ class QuizSubmission extends Model
     // Get total score (either automatic or manual, or both)
     public function getTotalScore()
     {
-        if ($this->quiz->grading_type === 'both') {
-            return ($this->automatic_score + $this->manual_score) / 2;
-        } elseif ($this->quiz->grading_type === 'automatic') {
+        // If a lecturer/admin has manually graded this submission, that takes precedence
+        if ($this->status === 'graded' && $this->manual_score !== null) {
+            if ($this->quiz->grading_type === 'both' && $this->automatic_score !== null) {
+                return ($this->automatic_score + $this->manual_score) / 2;
+            }
+            return $this->manual_score;
+        }
+
+        if ($this->quiz->grading_type === 'automatic') {
             return $this->automatic_score;
         }
+
         return $this->manual_score;
     }
 
