@@ -24,12 +24,12 @@ class QuizSubmissionAnswer extends Model
     // Relationships
     public function submission()
     {
-        return $this->belongsTo(QuizSubmission::class);
+        return $this->belongsTo(QuizSubmission::class, 'quiz_submission_id');
     }
 
     public function question()
     {
-        return $this->belongsTo(QuizQuestion::class);
+        return $this->belongsTo(QuizQuestion::class, 'quiz_question_id');
     }
 
     public function answer()
