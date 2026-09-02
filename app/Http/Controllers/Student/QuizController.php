@@ -24,6 +24,24 @@ class QuizController extends Controller
         $subject = \App\Models\Subject::findOrFail($subjectId);
         $quizzes = $subject->quizzes()->where('is_published', true)->get();
 
+        // Auto-expire any abandoned in-progress attempts for this student
+        $staleSubmissions = $student->quizSubmissions()
+            ->where('status', 'in_progress')
+            ->get();
+
+        foreach ($staleSubmissions as $stale) {
+            $quiz = $stale->quiz;
+            $deadline = $stale->started_at->addMinutes($quiz->duration_minutes);
+
+            if (now()->greaterThan($deadline)) {
+                $stale->update([
+                    'submitted_at' => $deadline,
+                    'automatic_score' => 0,
+                    'status' => $quiz->grading_type === 'automatic' ? 'graded' : 'submitted',
+                ]);
+            }
+        }
+
         foreach ($quizzes as $quiz) {
             $quiz->student_attempt = $student->quizSubmissions()
                 ->where('quiz_id', $quiz->id)
@@ -90,14 +108,15 @@ class QuizController extends Controller
             ->toArray();
 
         $startedAt = $submission->started_at;
-        $timeElapsed = now()->diffInMinutes($startedAt);
-        $timeRemaining = max(0, $quiz->duration_minutes - $timeElapsed);
+        $elapsedSeconds = now()->diffInSeconds($startedAt);
+        $totalSeconds = $quiz->duration_minutes * 60;
+        $remainingSeconds = max(0, $totalSeconds - $elapsedSeconds);
 
-        if ($timeRemaining <= 0 && !$submission->submitted_at) {
+        if ($remainingSeconds <= 0 && !$submission->submitted_at) {
             return redirect()->route('student.quiz.submit', $submission->id);
         }
 
-        return view('student.quizzes.attempt', compact('submission', 'quiz', 'questions', 'timeRemaining', 'submittedAnswers'));
+        return view('student.quizzes.attempt', compact('submission', 'quiz', 'questions', 'remainingSeconds', 'submittedAnswers'));
     }
 
     // Submit quiz

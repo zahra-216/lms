@@ -375,9 +375,17 @@
 <script>
 function updateQuestionForm() {
     const type = document.getElementById('questionType').value;
-    document.getElementById('mcSection').style.display = type === 'multiple_choice' ? 'block' : 'none';
-    document.getElementById('tfSection').style.display = type === 'true_false' ? 'block' : 'none';
-    document.getElementById('saSection').style.display = type === 'short_answer' ? 'block' : 'none';
+    const mc = document.getElementById('mcSection');
+    const tf = document.getElementById('tfSection');
+    const sa = document.getElementById('saSection');
+
+    mc.style.display = type === 'multiple_choice' ? 'block' : 'none';
+    tf.style.display = type === 'true_false' ? 'block' : 'none';
+    sa.style.display = type === 'short_answer' ? 'block' : 'none';
+
+    mc.querySelectorAll('input').forEach(el => el.disabled = type !== 'multiple_choice');
+    tf.querySelectorAll('input').forEach(el => el.disabled = type !== 'true_false');
+    sa.querySelectorAll('textarea').forEach(el => el.disabled = type !== 'short_answer');
 }
 
 function addAnswerOption() {

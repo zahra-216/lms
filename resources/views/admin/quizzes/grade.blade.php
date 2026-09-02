@@ -133,6 +133,7 @@
                     <h6><i class="bi bi-file-earmark"></i> Student Answers</h6>
                     @php $qIndex = 1; @endphp
                     @foreach($submission->answers as $answer)
+                    @continue(!$answer->question)
                     @php
                         $question = $answer->question;
                         $isCorrect = $answer->is_correct;

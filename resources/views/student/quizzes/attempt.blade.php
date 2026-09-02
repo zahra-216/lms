@@ -64,7 +64,7 @@
 <body>
 <div class="container">
     <div class="timer-alert" id="timerAlert">
-        <span><i class="bi bi-hourglass-split"></i> Time Remaining: <span id="timeDisplay">{{ $timeRemaining }}:00</span></span>
+        <span><i class="bi bi-hourglass-split"></i> Time Remaining: <span id="timeDisplay">{{ sprintf('%d:%02d', intdiv($remainingSeconds, 60), $remainingSeconds % 60) }}</span></span>
     </div>
 
     <div class="row">
@@ -74,7 +74,7 @@
                 <div class="info-row"><span>Total Questions</span><span>{{ $questions->count() }}</span></div>
                 <div class="info-row"><span>Duration</span><span>{{ $quiz->duration_minutes }} min</span></div>
                 <div class="timer-box">
-                    <h4 id="timer">{{ $timeRemaining }}:00</h4>
+                    <h4 id="timer">{{ sprintf('%d:%02d', intdiv($remainingSeconds, 60), $remainingSeconds % 60) }}</h4>
                     <small>remaining</small>
                 </div>
             </div>
@@ -149,7 +149,7 @@
 </div>
 
 <script>
-let timeRemaining = {{ $timeRemaining * 60 }};
+let timeRemaining = {{ $remainingSeconds }};
 
 function updateTimer() {
     const minutes = Math.floor(timeRemaining / 60);
