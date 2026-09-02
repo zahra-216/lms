@@ -21,7 +21,7 @@ class QuizController extends Controller
             return redirect()->route('login')->with('error', 'Please log in again');
         }
 
-        $subject = $student->subjects()->findOrFail($subjectId);
+        $subject = \App\Models\Subject::findOrFail($subjectId);
         $quizzes = $subject->quizzes()->where('is_published', true)->get();
 
         foreach ($quizzes as $quiz) {
