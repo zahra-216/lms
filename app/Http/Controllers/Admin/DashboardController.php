@@ -45,7 +45,8 @@ class DashboardController extends Controller
             'pendingEnrollments',
             'recentActivities',
             'notifications',
-            'subjects' // <-- pass it to the view
+            'subjects',
+            'unreadChats'
         ));
     }
 }
