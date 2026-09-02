@@ -21,4 +21,9 @@ class Lecturer extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    public function chatMessages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
 }

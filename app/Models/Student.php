@@ -65,4 +65,9 @@ class Student extends Authenticatable
         return $this->hasMany(\App\Models\QuizSubmission::class);
     }
 
+    public function chatMessages()
+    {
+        return $this->hasMany(ChatMessage::class);
+    }
+
 }

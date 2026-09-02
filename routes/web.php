@@ -108,6 +108,15 @@ Route::prefix('lecturer')->group(function () {
             Route::get('/subject/{id}/timetable', [App\Http\Controllers\LecturerSubjectController::class, 'timetable'])
                 ->name('subject.timetable');
 
+            Route::get('/chat', [App\Http\Controllers\LecturerChatController::class, 'index'])
+                ->name('chat.index');
+            Route::get('/chat/{student}', [App\Http\Controllers\LecturerChatController::class, 'show'])
+                ->name('chat.show');
+            Route::post('/chat/{student}', [App\Http\Controllers\LecturerChatController::class, 'store'])
+                ->name('chat.store');
+            Route::get('/chat/{student}/poll', [App\Http\Controllers\LecturerChatController::class, 'poll'])
+                ->name('chat.poll');
+
             Route::post('/notification/read/{id}', function ($id) {
                 auth('lecturer')->user()->notifications()->where('id', $id)->update(['read_at' => now()]);
                 return response()->json(['success' => true]);
@@ -274,6 +283,15 @@ Route::prefix('student')->name('student.')->middleware('student.auth')->group(fu
     Route::get('/subject/{id}/assignments', [StudentSubjectController::class, 'assignments'])
         ->name('subject.assignments');
 
+    Route::get('/chat', [App\Http\Controllers\Student\ChatController::class, 'index'])
+        ->name('chat.index');
+    Route::get('/chat/{lecturer}', [App\Http\Controllers\Student\ChatController::class, 'show'])
+        ->name('chat.show');
+    Route::post('/chat/{lecturer}', [App\Http\Controllers\Student\ChatController::class, 'store'])
+        ->name('chat.store');
+    Route::get('/chat/{lecturer}/poll', [App\Http\Controllers\Student\ChatController::class, 'poll'])
+        ->name('chat.poll');
+
     Route::post('/verify-subject', [StudentSubjectController::class, 'verifySubject']);
 
     Route::get('/semester/{id}/subjects', [SemesterController::class, 'getSubjects']);
@@ -393,6 +411,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
 
     Route::get('/assignments/{id}/submissions', [AssignmentController::class, 'submissions'])
         ->name('assignments.submissions');
+
+    Route::get('/chats', [App\Http\Controllers\Admin\ChatController::class, 'index'])
+        ->name('chats.index');
+    Route::get('/chats/{student}/{lecturer}', [App\Http\Controllers\Admin\ChatController::class, 'show'])
+        ->name('chats.show');
 
     Route::get('/get-subjects', [AjaxController::class, 'getSubjects']);
     Route::get('/get-notes/{subject_id}', [AjaxController::class, 'getNotes']);

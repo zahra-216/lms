@@ -263,7 +263,18 @@
                 @endforelse
             </ul>
         </div>
-        <i class="bi bi-chat icon-btn"></i>
+        <a href="{{ route('student.chat.index') }}" class="text-white text-decoration-none position-relative d-inline-flex" style="width:40px;height:40px;">
+            <i class="bi bi-chat icon-btn" style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></i>
+            @php
+                $unreadChatCount = \App\Models\ChatMessage::where('student_id', $student->id)
+                    ->where('sender_type', 'lecturer')
+                    ->where('is_read', false)
+                    ->count();
+            @endphp
+            @if($unreadChatCount > 0)
+                <span class="notif-badge">{{ $unreadChatCount }}</span>
+            @endif
+        </a>
 
         <div class="small text-white topbar-name">
           {{ $student->name }} ({{ $student->registration_no }})

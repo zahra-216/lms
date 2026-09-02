@@ -107,6 +107,14 @@
     <div class="topbar">
         <h1><i class="bi bi-speedometer2"></i> Lecturer Dashboard</h1>
         <div class="actions">
+            <a href="{{ route('lecturer.chat.index') }}" class="btn-pill-light position-relative">
+                <i class="bi bi-chat-dots"></i>
+                @if($lecturer->chatMessages()->where('sender_type','student')->where('is_read', false)->count())
+                    <span class="badge rounded-pill bg-danger position-absolute top-0 start-100 translate-middle notif-badge">
+                        {{ $lecturer->chatMessages()->where('sender_type','student')->where('is_read', false)->count() }}
+                    </span>
+                @endif
+            </a>
             <div class="dropdown">
                 <button class="btn-pill-light position-relative" type="button" data-bs-toggle="dropdown">
                     <i class="bi bi-bell"></i>

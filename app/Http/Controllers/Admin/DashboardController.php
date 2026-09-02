@@ -35,6 +35,8 @@ class DashboardController extends Controller
         // ✅ Add this line to get subjects
         $subjects = Subject::all();
 
+        $unreadChats = \App\Models\ChatMessage::where('is_read', false)->count();
+
         return view('admin.dashboard', compact(
             'totalStudents', 
             'totalFaculty', 

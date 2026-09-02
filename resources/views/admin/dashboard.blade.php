@@ -150,6 +150,12 @@
         <a href="{{ route('admin.payments.index') }}"><i class="bi bi-cash-coin"></i> Student Payments</a>
         <a href="{{ route('admin.lecturer-payments.index') }}"><i class="bi bi-wallet2"></i> Lecturer Payments</a>
         <a href="{{ route('admin.certificates.index') }}"><i class="bi bi-patch-check"></i> Certificate Verification</a>
+        <a href="{{ route('admin.chats.index') }}">
+            <i class="bi bi-chat-dots"></i> Chats
+            @if($unreadChats ?? 0 > 0)
+                <span class="badge bg-danger rounded-pill ms-auto">{{ $unreadChats }}</span>
+            @endif
+        </a>
     </div>
 </div>
 
