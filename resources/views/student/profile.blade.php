@@ -416,14 +416,14 @@ footer.shift{
                     <div class="alert alert-success">{{ session('success') }}</div>
                 @endif
                 
-                <form action="{{ route('student.photo.update') }}" method="POST" enctype="multipart/form-data">
+                <form id="photoForm" action="{{ route('student.photo.update') }}" method="POST" enctype="multipart/form-data">
                     @csrf
 
                     <label for="photoInput" class="profile-img-wrapper">
 
                         <img id="previewImage"
-                             src="{{ $student->photo ? asset('storage/'.$student->photo) : asset('images/user.png') }}"
-                             class="profile-img">
+                            src="{{ $student->photo ? asset('storage/'.$student->photo) : asset('images/user.png') }}"
+                            class="profile-img">
 
                         <span class="camera-badge">
                             <i class="bi bi-camera-fill"></i>
@@ -431,9 +431,9 @@ footer.shift{
 
                     </label>
 
-                    <input type="file" name="photo" id="photoInput" hidden>
+                    <input type="file" name="photo" id="photoInput" accept="image/png, image/jpeg" hidden>
 
-                    <button type="submit" class="btn btn-light btn-sm mt-2 px-3">
+                    <button type="button" id="uploadBtn" class="btn btn-light btn-sm mt-2 px-3">
                         Upload Photo
                     </button>
                 </form>
@@ -580,21 +580,22 @@ footer.shift{
 </footer>
 
 <script>
-function toggleSidebar(){
-    document.getElementById("sidebar").classList.toggle("show");
-    document.getElementById("main").classList.toggle("shift");
-    document.getElementById("footer").classList.toggle("shift");
-}
-
-
-document.getElementById('photoInput').addEventListener('change', function(e){
-    const reader = new FileReader();
-    reader.onload = function(){
-        document.getElementById('previewImage').src = reader.result;
-    }
-    reader.readAsDataURL(e.target.files[0]);
+document.getElementById('uploadBtn').addEventListener('click', function () {
+    document.getElementById('photoInput').click();
 });
 
+document.getElementById('photoInput').addEventListener('change', function (e) {
+    if (!e.target.files || !e.target.files[0]) return;
+
+    const reader = new FileReader();
+    reader.onload = function () {
+        document.getElementById('previewImage').src = reader.result;
+    };
+    reader.readAsDataURL(e.target.files[0]);
+
+    // auto-submit once a file is picked
+    document.getElementById('photoForm').submit();
+});
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
