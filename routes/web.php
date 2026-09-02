@@ -414,6 +414,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
 
     Route::get('/chats', [App\Http\Controllers\Admin\ChatController::class, 'index'])
         ->name('chats.index');
+    Route::get('/chats/{student}', [App\Http\Controllers\Admin\ChatController::class, 'studentThreads'])
+        ->name('chats.student');
     Route::get('/chats/{student}/{lecturer}', [App\Http\Controllers\Admin\ChatController::class, 'show'])
         ->name('chats.show');
 
