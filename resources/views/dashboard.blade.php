@@ -415,27 +415,28 @@
             <div class="card-box mt-4">
                 <div class="section-title"><i class="bi bi-clipboard-check"></i> Pending Assignments</div>
 
-                @if($pendingAssignments->count() > 0)
-                    <div class="list-group">
-                        @foreach($pendingAssignments as $a)
-                            <div class="list-group-item d-flex justify-content-between align-items-center">
-                                <div>
-                                    <b>{{ $a->subject->name ?? 'N/A' }}</b><br>
-                                    <span>{{ $a->title }}</span>
-                                </div>
-                                @if($a->due_date->isPast())
-                                    <span class="badge bg-danger">Overdue</span>
-                                @else
-                                    <span class="badge bg-warning text-dark">
-                                        {{ $a->due_date->diffForHumans(now(), true) }} left
-                                    </span>
-                                @endif
+            @if($pendingAssignments->count() > 0)
+                <div class="list-group">
+                    @foreach($pendingAssignments as $a)
+                        <a href="{{ route('student.subject.portal.assignments', $a->subject_id) }}"
+                        class="list-group-item d-flex justify-content-between align-items-center text-decoration-none">
+                            <div>
+                                <b class="text-dark">{{ $a->subject->name ?? 'N/A' }}</b><br>
+                                <span class="text-dark">{{ $a->title }}</span>
                             </div>
-                        @endforeach
-                    </div>
-                @else
-                    <p class="text-muted mb-0">No pending assignments</p>
-                @endif
+                            @if($a->due_date->isPast())
+                                <span class="badge bg-danger">Overdue</span>
+                            @else
+                                <span class="badge bg-warning text-dark">
+                                    {{ $a->due_date->diffForHumans(now(), true) }} left
+                                </span>
+                            @endif
+                        </a>
+                    @endforeach
+                </div>
+            @else
+                <p class="text-muted mb-0">No pending assignments</p>
+            @endif
             </div>
         </div>
 
