@@ -145,6 +145,8 @@
         <a href="{{ route('admin.lecturers.index') }}"><i class="bi bi-person-workspace"></i> Lecturers</a>
         <a href="{{ route('admin.faculties.index') }}"><i class="bi bi-person-badge"></i> Faculties</a>
         <a href="{{ route('admin.attendance.index') }}"><i class="bi bi-calendar-check"></i> Attendance</a>
+        <a href="{{ route('admin.gate-log.index') }}"><i class="bi bi-door-open"></i> Gate Log</a>
+        <a href="{{ route('admin.gate-devices.index') }}"><i class="bi bi-hdd-network"></i> Gate Devices</a>
         <a href="{{ route('admin.assignments.browse') }}"><i class="bi bi-journal-text"></i> Assignments</a>
         <a href="{{ route('admin.lecture-records.index') }}"><i class="bi bi-journal-plus"></i> Lecture Records</a>
         <a href="{{ route('admin.payments.index') }}"><i class="bi bi-cash-coin"></i> Student Payments</a>

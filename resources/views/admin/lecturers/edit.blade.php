@@ -61,7 +61,16 @@
         </div>
     @endif
 
-    <div class="card-box">
+        <div class="card-box">
+        <div class="text-center mb-4" style="padding-bottom:20px; border-bottom:1px solid #e2e8f0;">
+            <img src="{{ route('admin.lecturers.qr', $lecturer->id) }}" alt="QR Code" style="width:180px; border-radius:10px;">
+            <div class="mt-2">
+                <a href="{{ route('admin.lecturers.qr', $lecturer->id) }}" download="{{ $lecturer->username }}-qr.png" class="back-btn" style="margin:0; display:inline-flex;">
+                    <i class="bi bi-download"></i> Download QR
+                </a>
+            </div>
+        </div>
+
         <form action="{{ route('admin.lecturers.update', $lecturer->id) }}" method="POST">
             @csrf
             @method('PUT')

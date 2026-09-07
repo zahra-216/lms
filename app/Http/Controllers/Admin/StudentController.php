@@ -220,4 +220,12 @@ class StudentController extends Controller
 
         return back()->with('success', 'Profile photo updated successfully!');
     }
+
+    public function showQr($id)
+    {
+        $student = Student::findOrFail($id);
+        $token = $student->ensureQrToken();
+
+        return \SimpleSoftwareIO\QrCode\Facades\QrCode::size(300)->generate($token);
+    }
 }

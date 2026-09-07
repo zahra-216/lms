@@ -70,4 +70,12 @@ class Student extends Authenticatable
         return $this->hasMany(ChatMessage::class);
     }
 
+    public function ensureQrToken()
+    {
+        if (!$this->qr_token) {
+            $this->update(['qr_token' => \App\Models\GateDevice::generateKey()]);
+        }
+        return $this->qr_token;
+    }
+
 }

@@ -413,6 +413,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         'subjects' => SubjectController::class,
     ]);
 
+    Route::get('/students/{id}/qr', [StudentController::class, 'showQr'])
+        ->name('students.qr');
+    Route::get('/lecturers/{id}/qr', [LecturerController::class, 'showQr'])
+        ->name('lecturers.qr');
+
     Route::get('/assignments', [AssignmentController::class, 'index'])
         ->name('assignments.index');
 
@@ -550,6 +555,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('attendance.monthly.pdf');
     Route::delete('/attendance/{id}/history/{month}', [App\Http\Controllers\Admin\AttendanceController::class, 'deleteMonth'])
         ->name('attendance.monthly.destroy');
+
+    // Gate Log   
+    Route::get('/gate-log', [App\Http\Controllers\Admin\GateLogController::class, 'index'])
+        ->name('gate-log.index');
 
     // Gate Devices
     Route::get('/gate-devices', [App\Http\Controllers\Admin\GateDeviceController::class, 'index'])

@@ -14,4 +14,9 @@ class GateLog extends Model
             ? Student::find($this->user_id)
             : Lecturer::find($this->user_id);
     }
+
+    public function device()
+    {
+        return $this->belongsTo(GateDevice::class, 'gate_device_id');
+    }
 }

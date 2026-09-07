@@ -47,6 +47,10 @@
 </head>
 <body>
 <div class="container">
+    <a href="{{ route('admin.dashboard') }}" class="back-btn" style="border:none;background:#fff;color:#012147;font-weight:600;padding:8px 16px;border-radius:10px;box-shadow:0 4px 12px rgba(0,0,0,0.06);text-decoration:none;display:inline-flex;align-items:center;gap:6px;margin-bottom:10px;">
+        <i class="bi bi-arrow-left"></i> Back
+    </a>
+
     <div class="page-header">
         <div>
             <h2><i class="bi bi-hdd-network"></i> Gate Devices</h2>

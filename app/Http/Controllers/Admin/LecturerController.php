@@ -78,4 +78,12 @@ class LecturerController extends Controller
         return redirect()->route('admin.lecturers.index')
             ->with('success', 'Lecturer deleted!');
     }
+
+    public function showQr($id)
+    {
+        $lecturer = Lecturer::findOrFail($id);
+        $token = $lecturer->ensureQrToken();
+
+        return \SimpleSoftwareIO\QrCode\Facades\QrCode::size(300)->generate($token);
+    }
 }
