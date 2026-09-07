@@ -35,7 +35,7 @@
                 <input type="text" name="name" class="form-control" placeholder="e.g. Main Gate Tablet" required>
             </div>
             <button type="submit" class="btn btn-save">Create Device & Generate Key</button>
-            <a href="{{ route('admin.gate-devices.index') }}" class="btn btn-link">Cancel</a>
+            <a href="{{ route('admin.gate-devices.index') }}" style="display:inline-block; padding:10px 20px; border-radius:10px; font-weight:600; color:#012147; border:1px solid #e2e8f0; text-decoration:none; margin-left:8px;">Cancel</a>
         </form>
     </div>
 </div>
