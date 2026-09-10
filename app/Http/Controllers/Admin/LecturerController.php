@@ -84,6 +84,8 @@ class LecturerController extends Controller
         $lecturer = Lecturer::findOrFail($id);
         $token = $lecturer->ensureQrToken();
 
-        return \SimpleSoftwareIO\QrCode\Facades\QrCode::size(300)->generate($token);
+        $svg = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(300)->generate($token);
+
+        return response($svg)->header('Content-Type', 'image/svg+xml');
     }
 }

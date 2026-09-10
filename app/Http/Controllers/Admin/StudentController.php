@@ -226,6 +226,8 @@ class StudentController extends Controller
         $student = Student::findOrFail($id);
         $token = $student->ensureQrToken();
 
-        return \SimpleSoftwareIO\QrCode\Facades\QrCode::size(300)->generate($token);
+        $svg = \SimpleSoftwareIO\QrCode\Facades\QrCode::size(300)->generate($token);
+
+        return response($svg)->header('Content-Type', 'image/svg+xml');
     }
 }
