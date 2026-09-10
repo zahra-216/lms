@@ -556,9 +556,11 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::delete('/attendance/{id}/history/{month}', [App\Http\Controllers\Admin\AttendanceController::class, 'deleteMonth'])
         ->name('attendance.monthly.destroy');
 
-    // Gate Log   
+    // Gate Log
     Route::get('/gate-log', [App\Http\Controllers\Admin\GateLogController::class, 'index'])
         ->name('gate-log.index');
+    Route::delete('/gate-log/{userType}/{userId}', [App\Http\Controllers\Admin\GateLogController::class, 'destroy'])
+        ->name('gate-log.destroy');
 
     // Gate Devices
     Route::get('/gate-devices', [App\Http\Controllers\Admin\GateDeviceController::class, 'index'])
