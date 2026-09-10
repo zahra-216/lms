@@ -12,4 +12,8 @@ class GateDevice extends Model
     {
         return bin2hex(random_bytes(32)); // random 64-character key
     }
+
+    protected $casts = [
+        'last_used_at' => 'datetime',
+    ];
 }
