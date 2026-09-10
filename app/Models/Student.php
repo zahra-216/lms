@@ -20,7 +20,8 @@ class Student extends Authenticatable
         'course_id',
         'level_id',
         'last_seen_at',
-        'photo' 
+        'photo',
+        'qr_token',
     ];
 
     protected $hidden = [

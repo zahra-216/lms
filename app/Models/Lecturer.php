@@ -15,6 +15,7 @@ class Lecturer extends Authenticatable
         'name',
         'email',
         'password',
+        'qr_token',
     ];
 
     protected $hidden = [
