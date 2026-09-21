@@ -81,8 +81,10 @@ class GateScanController extends Controller
         return response()->json([
             'success' => true,
             'name' => $name,
+            'ref' => $student ? $student->registration_no : $lecturer->username,  
             'type' => $userType,
             'scan_type' => $scanType,
+            'date' => now()->format('d M Y'),   
             'time' => now()->format('h:i A'),
         ]);
     }
