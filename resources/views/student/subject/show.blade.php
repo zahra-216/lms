@@ -58,6 +58,7 @@
     .icon-assignments{ background:#f59e0b; }
     .icon-quizzes{ background:#ec4899; }
     .icon-grades{ background:#10b981; }
+    .icon-recordings{ background:#ef4444; }
 </style>
 </head>
 <body>
@@ -102,6 +103,12 @@
             <a href="{{ route('student.subject.portal.grades', $subject->id) }}" class="module-card">
                 <i class="bi bi-clipboard-data icon-grades"></i>
                 <span>Grades</span>
+            </a>
+        </div>
+                <div class="col-md-3 col-6">
+            <a href="{{ route('student.recordings.subject', $subject->id) }}" class="module-card">
+                <i class="bi bi-collection-play icon-recordings"></i>
+                <span>Recordings</span>
             </a>
         </div>
     </div>

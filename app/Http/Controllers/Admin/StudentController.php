@@ -131,6 +131,7 @@ class StudentController extends Controller
             'level_id' => 'required|integer',
             'semester_id' => 'required|integer',
             'password' => 'nullable|string|min:6|confirmed',
+            'status' => 'required|in:active,dropped',
         ]);
 
         $student->registration_no = $request->registration_no;
@@ -140,6 +141,7 @@ class StudentController extends Controller
         $student->course_id = $request->course_id;
         $student->level_id = $request->level_id;
         $student->semester_id = $request->semester_id;
+        $student->status = $request->status;
 
         if ($request->filled('password')) {
             $student->password = Hash::make($request->password);

@@ -22,6 +22,7 @@ class Student extends Authenticatable
         'last_seen_at',
         'photo',
         'qr_token',
+        'status',
     ];
 
     protected $hidden = [

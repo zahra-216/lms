@@ -132,6 +132,14 @@
                 </select>
             </div>
 
+            <div class="mb-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select" required>
+                    <option value="active" {{ $student->status == 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="dropped" {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped Out</option>
+                </select>
+            </div>
+
             <div class="mb-3 password-wrap">
                 <label class="form-label">New Password</label>
                 <input type="password" name="password" id="studentNewPassword" class="form-control" placeholder="Leave blank to keep unchanged">

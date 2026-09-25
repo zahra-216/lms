@@ -255,6 +255,11 @@ Route::prefix('student')->name('student.')->middleware('student.auth')->group(fu
     Route::get('/my-payments', [StudentStudentController::class, 'myPayments'])
         ->name('my.payments');
 
+    Route::get('/recordings/subject/{subjectId}', [App\Http\Controllers\Student\RecordingController::class, 'subject'])
+        ->name('recordings.subject');
+    Route::get('/recordings/{id}', [App\Http\Controllers\Student\RecordingController::class, 'show'])
+        ->name('recordings.show');
+
     Route::get('/subject/{id}/show', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'show'])
         ->name('subject.portal.show');
 
