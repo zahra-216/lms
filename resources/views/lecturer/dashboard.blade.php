@@ -134,13 +134,13 @@
                     @endif
                     @forelse($lecturer->unreadNotifications->take(10) as $note)
                         <li class="mb-1">
-                            <a href="{{ isset($note->data['subject_id']) ? route('lecturer.subject.timetable', $note->data['subject_id']) : '#' }}"
+                            <a href="{{ isset($note->data['subject_id']) ? route('lecturer.subject.timetable', $note->data['subject_id']) : route('lecturer.notifications.index') }}"
                                 class="dropdown-item rounded bg-light fw-semibold"
                                 onclick="event.preventDefault();
                                             fetch('{{ route('lecturer.notification.read', $note->id) }}', {
                                                 method:'POST',
                                                 headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}','Accept':'application/json'}
-                                            }).then(()=> window.location = this.href);">
+                                            }).then(()=> this.getAttribute('href') === '#' ? window.location.reload() : window.location = this.href);">
                                 <div>{{ $note->data['title'] ?? 'Notification' }}</div>
                                 <div class="text-muted" style="font-size:12px;">{{ $note->data['message'] ?? '' }}</div>
                             </a>
@@ -148,6 +148,12 @@
                     @empty
                         <li class="text-center text-muted p-2" style="font-size:13px;">No notifications</li>
                     @endforelse
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <a href="{{ route('lecturer.notifications.index') }}" class="dropdown-item text-center fw-semibold" style="font-size:13px;">
+                            View all notifications
+                        </a>
+                    </li>
                 </ul>
             </div>
             <span class="welcome-text">Welcome, {{ $lecturer->name }}</span>

@@ -158,6 +158,7 @@
                 <span class="badge bg-danger rounded-pill ms-auto">{{ $unreadChats }}</span>
             @endif
         </a>
+        <a href="{{ route('admin.notifications.create') }}"><i class="bi bi-megaphone"></i> Send Notification</a>
     </div>
 </div>
 

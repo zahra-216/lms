@@ -145,6 +145,9 @@ Route::prefix('lecturer')->group(function () {
                 return response()->json(['success' => true]);
             })->name('notification.read');
 
+            Route::get('/notifications', [App\Http\Controllers\LecturerInboxController::class, 'index'])
+                ->name('notifications.index');
+
             Route::post('/notification/read-all', function () {
                 auth('lecturer')->user()->unreadNotifications->markAsRead();
                 return response()->json(['success' => true]);
@@ -451,6 +454,12 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('chats.student');
     Route::get('/chats/{student}/{lecturer}', [App\Http\Controllers\Admin\ChatController::class, 'show'])
         ->name('chats.show');
+
+    // Send notifications to lecturers
+    Route::get('/notifications/send', [App\Http\Controllers\Admin\LecturerNotificationController::class, 'create'])
+        ->name('notifications.create');
+    Route::post('/notifications/send', [App\Http\Controllers\Admin\LecturerNotificationController::class, 'store'])
+        ->name('notifications.store');
 
     Route::get('/get-subjects', [AjaxController::class, 'getSubjects']);
     Route::get('/get-notes/{subject_id}', [AjaxController::class, 'getNotes']);
