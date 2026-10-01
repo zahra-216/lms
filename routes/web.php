@@ -118,6 +118,19 @@ Route::prefix('lecturer')->group(function () {
             Route::get('/subject/{id}/timetable', [App\Http\Controllers\LecturerSubjectController::class, 'timetable'])
                 ->name('subject.timetable');
 
+            Route::get('/subject/{subject}/recordings', [App\Http\Controllers\LecturerRecordingController::class, 'index'])
+                ->name('subject.recordings');
+            Route::get('/subject/{subject}/recordings/create', [App\Http\Controllers\LecturerRecordingController::class, 'create'])
+                ->name('subject.recordings.create');
+            Route::post('/subject/{subject}/recordings', [App\Http\Controllers\LecturerRecordingController::class, 'store'])
+                ->name('subject.recordings.store');
+            Route::get('/subject/{subject}/recordings/{recording}/edit', [App\Http\Controllers\LecturerRecordingController::class, 'edit'])
+                ->name('subject.recordings.edit');
+            Route::put('/subject/{subject}/recordings/{recording}', [App\Http\Controllers\LecturerRecordingController::class, 'update'])
+                ->name('subject.recordings.update');
+            Route::delete('/subject/{subject}/recordings/{recording}', [App\Http\Controllers\LecturerRecordingController::class, 'destroy'])
+                ->name('subject.recordings.destroy');
+
             Route::get('/chat', [App\Http\Controllers\LecturerChatController::class, 'index'])
                 ->name('chat.index');
             Route::get('/chat/{student}', [App\Http\Controllers\LecturerChatController::class, 'show'])
@@ -478,7 +491,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::delete('enrollments/{id}', [EnrollmentController::class, 'destroy'])
         ->name('enrollments.delete');
 
-    // Notes / Assignments / Grades (nested under subjects/{subject})
+    // Notes / Assignments / Grades / Recordings (nested under subjects/{subject})
     Route::prefix('subjects/{subject}')->name('subjects.')->group(function () {
         Route::get('notes', [NoteController::class, 'index'])->name('notes.index');
         Route::get('notes/create', [NoteController::class, 'create'])->name('notes.create');
@@ -487,6 +500,13 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         Route::put('notes/{note}', [NoteController::class, 'update'])->name('notes.update');
         Route::delete('notes/{note}', [NoteController::class, 'destroy'])->name('notes.destroy');
         Route::get('notes/{note}/download', [NoteController::class, 'download'])->name('notes.download');
+
+        Route::get('recordings', [App\Http\Controllers\Admin\RecordingController::class, 'index'])->name('recordings.index');
+        Route::get('recordings/create', [App\Http\Controllers\Admin\RecordingController::class, 'create'])->name('recordings.create');
+        Route::post('recordings', [App\Http\Controllers\Admin\RecordingController::class, 'store'])->name('recordings.store');
+        Route::get('recordings/{recording}/edit', [App\Http\Controllers\Admin\RecordingController::class, 'edit'])->name('recordings.edit');
+        Route::put('recordings/{recording}', [App\Http\Controllers\Admin\RecordingController::class, 'update'])->name('recordings.update');
+        Route::delete('recordings/{recording}', [App\Http\Controllers\Admin\RecordingController::class, 'destroy'])->name('recordings.destroy');
 
         Route::get('assignments', [AssignmentController::class, 'subjectIndex'])->name('assignments.index');
         Route::get('assignments/create', [AssignmentController::class, 'create'])->name('assignments.create');

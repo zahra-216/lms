@@ -24,6 +24,7 @@
     .icon-grades{ background:#10b981; }
     .icon-attendance{ background:#ef4444; }
     .icon-timetable{ background:#8b5cf6; }
+    .icon-recordings{ background:#06b6d4; }
 </style>
 </head>
 <body>
@@ -54,6 +55,11 @@
         <div class="col-md-4 col-6">
             <a href="{{ route('admin.subjects.grades', $subject->id) }}" class="module-card">
                 <i class="bi bi-clipboard-data icon-grades"></i><span>Grades</span>
+            </a>
+        </div>
+        <div class="col-md-4 col-6">
+            <a href="{{ route('admin.subjects.recordings.index', $subject->id) }}" class="module-card">
+                <i class="bi bi-collection-play icon-recordings"></i><span>Recordings</span>
             </a>
         </div>
         <div class="col-md-4 col-6">
