@@ -35,15 +35,6 @@ use App\Http\Controllers\Admin\AjaxController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\MarkController;
 
-/*
-|--------------------------------------------------------------------------
-| Gate Scanner (device-key protected, not user-authenticated)
-|--------------------------------------------------------------------------
-*/
-Route::get('/gate-scanner/{deviceKey}', [App\Http\Controllers\GateScanController::class, 'scanner'])
-    ->name('gate-scanner.show');
-Route::post('/gate-scanner/{deviceKey}/scan', [App\Http\Controllers\GateScanController::class, 'scan'])
-    ->name('gate-scanner.scan');
 
 /*
 |--------------------------------------------------------------------------
@@ -595,18 +586,10 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('gate-log.index');
     Route::delete('/gate-log/{userType}/{userId}', [App\Http\Controllers\Admin\GateLogController::class, 'destroy'])
         ->name('gate-log.destroy');
-
-    // Gate Devices
-    Route::get('/gate-devices', [App\Http\Controllers\Admin\GateDeviceController::class, 'index'])
-        ->name('gate-devices.index');
-    Route::get('/gate-devices/create', [App\Http\Controllers\Admin\GateDeviceController::class, 'create'])
-        ->name('gate-devices.create');
-    Route::post('/gate-devices', [App\Http\Controllers\Admin\GateDeviceController::class, 'store'])
-        ->name('gate-devices.store');
-    Route::post('/gate-devices/{id}/toggle', [App\Http\Controllers\Admin\GateDeviceController::class, 'toggle'])
-        ->name('gate-devices.toggle');
-    Route::delete('/gate-devices/{id}', [App\Http\Controllers\Admin\GateDeviceController::class, 'destroy'])
-        ->name('gate-devices.destroy');
+    // Scan attendance (students)
+    Route::get('/scan', [App\Http\Controllers\Admin\ScanController::class, 'index'])->name('scan.index');
+    Route::post('/scan/verify', [App\Http\Controllers\Admin\ScanController::class, 'verify'])->name('scan.verify')->middleware('throttle:60,1');
+    Route::post('/scan/mark', [App\Http\Controllers\Admin\ScanController::class, 'mark'])->name('scan.mark')->middleware('throttle:60,1');
 
     // Lecture Records
     Route::get('/lecture-records', [App\Http\Controllers\Admin\LectureRecordController::class, 'index'])

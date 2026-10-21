@@ -52,6 +52,7 @@
             <h2><i class="bi bi-door-open"></i> Gate Log</h2>
             <small>Campus check-in / check-out records</small>
         </div>
+        <a href="{{ route('admin.scan.index') }}" class="btn btn-light fw-semibold"><i class="bi bi-qr-code-scan"></i> Scan attendance</a>
     </div>
 
     @if(session('success'))
@@ -73,11 +74,9 @@
             <thead>
                 <tr>
                     <th>Name</th>
-                    <th>Reg No / Username</th>
-                    <th>Type</th>
+                    <th>Reg No</th>
                     <th>Check In</th>
                     <th>Check Out</th>
-                    <th>Device</th>
                     <th></th>
                 </tr>
             </thead>
@@ -86,7 +85,6 @@
                     <tr data-name="{{ strtolower($row->name . ' ' . $row->ref) }}">
                         <td>{{ $row->name }}</td>
                         <td>{{ $row->ref }}</td>
-                        <td><span class="type-pill">{{ ucfirst($row->user_type) }}</span></td>
                         <td>
                             @if($row->check_in)
                                 <span class="badge-in">{{ \Carbon\Carbon::parse($row->check_in)->format('h:i A') }}</span>
@@ -101,7 +99,6 @@
                                 <span class="badge-missing">Not yet</span>
                             @endif
                         </td>
-                        <td>{{ $row->device }}</td>
                         <td>
                             <form action="{{ route('admin.gate-log.destroy', [$row->user_type, $row->user_id]) }}?date={{ $date }}"
                                   method="POST" onsubmit="return confirm('Delete this record for {{ $row->name }} on {{ $date }}?');">
@@ -112,7 +109,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="7" class="text-center text-muted">No gate log entries for this date.</td></tr>
+                    <tr><td colspan="5" class="text-center text-muted">No gate log entries for this date.</td></tr>
                 @endforelse
             </tbody>
         </table>

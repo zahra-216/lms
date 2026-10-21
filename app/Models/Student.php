@@ -75,7 +75,7 @@ class Student extends Authenticatable
     public function ensureQrToken()
     {
         if (!$this->qr_token) {
-            $this->update(['qr_token' => \App\Models\GateDevice::generateKey()]);
+            $this->update(['qr_token' => bin2hex(random_bytes(32))]);
         }
         return $this->qr_token;
     }
