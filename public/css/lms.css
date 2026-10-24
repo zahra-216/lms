@@ -381,3 +381,11 @@ main:not(.lms-main):not(.auth-main) { padding-bottom: 64px; }
 .auth-side .lms-brand small { font-size: 12px; margin-top: 4px; }
 .auth-mobile-brand img { width: 52px; height: 52px; }
 .auth-mobile-brand b { font-size: 20px; }
+
+/* Compact footer: logo, campus name and slogan (same colour as the name) */
+.site-footer { padding: 18px 24px; }
+.site-footer .f-grid { align-items: center; }
+.site-footer .f-brand { align-items: center; gap: 14px; }
+.site-footer .f-brand img { width: 46px; height: 46px; }
+.site-footer .f-name { font-size: 20px; }
+.site-footer .f-slogan { color: #fff; font-weight: 500; font-size: 14px; margin: 2px 0 0; }
