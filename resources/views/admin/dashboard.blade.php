@@ -34,7 +34,7 @@ Dashboard
 
     <div class="row g-3 mb-4">
         @foreach ($stats as [$label, $value, $icon, $url])
-            <div class="col-6 col-lg-4 col-xl-2">
+            <div class="col-6 col-xl-3">
                 <a href="{{ $url }}" class="stat-card tile">
                     <div class="stat-icon"><i class="bi bi-{{ $icon }}"></i></div>
                     <div>

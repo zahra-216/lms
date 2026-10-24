@@ -322,8 +322,8 @@ body.lms-guest { background: var(--navy-950); min-height: 100vh; }
 
 /* ---------- Footer (all layouts) ---------- */
 .site-footer { background: var(--navy-950); color: rgba(255,255,255,.8); padding: 28px 24px; font-size: 14px; }
-.site-footer .f-grid { display: grid; grid-template-columns: 1.3fr 1fr auto; gap: 28px; align-items: center; }
-.site-footer .f-brand { display: flex; align-items: center; gap: 16px; }
+.site-footer .f-grid { display: flex; justify-content: space-between; align-items: flex-end; gap: 28px; flex-wrap: wrap; }
+.site-footer .f-brand { display: flex; align-items: flex-start; gap: 18px; }
 .site-footer .f-brand img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: #fff; flex-shrink: 0; }
 .site-footer .f-name { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; color: #fff; line-height: 1.15; }
 .site-footer .f-addr { display: block; margin-top: 4px; color: rgba(255,255,255,.75); }
@@ -354,3 +354,30 @@ body.lms-guest { background: var(--navy-950); min-height: 100vh; }
 .hero-public, .auth-side { background: var(--navy-900) !important; }
 main .pub-wrap { padding-left: 24px; padding-right: 24px; }
 main .pub-wrap[style*="max-width"] { margin-left: auto !important; margin-right: auto !important; }
+
+
+/* ---------- Round 3 ---------- */
+/* space between page content and the footer */
+.lms-main { padding-bottom: 64px; }
+.pub-main { padding-bottom: 64px; }
+main:not(.lms-main):not(.auth-main) { padding-bottom: 64px; }
+.site-footer { margin-top: 0; padding: 34px 24px; }
+.site-footer .f-line { display: block; margin-top: 4px; color: rgba(255,255,255,.78); }
+.site-footer .f-slogan { margin: 4px 0 8px; }
+
+/* "Learning Portal" badge, same style as the website's admissions badge */
+.portal-badge { background: #fff; color: var(--brand-700); font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; padding: 5px 12px; border-radius: 6px; }
+
+/* paragraphs and long texts are justified (centred or right-aligned blocks keep their alignment) */
+.lms-main p, .lms-main li, .pub-content p, main .portal-card p { text-align: justify; hyphens: none; }
+.text-center p, .text-center li, p.text-center, .text-end p, .empty-state p, .page-header p, .auth-sub, .pick-sub, .stat-label, td p, th p, .alert p, .btn p { text-align: inherit; }
+.lms-main .nav-pills li, .lms-main .pagination li, .lms-main .dropdown-menu li, .lms-main .breadcrumb li, .lms-nav li { text-align: left; }
+
+/* sign-in pages: bigger logo and name, close to the left edge */
+.auth-side { padding: 32px 28px; }
+.auth-side .lms-brand { padding: 0; gap: 16px; }
+.auth-side .lms-brand img { width: 64px; height: 64px; }
+.auth-side .lms-brand b { font-size: 24px; }
+.auth-side .lms-brand small { font-size: 12px; margin-top: 4px; }
+.auth-mobile-brand img { width: 52px; height: 52px; }
+.auth-mobile-brand b { font-size: 20px; }

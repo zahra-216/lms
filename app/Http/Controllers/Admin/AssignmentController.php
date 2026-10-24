@@ -61,13 +61,21 @@ class AssignmentController extends Controller
         $student = Student::find($studentId);
         $assignment = Assignment::find($request->assignment_id);
 
-        // Admin gets in-app notification only (no email)
+        // Admins get an in-app notification
         foreach (Admin::all() as $admin) {
             try {
                 $admin->notify(new AssignmentSubmitted($student, $assignment));
             } catch (\Exception $e) {
                 \Log::error('Failed to notify admin #' . $admin->id . ' (' . $admin->email . '): ' . $e->getMessage());
             }
+        }
+
+        // The campus inbox gets an e-mail for every submission
+        try {
+            \Illuminate\Support\Facades\Notification::route('mail', config('mail.submissions_to'))
+                ->notify(new \App\Notifications\AssignmentSubmittedMail($student, $assignment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to email the submission to the campus inbox: ' . $e->getMessage());
         }
 
         // Student gets email confirmation

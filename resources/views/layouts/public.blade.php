@@ -16,9 +16,9 @@
 </head>
 <body class="lms lms-public">
     <div class="pub-topbar">
-        <div class="pub-wrap d-flex justify-content-between flex-wrap gap-2">
-            <span><i class="bi bi-telephone"></i> 011 4319 996 &nbsp;|&nbsp; 077 2270 348</span>
-            <span><i class="bi bi-envelope"></i> Info.ttmcml@gmail.com</span>
+        <div class="pub-wrap d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <span class="portal-badge">Learning Portal</span>
+            <span><i class="bi bi-envelope"></i> info.ttmetro@gmail.com</span>
         </div>
     </div>
 
