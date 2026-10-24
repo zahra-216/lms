@@ -20,7 +20,7 @@ class LecturerNoteController extends Controller
             'title' => 'required|string',
             'description' => 'nullable|string',
             'type' => 'required|string',
-            'file_path' => 'nullable|file',
+            'file_path' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png,mp3,mp4|max:51200',
             'url' => 'nullable|string',
         ]);
 
@@ -48,7 +48,7 @@ class LecturerNoteController extends Controller
             'title' => 'required|string',
             'description' => 'nullable|string',
             'type' => 'required|string',
-            'file_path' => 'nullable|file',
+            'file_path' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png,mp3,mp4|max:51200',
             'url' => 'nullable|string',
             'order' => 'nullable|integer',
             'is_published' => 'required|boolean',

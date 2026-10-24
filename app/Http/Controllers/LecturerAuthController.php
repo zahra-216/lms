@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Faculty;
 
@@ -20,16 +22,25 @@ class LecturerAuthController extends Controller
             'password' => 'required|string',
         ]);
 
-        $credentials = $request->only('username', 'password');
+        $key = 'lecturer-login:'.Str::lower($request->username).'|'.$request->ip();
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            return back()->withErrors([
+                'username' => 'Too many attempts. Please try again in '.RateLimiter::availableIn($key).' seconds.',
+            ])->onlyInput('username');
+        }
 
-        if (Auth::guard('lecturer')->attempt($credentials)) {
+        if (Auth::guard('lecturer')->attempt($request->only('username', 'password'))) {
+            RateLimiter::clear($key);
             $request->session()->regenerate();
+
             return redirect()->route('lecturer.dashboard');
         }
 
+        RateLimiter::hit($key, 120);
+
         return back()->withErrors([
             'username' => 'Invalid username or password.',
-        ]);
+        ])->onlyInput('username');
     }
 
     public function dashboard()

@@ -25,6 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'student.auth' => \App\Http\Middleware\EnsureStudentLoggedIn::class,
+            'student.subject' => \App\Http\Middleware\EnsureStudentCanAccessSubject::class,
+            'lecturer.subject' => \App\Http\Middleware\EnsureLecturerOwnsSubject::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -81,7 +81,7 @@ Route::prefix('lecturer')->group(function () {
     Route::post('/login', [LecturerAuthController::class, 'login'])->name('lecturer.login.submit');
     Route::post('/logout', [LecturerAuthController::class, 'logout'])->name('lecturer.logout');
 
-    Route::middleware('auth:lecturer')->group(function () {
+    Route::middleware(['auth:lecturer', 'lecturer.subject'])->group(function () {
 
         Route::get('/dashboard', [LecturerAuthController::class, 'dashboard'])
             ->name('lecturer.dashboard');
@@ -251,12 +251,12 @@ Route::prefix('lecturer')->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('student')->name('student.')->middleware('student.auth')->group(function () {
+Route::prefix('student')->name('student.')->middleware(['student.auth', 'student.subject'])->group(function () {
 
     Route::get('/grades', [StudentStudentController::class, 'grades'])
         ->name('grades');
 
-    Route::get('/subject/{id}/grades', [StudentStudentController::class, 'subjectGrades'])
+    Route::get('/subject/{id}/grades', fn ($id) => redirect()->route('student.subject.portal.grades', $id))
         ->name('subject.grades');
 
     Route::get('/my-payments', [StudentStudentController::class, 'myPayments'])
@@ -279,7 +279,7 @@ Route::prefix('student')->name('student.')->middleware('student.auth')->group(fu
     Route::get('/subject/{id}/portal-assignments', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'assignments'])
         ->name('subject.portal.assignments');
 
-    Route::get('/subject/{id}/portal-quizzes', [App\Http\Controllers\Student\StudentSubjectPortalController::class, 'quizzes'])
+    Route::get('/subject/{id}/portal-quizzes', fn ($id) => redirect()->route('student.quiz.index', $id))
         ->name('subject.portal.quizzes');
 
     Route::get('/subject/{id}/quizzes', [App\Http\Controllers\Student\QuizController::class, 'index'])
@@ -302,7 +302,7 @@ Route::prefix('student')->name('student.')->middleware('student.auth')->group(fu
     Route::post('/profile/update', [App\Http\Controllers\Student\ProfileController::class, 'update'])
         ->name('profile.update');
 
-    Route::get('/subject/{id}/assignments', [StudentSubjectController::class, 'assignments'])
+    Route::get('/subject/{id}/assignments', fn ($id) => redirect()->route('student.subject.portal.assignments', $id))
         ->name('subject.assignments');
 
     Route::get('/chat', [App\Http\Controllers\Student\ChatController::class, 'index'])
@@ -318,7 +318,7 @@ Route::prefix('student')->name('student.')->middleware('student.auth')->group(fu
 
     Route::get('/semester/{id}/subjects', [SemesterController::class, 'getSubjects']);
 
-    Route::get('/subject/{id}/notes', [StudentSubjectController::class, 'notes']);
+    Route::get('/subject/{id}/notes', fn ($id) => redirect()->route('student.subject.portal.notes', $id));
 
     Route::get('/download/{id}', [StudentSubjectController::class, 'download'])
         ->name('note.download');
@@ -415,22 +415,21 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         return redirect()->route('admin.login');
     })->name('logout');
 
-    Route::resources([
-        'students' => StudentController::class,
-        'lecturers' => LecturerController::class,
-        'faculties' => FacultyController::class,
-        'courses' => CourseController::class,
-        'levels' => LevelController::class,
-        'semesters' => SemesterController::class,
-        'subjects' => SubjectController::class,
-    ]);
+    // Only the actions each controller really implements (no dead /show or /create URLs that crash).
+    Route::resource('students', StudentController::class)->except(['show']);
+    Route::resource('lecturers', LecturerController::class)->except(['show']);
+    Route::resource('faculties', FacultyController::class)->except(['show']);
+    Route::resource('courses', CourseController::class)->except(['show']);
+    Route::resource('levels', LevelController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('semesters', SemesterController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('subjects', SubjectController::class)->only(['index', 'show', 'store', 'edit', 'update', 'destroy']);
 
     Route::get('/students/{id}/qr', [StudentController::class, 'showQr'])
         ->name('students.qr');
     Route::get('/lecturers/{id}/qr', [LecturerController::class, 'showQr'])
         ->name('lecturers.qr');
 
-    Route::get('/assignments', [AssignmentController::class, 'index'])
+    Route::get('/assignments', fn () => redirect()->route('admin.assignments.browse'))
         ->name('assignments.index');
 
     Route::get('/assignments/browse', [AssignmentController::class, 'browse'])

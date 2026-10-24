@@ -30,7 +30,7 @@ class AssignmentController extends Controller
     {
         $request->validate([
             'assignment_id' => 'required',
-            'file' => 'required|file'
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:20480',
         ]);
 
         $studentId = session('student_id');
@@ -95,7 +95,7 @@ class AssignmentController extends Controller
             'allow_late' => 'nullable|boolean',
             'late_penalty' => 'nullable|numeric|min:0|max:100',
             'is_published' => 'nullable|boolean',
-            'assignment_file' => 'nullable|file|max:10240',
+            'assignment_file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:10240',
         ]);
 
         $data['subject_id'] = $subject->id;
@@ -137,7 +137,7 @@ class AssignmentController extends Controller
             'allow_late' => 'nullable|boolean',
             'late_penalty' => 'nullable|numeric|min:0|max:100',
             'is_published' => 'nullable|boolean',
-            'assignment_file' => 'nullable|file|max:10240',
+            'assignment_file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:10240',
         ]);
 
         $data['allow_late'] = true;
@@ -203,7 +203,7 @@ class AssignmentController extends Controller
         }
 
         $request->validate([
-            'file' => 'required|file',
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:20480',
         ]);
 
         if ($submission->file) {
