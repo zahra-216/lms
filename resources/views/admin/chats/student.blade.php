@@ -1,44 +1,35 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ $student->name }} - Chats</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+{{ $student->name }} - Chats
+@endsection
+@section('back', route('admin.chats.index'))
+@push('styles')
 <style>
-    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-    .container { max-width:900px; margin:auto; }
-    .back-btn{
-        border:none; background:#fff; color:#012147; font-weight:600;
-        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
-        text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:18px;
-    }
-    .back-btn:hover{ background:#012147; color:#fff; }
-    .page-header{
-        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff; border-radius:18px;
-        padding:24px 28px; margin-bottom:22px; box-shadow:0 10px 30px rgba(1,33,71,0.25);
-    }
-    .page-header h3{ margin:0; font-weight:700; font-size:20px; }
-    .thread-list{ background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); overflow:hidden; }
-    .thread-item{ display:flex; align-items:center; gap:14px; padding:16px 18px; text-decoration:none; color:#012147; border-bottom:1px solid #eef1f6; }
-    .thread-item:last-child{ border-bottom:none; }
-    .thread-item:hover{ background:#f8fafc; }
-    .avatar{
+.thread-list { background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); overflow:hidden;
+}
+.thread-item { display:flex; align-items:center; gap:14px; padding:16px 18px; text-decoration:none; color:#012147; border-bottom:1px solid #eef1f6;
+}
+.thread-item:last-child { border-bottom:none;
+}
+.thread-item:hover { background:#f8fafc;
+}
+.avatar {
         width:44px; height:44px; border-radius:50%; background:#012147; color:#fff;
         display:flex; align-items:center; justify-content:center; font-weight:700; flex-shrink:0;
-    }
-    .pair-name{ font-weight:600; font-size:14.5px; }
-    .thread-preview{ font-size:13px; color:#64748b; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .thread-meta{ margin-left:auto; text-align:right; font-size:11.5px; color:#94a3b8; }
-    .badge-unread{ background:#fdeaea; color:#8a1f1f; font-size:11px; font-weight:700; border-radius:20px; padding:3px 10px; }
-    .empty-box{ background:#fff; border-radius:14px; padding:60px 20px; text-align:center; box-shadow:0 6px 20px rgba(0,0,0,0.06); color:#64748b; }
-    .empty-box i{ font-size:2.5rem; color:#cbd5e1; }
+}
+.pair-name { font-weight:600; font-size:14.5px;
+}
+.thread-preview { font-size:13px; color:#64748b; max-width:280px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.thread-meta { margin-left:auto; text-align:right; font-size:11.5px; color:#94a3b8;
+}
+.badge-unread { background:#fdeaea; color:#8a1f1f; font-size:11px; font-weight:700; border-radius:20px; padding:3px 10px;
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
-    <a href="{{ route('admin.chats.index') }}" class="back-btn"><i class="bi bi-arrow-left"></i> All Students</a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-person-lines-fill"></i> {{ $student->name }}</h3>
@@ -72,5 +63,4 @@
     </div>
     @endif
 </div>
-</body>
-</html>
+@endsection

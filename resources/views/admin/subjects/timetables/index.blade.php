@@ -1,36 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Timetable - {{ $subject->name }} | Admin</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+Timetable - {{ $subject->name }}
+@endsection
+@push('styles')
 <style>
-    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-    @media (max-width:480px){ body{ padding:20px 12px; } }
-    .container { max-width:1000px; margin:auto; }
-    .back-btn{ border:none; background:#fff; color:#012147; font-weight:600; padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06); text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:18px; }
-    .back-btn:hover{ background:#012147; color:#fff; }
-    .page-header{ background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff; border-radius:18px; padding:26px 30px; margin-bottom:30px; box-shadow:0 10px 30px rgba(1,33,71,0.25); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
-    .page-header h2{ margin:0; font-weight:700; font-size:22px; }
-    .page-header small{ opacity:0.85; }
-    .btn-add{ background:#fff; color:#012147; font-weight:600; padding:10px 20px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
-    .btn-add:hover{ background:#e2e8f0; color:#012147; }
-    .card-box{ background:#fff; border-radius:15px; box-shadow:0 6px 20px rgba(0,0,0,0.06); padding:22px; margin-bottom:18px; }
-    .card-box h5{ color:#012147; font-weight:700; margin-bottom:14px; }
-    table{ width:100%; }
-    thead th{ background:#012147; color:#fff; padding:10px 12px; font-size:13px; }
-    tbody td{ padding:10px 12px; font-size:14px; border-bottom:1px solid #eee; }
-    tbody tr:nth-child(even){ background:#f8fafc; }
-    .badge-day{ background:#eef2ff; color:#4338ca; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:600; margin:2px; display:inline-block; }
-    .actions a{ margin-right:10px; text-decoration:none; font-size:15px; }
-    .actions .edit{ color:#f59e0b; }
-    .actions .delete{ color:#ef4444; background:none; border:none; padding:0; }
-    .empty-state{ text-align:center; padding:50px 20px; color:#94a3b8; }
+.btn-add { background:#fff; color:#012147; font-weight:600; padding:10px 20px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
+}
+.btn-add:hover { background:#e2e8f0; color:#012147;
+}
+.card-box h5 { color:#012147; font-weight:700; margin-bottom:14px;
+}
+tbody td { padding:10px 12px; font-size:14px; border-bottom:1px solid #eee;
+}
+tbody tr:nth-child(even) { background:#f8fafc;
+}
+.badge-day { background:#eef2ff; color:#4338ca; padding:4px 10px; border-radius:8px; font-size:12px; font-weight:600; margin:2px; display:inline-block;
+}
+.actions a { margin-right:10px; text-decoration:none; font-size:15px;
+}
+.actions .edit { color:#f59e0b;
+}
+.actions .delete { color:#ef4444; background:none; border:none; padding:0;
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
     <a href="{{ route('admin.subjects.show', $subject->id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
 
@@ -44,9 +38,7 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    
 
     @if($entries->isEmpty())
         <div class="card-box empty-state">
@@ -79,5 +71,4 @@
         @endforeach
     @endif
 </div>
-</body>
-</html>
+@endsection

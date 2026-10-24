@@ -1,45 +1,25 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Assignments</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <style>
-        body{
-            background: linear-gradient(135deg,#f4f6ff,#eef2ff);
-            font-family: 'Segoe UI', sans-serif;
-        }
-
-        .card-box{
-            max-width: 1000px;
-            margin: 50px auto;
-            background: #fff;
-            border-radius: 18px;
-            padding: 25px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        h2{
+@extends('layouts.admin')
+@section('title')
+Assignments
+@endsection
+@push('styles')
+<style>
+h2 {
             text-align:center;
             font-weight:700;
             margin-bottom:25px;
-        }
-
-        .btn-create{
+}
+.btn-create {
             float:right;
             border-radius:10px;
             font-weight:600;
-        }
-
-        table th{
+}
+table th {
             background:#f3f4f6;
-        }
-    </style>
-</head>
-
-<body>
-
+}
+</style>
+@endpush
+@section('content')
 <div class="card-box">
 
     <h2>📚 Assignments</h2>
@@ -103,6 +83,4 @@
     </table>
 
 </div>
-
-</body>
-</html>
+@endsection

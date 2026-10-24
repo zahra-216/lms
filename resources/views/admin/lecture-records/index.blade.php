@@ -1,62 +1,59 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Lecture Records</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+Lecture Records
+@endsection
+@push('styles')
 <style>
-    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-    @media (max-width:576px){
-        body { padding:20px 12px; }
-        .page-header{ flex-direction:column; align-items:flex-start !important; gap:14px; }
-        .top-actions{ flex-direction:column; align-items:stretch !important; }
-    }
-    .container { max-width:1100px; margin:auto; }
-    .action-btn{
+@media (max-width:576px) {
+.top-actions { flex-direction:column; align-items:stretch !important;
+}
+}
+.action-btn {
         border:none; background:#fff; color:#012147; font-weight:600;
         padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
         text-decoration:none; display:inline-flex; align-items:center; gap:6px;
-    }
-    .action-btn:hover{ background:#012147; color:#fff; }
-    .page-header{
-        background:linear-gradient(120deg,#012147,#1e3a6e);
-        color:#fff; border-radius:18px; padding:26px 30px; margin:18px 0 26px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
-    }
-    .page-header h2{ margin:0; font-weight:700; font-size:22px; }
-    .top-actions{ display:flex; gap:10px; flex-wrap:wrap; }
-    .card-box{
-        background:#fff; padding:20px; border-radius:14px;
-        box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:26px;
-    }
-    .icon-btn{
+}
+.action-btn:hover { background:#012147; color:#fff;
+}
+.top-actions { display:flex; gap:10px; flex-wrap:wrap;
+}
+.icon-btn {
         border:none; background:#fff; color:#012147;
         width:34px; height:34px; border-radius:8px; box-shadow:0 2px 8px rgba(0,0,0,0.06);
         display:inline-flex; align-items:center; justify-content:center;
         text-decoration:none; transition:background .15s; font-size:14px;
-    }
-    .icon-btn:hover{ background:#012147; color:#fff; }
-    .icon-btn.text-danger:hover{ background:#ef4444; color:#fff; }
-    .actions-cell{ display:flex; gap:8px; }
-    .module-list-cell{ line-height:1.7; }
-    table.lr-table{ border-collapse:separate; border-spacing:0; }
-    table.lr-table thead th{
+}
+.icon-btn:hover { background:#012147; color:#fff;
+}
+.icon-btn.text-danger:hover { background:#ef4444; color:#fff;
+}
+.actions-cell { display:flex; gap:8px;
+}
+.module-list-cell { line-height:1.7;
+}
+table.lr-table { border-collapse:separate; border-spacing:0;
+}
+table.lr-table thead th {
         background:#012147; color:#fff; font-weight:600; border:none;
         padding:12px 10px; white-space:nowrap;
-    }
-    table.lr-table thead th:first-child{ border-top-left-radius:10px; }
-    table.lr-table thead th:last-child{ border-top-right-radius:10px; }
-    table.lr-table tbody td{ vertical-align:middle; padding:10px; }
-    table.lr-table tbody tr:nth-child(even){ background:#f8fafc; }
-    table.lr-table tbody tr:hover{ background:#eef2f9; }
-    .badge-pending{ background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
-    .badge-complete{ background:#d1fae5; color:#065f46; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600; }
+}
+table.lr-table thead th:first-child { border-top-left-radius:10px;
+}
+table.lr-table thead th:last-child { border-top-right-radius:10px;
+}
+table.lr-table tbody td { vertical-align:middle; padding:10px;
+}
+table.lr-table tbody tr:nth-child(even) { background:#f8fafc;
+}
+table.lr-table tbody tr:hover { background:#eef2f9;
+}
+.badge-pending { background:#fef3c7; color:#92400e; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600;
+}
+.badge-complete { background:#d1fae5; color:#065f46; padding:4px 10px; border-radius:20px; font-size:12px; font-weight:600;
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
     <div class="page-header">
         <div>
@@ -73,9 +70,7 @@
         </div>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success rounded-3"><i class="bi bi-check-circle"></i> {{ session('success') }}</div>
-    @endif
+    
 
     <div class="card-box" style="margin-bottom:16px; padding:14px 20px;">
         <input type="text" id="moduleSearch" class="form-control" placeholder="Search by module name or code...">
@@ -152,7 +147,8 @@
         </div>
     </div>
 </div>
-
+@endsection
+@push('scripts')
 <script>
 document.getElementById('moduleSearch').addEventListener('input', function () {
     const query = this.value.toLowerCase().trim();
@@ -161,6 +157,4 @@ document.getElementById('moduleSearch').addEventListener('input', function () {
     });
 });
 </script>
-
-</body>
-</html>
+@endpush

@@ -1,98 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ $faculty->name }} - Courses | Admin</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+{{ $faculty->name }} - Courses
+@endsection
+@section('back', route('admin.faculties.index'))
+@push('styles')
 <style>
-    * { box-sizing:border-box; }
-    body { font-family:'Segoe UI', sans-serif; background:#f4f6fb; margin:0; padding:40px 20px; color:#012147; }
-    .container { max-width:1100px; margin:auto; }
-
-    .back-btn {
-        border:none; background:#fff; color:#012147; font-weight:600;
-        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
-        text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:18px;
-    }
-    .back-btn:hover { background:#012147; color:#fff; }
-
-    .page-header {
-        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
-        border-radius:18px; padding:26px 30px; margin-bottom:22px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-    }
-    .page-header h2 { margin:0 0 4px; font-weight:700; font-size:22px; }
-    .page-header small { opacity:0.85; }
-
-    .section-heading { font-size:18px; font-weight:700; color:#012147; margin-bottom:16px; display:flex; align-items:center; gap:8px; }
-
-    .add-btn {
-        background:#012147; color:#fff; padding:9px 18px; border-radius:10px;
-        text-decoration:none; font-weight:600; font-size:14px; display:inline-flex; align-items:center; gap:8px;
-    }
-    .add-btn:hover { background:#1e3a6e; color:#fff; }
-
-    .course-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; margin-bottom:32px; }
-    .course-card { border-radius:16px; overflow:hidden; background:#fff; height:180px; position:relative; color:#fff; box-shadow:0 8px 24px rgba(0,0,0,.07); cursor:pointer; transition:transform .25s; }
-    .course-card:hover { transform:translateY(-5px); }
-    .course-card::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(1,33,71,0) 40%, rgba(1,33,71,0.9) 100%); }
-    .course-card .card-body { position:absolute; bottom:0; left:0; right:0; padding:14px 16px; z-index:2; }
-    .course-card h6 { font-size:14px; font-weight:700; margin:0 0 6px; }
-    .course-card .badge { border-radius:20px; }
-    .course-card-actions { position:absolute; top:10px; right:10px; z-index:3; display:flex; gap:6px; }
-    .course-card-actions a, .course-card-actions button { width:30px; height:30px; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; }
-    .icon-edit { background:#eef2f9; color:#012147; }
-    .icon-edit:hover { background:#012147; color:#fff; }
-    .icon-delete { background:#fee2e2; color:#991b1b; }
-    .icon-delete:hover { background:#dc2626; color:#fff; }
-
-    .card-box { background:#fff; border-radius:16px; padding:20px; box-shadow:0 8px 26px rgba(0,0,0,0.06); margin-bottom:18px; }
-    .structure-header { cursor:pointer; }
-    .structure-header h5 { font-size:16px; color:#012147; font-weight:700; margin-bottom:2px; }
-    .structure-header small { color:#64748b; }
-
-    .level-block h6 { font-size:14px; font-weight:700; color:#012147; margin:14px 0 10px; display:flex; align-items:center; gap:8px; }
-    .level-block h6::before { content:''; width:6px; height:6px; border-radius:50%; background:#3b82f6; }
-
-    .semester-btn { border-radius:10px !important; border:1px solid #e2e8f0 !important; color:#012147 !important; background:#f8fafc !important; font-weight:600; padding:10px 14px !important; }
-    .semester-btn:hover { background:#eef2f9 !important; }
-
-    .semester-item { margin-bottom:8px; }
-
-    .subject-list .list-group-item { border:none; border-bottom:1px solid #f1f5f9; padding:11px 14px; }
-    .subject-list .list-group-item:hover { background:#f8fafc; }
-    .subject-list a { color:#012147; font-weight:500; text-decoration:none; }
-
-    .quick-add-row { display:flex; gap:8px; margin-top:8px; margin-bottom:12px; flex-wrap:wrap; }
-    .quick-add-row select, .quick-add-row input { border-radius:8px; border:1px solid #e2e8f0; padding:8px 10px; font-size:13px; flex:1; min-width:120px; }
-    .quick-add-row button { border:none; background:#012147; color:#fff; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600; }
-    .quick-add-row button:hover { background:#1e3a6e; }
-
-    @media (max-width:576px){
-        body { padding:20px 12px; }
-        .course-grid { grid-template-columns:1fr 1fr; }
-        .structure-header { flex-direction:column; align-items:flex-start !important; gap:8px; }
-        .card-box { padding:16px; }
-    }
-    @media (max-width:400px){
-        .course-grid { grid-template-columns:1fr; }
-    }
+.section-heading { font-size:18px; font-weight:700; color:#012147; margin-bottom:16px; display:flex; align-items:center; gap:8px;
+}
+.course-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; margin-bottom:32px;
+}
+.course-card { border-radius:16px; overflow:hidden; background:#fff; height:180px; position:relative; color:#fff; box-shadow:0 8px 24px rgba(0,0,0,.07); cursor:pointer; transition:transform .25s;
+}
+.course-card:hover { transform:translateY(-5px);
+}
+.course-card::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(1,33,71,0) 40%, rgba(1,33,71,0.9) 100%);
+}
+.course-card .card-body { position:absolute; bottom:0; left:0; right:0; padding:14px 16px; z-index:2;
+}
+.course-card h6 { font-size:14px; font-weight:700; margin:0 0 6px;
+}
+.course-card .badge { border-radius:20px;
+}
+.course-card-actions { position:absolute; top:10px; right:10px; z-index:3; display:flex; gap:6px;
+}
+.course-card-actions a, .course-card-actions button { width:30px; height:30px; border:none; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px;
+}
+.structure-header { cursor:pointer;
+}
+.structure-header h5 { font-size:16px; color:#012147; font-weight:700; margin-bottom:2px;
+}
+.structure-header small { color:#64748b;
+}
+.level-block h6 { font-size:14px; font-weight:700; color:#012147; margin:14px 0 10px; display:flex; align-items:center; gap:8px;
+}
+.level-block h6::before { content:''; width:6px; height:6px; border-radius:50%; background:#3b82f6;
+}
+.semester-btn { border-radius:10px !important; border:1px solid #e2e8f0 !important; color:#012147 !important; background:#f8fafc !important; font-weight:600; padding:10px 14px !important;
+}
+.semester-btn:hover { background:#eef2f9 !important;
+}
+.semester-item { margin-bottom:8px;
+}
+.subject-list .list-group-item { border:none; border-bottom:1px solid #f1f5f9; padding:11px 14px;
+}
+.subject-list .list-group-item:hover { background:#f8fafc;
+}
+.subject-list a { color:#012147; font-weight:500; text-decoration:none;
+}
+.quick-add-row { display:flex; gap:8px; margin-top:8px; margin-bottom:12px; flex-wrap:wrap;
+}
+.quick-add-row select, .quick-add-row input { border-radius:8px; border:1px solid #e2e8f0; padding:8px 10px; font-size:13px; flex:1; min-width:120px;
+}
+.quick-add-row button { border:none; background:#012147; color:#fff; border-radius:8px; padding:8px 14px; font-size:13px; font-weight:600;
+}
+.quick-add-row button:hover { background:#1e3a6e;
+}
+@media (max-width:576px) {
+.course-grid { grid-template-columns:1fr 1fr;
+}
+.structure-header { flex-direction:column; align-items:flex-start !important; gap:8px;
+}
+}
+@media (max-width:400px) {
+.course-grid { grid-template-columns:1fr;
+}
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
-    <a href="{{ route('admin.faculties.index') }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h2>{{ $faculty->name }}</h2>
         <small>Manage courses, levels, semesters and subjects for this faculty.</small>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success rounded-3">{{ session('success') }}</div>
-    @endif
+    
 
     <div class="d-flex justify-content-between align-items-center mb-3">
         <div class="section-heading mb-0"><i class="bi bi-collection"></i> Courses</div>
@@ -230,8 +214,8 @@
         <p class="text-muted">No courses yet for this faculty.</p>
     @endif
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+@endsection
+@push('scripts')
 <script>
 function openCourseStructure(collapseId){
     const target = document.getElementById(collapseId);
@@ -241,5 +225,4 @@ function openCourseStructure(collapseId){
     setTimeout(() => target.closest('.card-box').scrollIntoView({ behavior:'smooth', block:'start' }), 150);
 }
 </script>
-</body>
-</html>
+@endpush

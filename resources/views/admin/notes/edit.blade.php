@@ -1,47 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Edit Note - {{ $note->title }}</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+Edit Note - {{ $note->title }}
+@endsection
+@push('styles')
 <style>
-    * { box-sizing:border-box; }
-    body { font-family:'Segoe UI', sans-serif; background:#f4f6fb; margin:0; padding:40px 20px; color:#012147; }
-    .container { max-width:600px; margin:auto; }
-
-    .back-btn {
-        border:none; background:#fff; color:#012147; font-weight:600;
-        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
-        text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:18px;
-    }
-    .back-btn:hover { background:#012147; color:#fff; }
-
-    .page-header {
-        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
-        border-radius:18px; padding:24px 28px; margin-bottom:26px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-    }
-    .page-header h3 { margin:0; font-weight:700; font-size:20px; }
-
-    .card-box { background:#fff; border-radius:16px; padding:28px; box-shadow:0 8px 26px rgba(0,0,0,0.06); }
-
-    .form-label { font-weight:600; color:#012147; font-size:14px; margin-bottom:6px; }
-    .form-control, .form-select, textarea { border-radius:10px; border:1px solid #e2e8f0; padding:10px 14px; }
-    .form-control:focus, .form-select:focus { border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
-
-    .btn-navy { width:100%; background:#012147; color:#fff; border:none; padding:12px; border-radius:12px; font-weight:600; }
-    .btn-navy:hover { background:#0b2d5a; }
-    .btn-download { background:#10b981; color:#fff; border:none; padding:8px 16px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:600; }
-    .btn-download:hover { background:#059669; color:#fff; }
-
-    @media (max-width:480px){ .card-box{ padding:20px; } }
+textarea { border-radius:10px; border:1px solid #e2e8f0; padding:10px 14px;
+}
+.btn-download { background:#10b981; color:#fff; border:none; padding:8px 16px; border-radius:8px; text-decoration:none; font-size:13px; font-weight:600;
+}
+.btn-download:hover { background:#059669; color:#fff;
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
-    <a href="{{ route('admin.dashboard') }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-pencil-square"></i> Edit Note</h3>
@@ -118,5 +91,4 @@
         </form>
     </div>
 </div>
-</body>
-</html>
+@endsection

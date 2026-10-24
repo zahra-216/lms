@@ -1,43 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ $subject->name }} - Assignments | Admin</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+{{ $subject->name }} - Assignments
+@endsection
+@push('styles')
 <style>
-    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-    @media (max-width:576px){
-        body{ padding:20px 12px; }
-        .page-header{ flex-direction:column; align-items:flex-start !important; gap:14px; }
-        .page-header .add-btn{ width:100%; text-align:center; }
-        .assignment-header{ flex-direction:column; align-items:flex-start !important; gap:8px; padding:15px 16px; }
-        .assignment-body{ padding:16px; }
-    }
-    .container { max-width:1000px; margin:auto; }
-    .back-btn{ border:none; background:#fff; color:#012147; font-weight:600; padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06); text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
-    .back-btn:hover{ background:#012147; color:#fff; }
-    .page-header{ background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff; border-radius:18px; padding:26px 30px; margin:18px 0 26px; box-shadow:0 10px 30px rgba(1,33,71,0.25); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px; }
-    .page-header h2{ margin:0; font-weight:700; font-size:22px; }
-    .add-btn{ background:#fff; color:#012147; font-weight:600; border:none; padding:10px 18px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
-    .add-btn:hover{ background:#e2e8f0; color:#012147; }
-    .assignment-card{ border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:25px; border:none; overflow:hidden; }
-    .assignment-header{ background:#012147; color:#fff; padding:18px 22px; display:flex; justify-content:space-between; align-items:center; }
-    .assignment-body{ padding:20px 22px; background:#fff; }
-    .meta-badge{ font-size:0.8rem; margin-right:6px; padding:6px 12px; border-radius:20px; }
-    .late-badge{ background:#fee2e2; color:#b91c1c; }
-    .ontime-badge{ background:#dcfce7; color:#15803d; }
-    table.sub-table{ border-collapse:separate; border-spacing:0; }
-    table.sub-table thead th{ background:#f1f5f9; color:#012147; font-weight:600; border:none; padding:10px; }
-    table.sub-table tbody td{ vertical-align:middle; padding:10px; }
-    table.sub-table tbody tr:nth-child(even){ background:#f8fafc; }
-    table.sub-table tbody tr:hover{ background:#eef2f9; }
-    .btn-edit{ background:#ffc107; color:#012147; border:none; }
-    .btn-delete{ background:#dc3545; color:#fff; border:none; }
+@media (max-width:576px) {
+.page-header .add-btn { width:100%; text-align:center;
+}
+.assignment-header { flex-direction:column; align-items:flex-start !important; gap:8px; padding:15px 16px;
+}
+.assignment-body { padding:16px;
+}
+}
+.assignment-card { border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:25px; border:none; overflow:hidden;
+}
+.assignment-header { background:#012147; color:#fff; padding:18px 22px; display:flex; justify-content:space-between; align-items:center;
+}
+.assignment-body { padding:20px 22px; background:#fff;
+}
+.meta-badge { font-size:0.8rem; margin-right:6px; padding:6px 12px; border-radius:20px;
+}
+.late-badge { background:#fee2e2; color:#b91c1c;
+}
+.ontime-badge { background:#dcfce7; color:#15803d;
+}
+table.sub-table { border-collapse:separate; border-spacing:0;
+}
+table.sub-table thead th { background:#f1f5f9; color:#012147; font-weight:600; border:none; padding:10px;
+}
+table.sub-table tbody td { vertical-align:middle; padding:10px;
+}
+table.sub-table tbody tr:nth-child(even) { background:#f8fafc;
+}
+table.sub-table tbody tr:hover { background:#eef2f9;
+}
+.btn-edit { background:#ffc107; color:#012147; border:none;
+}
+.btn-delete { background:#dc3545; color:#fff; border:none;
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
     <a href="{{ route('admin.subjects.show', $subject->id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
 
@@ -48,9 +51,7 @@
         </a>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success rounded-3">{{ session('success') }}</div>
-    @endif
+    
 
     @if($subject->assignments && $subject->assignments->count())
         @foreach($subject->assignments as $assignment)
@@ -137,5 +138,4 @@
         <p class="text-muted mt-3">No assignments posted yet for this subject.</p>
     @endif
 </div>
-</body>
-</html>
+@endsection

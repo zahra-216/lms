@@ -1,161 +1,23 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Reset Password</title>
+@extends('layouts.guest')
+@section('title', 'Reset password')
+@section('icon', 'shield-lock')
+@section('heading', 'Choose a new password')
+@section('subheading', 'Use at least 8 characters.')
 
-    <!-- Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-
-    <style>
-
-    body{
-        height:100vh;
-        margin:0;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        background: linear-gradient(135deg, #012147, #0b2d5a);
-        font-family: 'Segoe UI', sans-serif;
-    }
-
-    /* CARD */
-    .reset-card{
-        width:100%;
-        max-width:420px;
-        background:#fff;
-        padding:30px;
-        border-radius:18px;
-        box-shadow:0 20px 50px rgba(0,0,0,0.25);
-        animation: fadeIn 0.6s ease-in-out;
-    }
-
-    @keyframes fadeIn{
-        from{opacity:0; transform:translateY(20px);}
-        to{opacity:1; transform:translateY(0);}
-    }
-
-    /* TITLE */
-    .reset-card h3{
-        text-align:center;
-        font-weight:700;
-        color:#012147;
-        margin-bottom:20px;
-    }
-
-    /* INPUT */
-    .form-control{
-        border-radius:12px;
-        padding:12px;
-    }
-
-    .form-control:focus{
-        border-color:#012147;
-        box-shadow:0 0 0 0.15rem rgba(1,33,71,0.2);
-    }
-
-    /* BUTTON */
-    .btn-custom{
-        background:#012147;
-        color:#fff;
-        border:none;
-        border-radius:12px;
-        padding:12px;
-        font-weight:600;
-        transition:0.3s;
-    }
-
-    .btn-custom:hover{
-        background:#0b2d5a;
-        transform:scale(1.02);
-    }
-
-    /* ICON */
-    .icon-box{
-        text-align:center;
-        font-size:45px;
-        color:#012147;
-        margin-bottom:10px;
-    }
-
-    /* ALERT */
-    .alert{
-        border-radius:12px;
-        font-size:14px;
-    }
-
-    </style>
-</head>
-
-<body>
-
-<div class="reset-card">
-
-    <!-- ICON -->
-    <div class="icon-box">
-        <i class="bi bi-shield-lock-fill"></i>
+@section('content')
+<form method="POST" action="{{ url('/admin/reset-password') }}">
+    @csrf
+    <input type="hidden" name="token" value="{{ $token }}">
+    <div class="mb-3 field-icon">
+        <i class="bi bi-lock"></i>
+        <input type="password" name="password" id="resetPassword" class="form-control has-eye" placeholder="New password" autocomplete="new-password" required autofocus>
+        <i class="bi bi-eye toggle-eye" data-toggle-password="resetPassword"></i>
     </div>
-
-    <h3>Reset Password</h3>
-
-    {{-- SUCCESS --}}
-    @if(session('success'))
-    <div class="alert alert-success">
-        {{ session('success') }}
+    <div class="mb-3 field-icon">
+        <i class="bi bi-lock-fill"></i>
+        <input type="password" name="password_confirmation" id="resetConfirmPassword" class="form-control has-eye" placeholder="Confirm new password" autocomplete="new-password" required>
+        <i class="bi bi-eye toggle-eye" data-toggle-password="resetConfirmPassword"></i>
     </div>
-    @endif
-
-    {{-- ERRORS --}}
-    @if($errors->any())
-    <div class="alert alert-danger">
-        <ul class="mb-0">
-            @foreach($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-    @endif
-
-    <form method="POST" action="{{ url('/admin/reset-password') }}">
-        @csrf
-
-        <input type="hidden" name="token" value="{{ $token }}">
-
-        <div class="mb-3" style="position:relative;">
-            <input type="password" name="password" id="resetPassword" class="form-control" placeholder="New Password" required style="padding-right:40px;">
-            <i class="bi bi-eye" onclick="togglePassword('resetPassword', this)"
-            style="position:absolute; top:50%; right:14px; transform:translateY(-50%); cursor:pointer; color:#6b7280;"></i>
-        </div>
-
-        <div class="mb-3" style="position:relative;">
-            <input type="password" name="password_confirmation" id="resetConfirmPassword" class="form-control" placeholder="Confirm Password" required style="padding-right:40px;">
-            <i class="bi bi-eye" onclick="togglePassword('resetConfirmPassword', this)"
-            style="position:absolute; top:50%; right:14px; transform:translateY(-50%); cursor:pointer; color:#6b7280;"></i>
-        </div>
-
-        <button class="btn btn-custom w-100">
-            Reset Password
-        </button>
-    </form>
-
-</div>
-
-<script>
-function togglePassword(id, icon) {
-    const input = document.getElementById(id);
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.classList.remove('bi-eye');
-        icon.classList.add('bi-eye-slash');
-    } else {
-        input.type = 'password';
-        icon.classList.remove('bi-eye-slash');
-        icon.classList.add('bi-eye');
-    }
-}
-</script>
-
-</body>
-</html>
+    <button type="submit" class="btn-navy"><i class="bi bi-check2-circle"></i> Reset password</button>
+</form>
+@endsection

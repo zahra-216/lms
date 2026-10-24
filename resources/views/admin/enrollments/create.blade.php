@@ -1,32 +1,22 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Add Enrollment</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+@extends('layouts.admin')
+@section('title')
+Add Enrollment
+@endsection
+@push('styles')
 <style>
-body {
-    background: linear-gradient(135deg,#eef2ff,#f8fafc);
-}
 .card {
     border-radius: 15px;
 }
 </style>
-
-</head>
-<body class="container py-5">
-
+@endpush
+@section('content')
+<div class="container py-5">
 <div class="card shadow p-4">
     <h3 class="mb-4">➕ Add Enrollment</h3>
 
-    @if(session('success'))
-        <div class="alert alert-success">{{ session('success') }}</div>
-    @endif
+    
 
-    @if(session('error'))
-        <div class="alert alert-danger">{{ session('error') }}</div>
-    @endif
+    
 
     <form method="POST" action="{{ route('admin.enrollments.store') }}">
         @csrf
@@ -68,6 +58,5 @@ body {
         <button class="btn btn-success w-100">Save</button>
     </form>
 </div>
-
-</body>
-</html>
+</div>
+@endsection

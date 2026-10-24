@@ -1,19 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ $subject->name }} — Recordings</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background: #f4f6f9; }
-        .navy-header { background: #012147; color: #fff; padding: 20px; }
-        .rec-card { border: none; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-    </style>
-</head>
-<body>
-
+@extends('layouts.student')
+@section('title')
+{{ $subject->name }} — Recordings
+@endsection
+@push('styles')
+<style>
+.navy-header { background: #012147; color: #fff; padding: 20px;
+}
+.rec-card { border: none; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+</style>
+@endpush
+@section('content')
     <div class="navy-header">
         <div class="container">
             <a href="{{ route('student.subject.portal.show', $subject->id) }}" class="text-white text-decoration-none"><i class="bi bi-arrow-left"></i> Back</a>
@@ -39,6 +36,4 @@
             </div>
         @endif
     </div>
-
-</body>
-</html>
+@endsection

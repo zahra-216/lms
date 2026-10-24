@@ -1,22 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Edit Enrollment</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+@extends('layouts.admin')
+@section('title')
+Edit Enrollment
+@endsection
+@push('styles')
 <style>
-body {
-    background: linear-gradient(135deg,#eef2ff,#f8fafc);
-}
 .card {
     border-radius: 15px;
 }
 </style>
-</head>
-
-<body class="container py-5">
-
+@endpush
+@section('content')
+<div class="container py-5">
 <div class="card shadow p-4">
     <h3 class="mb-4">✏️ Edit Enrollment</h3>
 
@@ -66,6 +60,5 @@ body {
         <button class="btn btn-primary w-100">Update</button>
     </form>
 </div>
-
-</body>
-</html>
+</div>
+@endsection

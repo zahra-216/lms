@@ -1,24 +1,17 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>Enrollments</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-
-<body class="container py-5">
-
+@extends('layouts.admin')
+@section('title')
+Enrollments
+@endsection
+@section('content')
+<div class="container py-5">
 <div class="d-flex justify-content-between mb-3">
     <h2>📚 Enrollments</h2>
     <a href="{{ route('admin.enrollments.create') }}" class="btn btn-primary">+ Add</a>
 </div>
 
-@if(session('success'))
-<div class="alert alert-success">{{ session('success') }}</div>
-@endif
 
-@if(session('error'))
-<div class="alert alert-danger">{{ session('error') }}</div>
-@endif
+
+
 
 <!-- FILTER -->
 <form method="GET" action="{{ route('admin.enrollments.index') }}" class="mb-3 p-3 border rounded">
@@ -106,6 +99,5 @@
 @endforeach
 </tbody>
 </table>
-
-</body>
-</html>
+</div>
+@endsection

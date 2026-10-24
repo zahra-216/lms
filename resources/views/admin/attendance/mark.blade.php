@@ -1,67 +1,44 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ $subject->name }} - Mark Attendance</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+{{ $subject->name }} - Mark Attendance
+@endsection
+@push('styles')
 <style>
-    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-
-    @media (max-width:576px){
-        body { padding:20px 12px; }
-        .page-header{ flex-direction:column; align-items:flex-start !important; gap:14px; }
-        .date-form{ flex-direction:column; align-items:flex-start !important; }
-        .date-form > div{ width:100%; }
-    }
-
-    .container { max-width:900px; margin:auto; }
-
-    .back-btn{
-        border:none; background:#fff; color:#012147; font-weight:600;
-        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
-        text-decoration:none; display:inline-flex; align-items:center; gap:6px;
-    }
-    .back-btn:hover{ background:#012147; color:#fff; }
-
-    .page-header{
-        background:linear-gradient(120deg,#012147,#1e3a6e);
-        color:#fff; border-radius:18px; padding:26px 30px; margin:18px 0 26px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
-    }
-    .page-header h2{ margin:0; font-weight:700; font-size:22px; }
-
-    .card-box{
-        background:#fff; padding:20px; border-radius:14px;
-        box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:26px;
-    }
-
-    .date-form label{ font-weight:600; color:#012147; font-size:14px; margin-bottom:4px; display:block; }
-    .date-form input[type="date"]{ border-radius:10px; padding:10px 14px; border:1px solid #e2e8f0; }
-
-    .input-group-text{ border-radius:10px 0 0 10px !important; }
-    #studentSearch{ border-radius:0 10px 10px 0 !important; }
-
-    table.attendance-table{ border-collapse:separate; border-spacing:0; }
-    table.attendance-table thead th{
+@media (max-width:576px) {
+.date-form { flex-direction:column; align-items:flex-start !important;
+}
+.date-form > div { width:100%;
+}
+}
+.date-form label { font-weight:600; color:#012147; font-size:14px; margin-bottom:4px; display:block;
+}
+.date-form input[type="date"] { border-radius:10px; padding:10px 14px; border:1px solid #e2e8f0;
+}
+.input-group-text { border-radius:10px 0 0 10px !important;
+}
+#studentSearch { border-radius:0 10px 10px 0 !important;
+}
+table.attendance-table { border-collapse:separate; border-spacing:0;
+}
+table.attendance-table thead th {
         background:#012147; color:#fff; font-weight:600; border:none;
         padding:12px 10px; white-space:nowrap;
-    }
-    table.attendance-table thead th:first-child{ border-top-left-radius:10px; }
-    table.attendance-table thead th:last-child{ border-top-right-radius:10px; }
-    table.attendance-table tbody td{ vertical-align:middle; padding:10px; }
-    table.attendance-table tbody tr:nth-child(even){ background:#f8fafc; }
-    table.attendance-table tbody tr:hover{ background:#eef2f9; }
-
-    .form-check-input{ width:18px; height:18px; cursor:pointer; }
-
-    .btn-navy{ background:#012147; color:#fff; border:none; }
-    .btn-navy:hover{ background:#1e3a6e; color:#fff; }
+}
+table.attendance-table thead th:first-child { border-top-left-radius:10px;
+}
+table.attendance-table thead th:last-child { border-top-right-radius:10px;
+}
+table.attendance-table tbody td { vertical-align:middle; padding:10px;
+}
+table.attendance-table tbody tr:nth-child(even) { background:#f8fafc;
+}
+table.attendance-table tbody tr:hover { background:#eef2f9;
+}
+.form-check-input { width:18px; height:18px; cursor:pointer;
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
         <a href="{{ route('admin.attendance.show', $subject->id) }}" class="back-btn">
@@ -80,9 +57,7 @@
         <i class="bi bi-clipboard2-check" style="font-size:44px; opacity:0.85;"></i>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success rounded-3"><i class="bi bi-check-circle"></i> {{ session('success') }}</div>
-    @endif
+    
 
     @if($alreadyMarked)
         <div class="alert alert-warning rounded-3">
@@ -151,7 +126,8 @@
         </form>
     </div>
 </div>
-
+@endsection
+@push('scripts')
 <script>
 document.getElementById('studentSearch').addEventListener('input', function () {
     const query = this.value.toLowerCase().trim();
@@ -164,5 +140,4 @@ document.getElementById('studentSearch').addEventListener('input', function () {
     });
 });
 </script>
-</body>
-</html>
+@endpush

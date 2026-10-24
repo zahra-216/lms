@@ -3,50 +3,31 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\Student;
-use App\Models\Faculty;
+use App\Models\Attendance;
+use App\Models\AssignmentSubmission;
 use App\Models\Course;
-use App\Models\Enrollment;
-use App\Models\Subject; // <-- add this
+use App\Models\Faculty;
+use App\Models\Lecturer;
+use App\Models\Student;
+use App\Models\Subject;
 
 class DashboardController extends Controller
 {
     public function index()
     {
-        $totalStudents = Student::count();
-        $totalFaculty = Faculty::count();
-        $totalCourses = Course::count();
-        $totalEnrollments = Enrollment::count();
-        $pendingEnrollments = Enrollment::where('status','pending')->count();
-
-        $recentActivities = [
-            'New student registered',
-            'New course added',
-            'Faculty assigned'
+        $stats = [
+            ['Students', Student::count(), 'people', route('admin.students.index')],
+            ['Lecturers', Lecturer::count(), 'person-workspace', route('admin.lecturers.index')],
+            ['Faculties', Faculty::count(), 'building', route('admin.faculties.index')],
+            ['Courses', Course::count(), 'mortarboard', route('admin.courses.index')],
+            ['Subjects', Subject::count(), 'book', route('admin.subjects.index')],
+            ['Marked present today', Attendance::whereDate('date', today())->where('status', 'present')->count(), 'calendar-check', route('admin.attendance.index')],
         ];
 
-        $notifications = [
-            'Pending enrollment approvals',
-            'Assignment deadlines',
-            'System alerts'
-        ];
-
-        // ✅ Add this line to get subjects
-        $subjects = Subject::all();
-
-        $unreadChats = \App\Models\ChatMessage::where('is_read', false)->count();
-
-        return view('admin.dashboard', compact(
-            'totalStudents', 
-            'totalFaculty', 
-            'totalCourses', 
-            'totalEnrollments',
-            'pendingEnrollments',
-            'recentActivities',
-            'notifications',
-            'subjects',
-            'unreadChats'
-        ));
+        return view('admin.dashboard', [
+            'stats' => $stats,
+            'recentStudents' => Student::with('course')->latest()->take(6)->get(),
+            'newSubmissions' => AssignmentSubmission::where('created_at', '>=', now()->subDays(7))->count(),
+        ]);
     }
 }
