@@ -205,6 +205,7 @@ tbody tr:nth-child(even) { background:#f8fafc;
                 @empty
                     <p class="empty-note">No students found under {{ $levelName }}.</p>
                 @endforelse
+            </div>
         </div>
     @endforeach
 
