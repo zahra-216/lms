@@ -19,8 +19,8 @@ class LecturerNoteController extends Controller
         $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'type' => 'required|string',
-            'file_path' => 'nullable|file',
+            'type' => 'required|in:document,video,link,text,image',
+            'file_path' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png,mp3,mp4|max:51200',
             'url' => 'nullable|string',
         ]);
 
@@ -47,8 +47,8 @@ class LecturerNoteController extends Controller
         $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'type' => 'required|string',
-            'file_path' => 'nullable|file',
+            'type' => 'required|in:document,video,link,text,image',
+            'file_path' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png,mp3,mp4|max:51200',
             'url' => 'nullable|string',
             'order' => 'nullable|integer',
             'is_published' => 'required|boolean',
@@ -65,8 +65,7 @@ class LecturerNoteController extends Controller
 
         $note->update($validated);
 
-        return redirect()
-            ->route('lecturer.subject.notes', $subject->id)
+        return $this->returnTo(route('lecturer.subject.notes', $subject->id))
             ->with('success', 'Note updated successfully');
     }
 

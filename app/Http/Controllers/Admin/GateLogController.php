@@ -48,7 +48,7 @@ class GateLogController extends Controller
             ->whereDate('scanned_at', $date)
             ->delete();
 
-        return redirect()->route('admin.gate-log.index', ['date' => $date])
+        return $this->returnTo(route('admin.gate-log.index', ['date' => $date]))
             ->with('success', 'Record deleted.');
     }
 }

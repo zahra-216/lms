@@ -26,8 +26,8 @@ class NoteController extends Controller
         $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'type' => 'required|string',
-            'file_path' => 'nullable|file',
+            'type' => 'required|in:document,video,link,text,image',
+            'file_path' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png,mp3,mp4|max:51200',
             'url' => 'nullable|string',
             'order' => 'nullable|integer',
             'is_published' => 'nullable|boolean'
@@ -42,8 +42,7 @@ class NoteController extends Controller
 
         Note::create($validated);
 
-        return redirect()
-            ->route('admin.subjects.notes.index',$subject->id)
+        return $this->returnTo(route('admin.subjects.notes.index',$subject->id))
             ->with('success','Note Added Successfully');
     }
 
@@ -57,8 +56,8 @@ class NoteController extends Controller
         $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'type' => 'required|string',
-            'file_path' => 'nullable|file',
+            'type' => 'required|in:document,video,link,text,image',
+            'file_path' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png,mp3,mp4|max:51200',
             'url' => 'nullable|string',
             'order' => 'nullable|integer',
             'is_published' => 'required|boolean'
@@ -78,8 +77,7 @@ class NoteController extends Controller
 
         $note->update($validated);
 
-        return redirect()
-            ->route('admin.subjects.notes.index',$subject->id)
+        return $this->returnTo(route('admin.subjects.notes.index',$subject->id))
             ->with('success','Note Updated Successfully');
     }
 

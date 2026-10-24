@@ -1,24 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TT Metro Campus - Create Admin</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+TT Metro Campus - Create Admin
+@endsection
+@push('head')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-
+@endpush
+@push('styles')
 <style>
-body {
-    background: #012147;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-family: 'Segoe UI', sans-serif;
-    padding: 20px;
-}
-
 .login-card {
     background: #fff;
     border-radius: 15px;
@@ -27,7 +15,6 @@ body {
     width: 100%;
     max-width: 420px;
 }
-
 .login-header {
     display: flex;
     align-items: center;
@@ -35,17 +22,12 @@ body {
     gap: 10px;
     margin-bottom: 25px;
 }
-
-.login-header img { width: 45px; height: auto; }
-.login-header h1 { margin: 0; font-weight: 700; color: #333; font-size: 22px; }
-
-.position-relative { position: relative; }
-
-.form-control {
-    border-radius: 50px;
-    padding: 10px 20px 10px 40px;
+.login-header img { width: 45px; height: auto;
 }
-
+.login-header h1 { margin: 0; font-weight: 700; color: #333; font-size: 22px;
+}
+.position-relative { position: relative;
+}
 .form-control-icon {
     position: absolute;
     top: 50%;
@@ -53,7 +35,6 @@ body {
     transform: translateY(-50%);
     color: #aaa;
 }
-
 .btn-login {
     border-radius: 50px;
     padding: 8px 30px;
@@ -66,22 +47,23 @@ body {
     margin: 15px auto 0 auto;
     width: auto;
 }
-
-.btn-login:hover { background: #17a673; }
-
-.alert { border-radius: 10px; }
-
-.form-text { text-align: center; margin-top: 15px; }
-.form-text a { color: #4e73df; text-decoration: none; }
-.form-text a:hover { text-decoration: underline; }
-
-@media (max-width:480px){
-    .login-card { padding: 30px 20px; }
+.btn-login:hover { background: #17a673;
+}
+.alert { border-radius: 10px;
+}
+.form-text { text-align: center; margin-top: 15px;
+}
+.form-text a { color: #4e73df; text-decoration: none;
+}
+.form-text a:hover { text-decoration: underline;
+}
+@media (max-width:480px) {
+.login-card { padding: 30px 20px;
+}
 }
 </style>
-</head>
-<body>
-
+@endpush
+@section('content')
 <div class="login-card">
 
     <div class="login-header">
@@ -89,11 +71,7 @@ body {
         <h1>Create Admin</h1>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success">
-            <i class="fa fa-check-circle"></i> {{ session('success') }}
-        </div>
-    @endif
+    
 
     @if($errors->any())
         <div class="alert alert-danger">
@@ -128,6 +106,4 @@ body {
         <small><a href="{{ route('admin.login') }}">Back to Login</a></small>
     </div>
 </div>
-
-</body>
-</html>
+@endsection

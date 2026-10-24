@@ -36,7 +36,7 @@ class LecturerController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        return redirect()->route('admin.lecturers.index')
+        return $this->returnTo(route('admin.lecturers.index'))
             ->with('success', 'Lecturer added successfully!');
     }
 
@@ -67,7 +67,7 @@ class LecturerController extends Controller
 
         $lecturer->save();
 
-        return redirect()->route('admin.lecturers.index')
+        return $this->returnTo(route('admin.lecturers.index'))
             ->with('success', 'Lecturer updated successfully!');
     }
 
@@ -75,7 +75,7 @@ class LecturerController extends Controller
     {
         Lecturer::findOrFail($id)->delete();
 
-        return redirect()->route('admin.lecturers.index')
+        return $this->returnTo(route('admin.lecturers.index'))
             ->with('success', 'Lecturer deleted!');
     }
 

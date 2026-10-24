@@ -83,6 +83,6 @@ class ProfileController extends Controller
 
         $student->update($validated);
 
-        return redirect()->route('student.profile')->with('success', 'Profile updated successfully!');
+        return $this->returnTo(route('student.profile'))->with('success', 'Profile updated successfully!');
     }
 }

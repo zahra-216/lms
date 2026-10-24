@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\AcademicTree;
 use App\Http\Controllers\Controller;
 use App\Models\Subject;
 use App\Models\Student;
@@ -11,24 +12,16 @@ use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $subjects = Subject::with(['course.faculty', 'level', 'semester'])->get();
-
-        $grouped = $subjects
-            ->groupBy(function ($s) { return optional(optional($s->course)->faculty)->name ?? 'Unassigned Faculty'; })
-            ->map(function ($facultySubjects) {
-                return $facultySubjects->groupBy(function ($s) { return optional($s->course)->name ?? 'Unassigned Course'; })
-                    ->map(function ($courseSubjects) {
-                        return $courseSubjects->groupBy(function ($s) { return optional($s->level)->name ?? 'Unassigned Level'; })
-                            ->map(function ($levelSubjects) {
-                                return $levelSubjects->groupBy(function ($s) { return optional($s->semester)->name ?? 'Unassigned Semester'; });
-                            });
-                    });
-            });
-
-        return view('admin.attendance.index', compact('grouped'));
+        return view('admin.academic-browser', [
+            'title' => 'Attendance',
+            'subtitle' => 'Pick a faculty, course, level and semester, then a subject to mark or review attendance.',
+            'icon' => 'calendar-check',
+            'tree' => AcademicTree::build($request, fn ($subject) => route('admin.attendance.show', $subject->id)),
+        ]);
     }
+
 
     public function show($id)
     {
@@ -146,7 +139,7 @@ class AttendanceController extends Controller
             ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
             ->delete();
 
-        return redirect()->route('admin.attendance.history', $id)
+        return $this->returnTo(route('admin.attendance.history', $id))
             ->with('success', 'Attendance for ' . $start->format('F Y') . ' deleted.');
     }
 }

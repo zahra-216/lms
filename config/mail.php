@@ -110,6 +110,9 @@ return [
     |
     */
 
+    // Every assignment submission is e-mailed here.
+    'submissions_to' => env('SUBMISSIONS_MAIL_TO', 'info.ttmetro@gmail.com'),
+
     'from' => [
         'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),
         'name' => env('MAIL_FROM_NAME', 'Example'),

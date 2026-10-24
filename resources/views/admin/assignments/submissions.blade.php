@@ -1,48 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Assignment Submissions</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+@extends('layouts.admin')
+@section('title')
+Assignment Submissions
+@endsection
+@push('styles')
 <style>
-body{
-    background:#f4f6fb;
-    font-family:'Segoe UI', sans-serif;
-}
-
-/* HEADER */
-.page-header{
-    background: linear-gradient(135deg,#1e3a8a,#2563eb);
-    color:white;
-    padding:20px;
-    border-radius:12px;
-    margin-bottom:20px;
-}
-
-/* CARD */
-.card-box{
-    background:white;
-    padding:20px;
-    border-radius:14px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-}
-
-/* TABLE */
-.table thead{
+.table thead {
     background:#1e3a8a;
     color:white;
 }
-
-.table tbody tr:hover{
+.table tbody tr:hover {
     background:#f1f5ff;
 }
-
-/* BUTTON */
-.download-btn{
+.download-btn {
     background:#2563eb;
     color:white;
     padding:6px 12px;
@@ -50,22 +19,12 @@ body{
     text-decoration:none;
     font-size:14px;
 }
-
-.download-btn:hover{
+.download-btn:hover {
     background:#1e40af;
 }
-
-/* EMPTY */
-.empty-box{
-    text-align:center;
-    padding:40px;
-    color:#6b7280;
-}
 </style>
-
-</head>
-<body>
-
+@endpush
+@section('content')
 <div class="container mt-5">
 
     <!-- HEADER -->
@@ -132,6 +91,4 @@ body{
     </div>
 
 </div>
-
-</body>
-</html>
+@endsection

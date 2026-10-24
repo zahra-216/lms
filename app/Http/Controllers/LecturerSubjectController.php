@@ -86,7 +86,7 @@ class LecturerSubjectController extends Controller
             }
         }
 
-        return redirect()->route('lecturer.subject.grades', $id)
+        return $this->returnTo(route('lecturer.subject.grades', $id))
             ->with('success', 'Marks saved successfully');
     }
 

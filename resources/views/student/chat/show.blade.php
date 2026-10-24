@@ -1,61 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chat with {{ $lecturer->name }}</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.student')
+@section('title')
+Chat with {{ $lecturer->name }}
+@endsection
+@push('styles')
 <style>
-    * { box-sizing:border-box; }
-    body { background:#e9edf5; font-family:'Segoe UI', sans-serif; margin:0; height:100vh; display:flex; flex-direction:column; }
-
-    .chat-header{
-        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
+.chat-header {
+        background:#012147; color:#fff;
         padding:14px 20px; display:flex; align-items:center; gap:14px;
         box-shadow:0 4px 12px rgba(1,33,71,0.2); flex-shrink:0;
-    }
-    .chat-header a{ color:#fff; font-size:20px; text-decoration:none; }
-    .chat-header .avatar{
+}
+.chat-header a { color:#fff; font-size:20px; text-decoration:none;
+}
+.chat-header .avatar {
         width:38px; height:38px; border-radius:50%; background:rgba(255,255,255,0.15);
         display:flex; align-items:center; justify-content:center; font-weight:700;
-    }
-    .chat-header .name{ font-weight:700; font-size:16px; }
-
-    .chat-body{
+}
+.chat-header .name { font-weight:700; font-size:16px;
+}
+.chat-body {
         flex:1; overflow-y:auto; padding:20px; display:flex; flex-direction:column; gap:4px;
-    }
-    .bubble-row{ display:flex; margin-bottom:6px; }
-    .bubble-row.from-student{ justify-content:flex-end; }
-    .bubble-row.from-lecturer{ justify-content:flex-start; }
-    .bubble{
+}
+.bubble-row { display:flex; margin-bottom:6px;
+}
+.bubble-row.from-student { justify-content:flex-end;
+}
+.bubble-row.from-lecturer { justify-content:flex-start;
+}
+.bubble {
         max-width:75%; padding:10px 14px; border-radius:14px; font-size:14.5px; line-height:1.4;
         box-shadow:0 2px 6px rgba(0,0,0,0.06); word-wrap:break-word;
-    }
-    .bubble.student{ background:#012147; color:#fff; border-bottom-right-radius:4px; }
-    .bubble.lecturer{ background:#fff; color:#1e293b; border-bottom-left-radius:4px; }
-    .bubble .time{ display:block; font-size:10.5px; opacity:0.7; margin-top:4px; text-align:right; }
-
-    .chat-input{
+}
+.bubble.student { background:#012147; color:#fff; border-bottom-right-radius:4px;
+}
+.bubble.lecturer { background:#fff; color:#1e293b; border-bottom-left-radius:4px;
+}
+.bubble .time { display:block; font-size:10.5px; opacity:0.7; margin-top:4px; text-align:right;
+}
+.chat-input {
         background:#fff; padding:12px 16px; display:flex; gap:10px; align-items:center;
         border-top:1px solid #e2e8f0; flex-shrink:0;
-    }
-    .chat-input input{
+}
+.chat-input input {
         flex:1; border:1px solid #e2e8f0; border-radius:24px; padding:11px 18px; font-size:14.5px; outline:none;
-    }
-    .chat-input input:focus{ border-color:#012147; }
-    .send-btn{
+}
+.chat-input input:focus { border-color:#012147;
+}
+.send-btn {
         background:#012147; color:#fff; border:none; width:44px; height:44px; border-radius:50%;
         display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:18px;
-    }
-    .send-btn:hover{ background:#1e3a6e; }
-    .empty-chat{ text-align:center; color:#94a3b8; margin-top:40px; font-size:13.5px; }
+}
+.send-btn:hover { background:#1e3a6e;
+}
+.empty-chat { text-align:center; color:#94a3b8; margin-top:40px; font-size:13.5px;
+}
 </style>
-</head>
-<body>
-
+@endpush
+@section('content')
 <div class="chat-header">
-    <a href="{{ route('student.chat.index') }}"><i class="bi bi-arrow-left"></i></a>
     <div class="avatar">{{ strtoupper(substr($lecturer->name, 0, 1)) }}</div>
     <div class="name">{{ $lecturer->name }}</div>
 </div>
@@ -78,7 +79,8 @@
     <input type="text" id="messageInput" placeholder="Type a message..." autocomplete="off" required>
     <button type="submit" class="send-btn"><i class="bi bi-send-fill"></i></button>
 </form>
-
+@endsection
+@push('scripts')
 <script>
 const chatBody = document.getElementById('chatBody');
 const chatForm = document.getElementById('chatForm');
@@ -124,7 +126,4 @@ setInterval(function () {
         .then(messages => messages.forEach(appendMessage));
 }, 3000);
 </script>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endpush

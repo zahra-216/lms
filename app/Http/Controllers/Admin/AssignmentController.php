@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\AcademicTree;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Assignment;
@@ -30,7 +31,7 @@ class AssignmentController extends Controller
     {
         $request->validate([
             'assignment_id' => 'required',
-            'file' => 'required|file'
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:20480',
         ]);
 
         $studentId = session('student_id');
@@ -60,13 +61,21 @@ class AssignmentController extends Controller
         $student = Student::find($studentId);
         $assignment = Assignment::find($request->assignment_id);
 
-        // Admin gets in-app notification only (no email)
+        // Admins get an in-app notification
         foreach (Admin::all() as $admin) {
             try {
                 $admin->notify(new AssignmentSubmitted($student, $assignment));
             } catch (\Exception $e) {
                 \Log::error('Failed to notify admin #' . $admin->id . ' (' . $admin->email . '): ' . $e->getMessage());
             }
+        }
+
+        // The campus inbox gets an e-mail for every submission
+        try {
+            \Illuminate\Support\Facades\Notification::route('mail', config('mail.submissions_to'))
+                ->notify(new \App\Notifications\AssignmentSubmittedMail($student, $assignment));
+        } catch (\Exception $e) {
+            \Log::error('Failed to email the submission to the campus inbox: ' . $e->getMessage());
         }
 
         // Student gets email confirmation
@@ -95,7 +104,7 @@ class AssignmentController extends Controller
             'allow_late' => 'nullable|boolean',
             'late_penalty' => 'nullable|numeric|min:0|max:100',
             'is_published' => 'nullable|boolean',
-            'assignment_file' => 'nullable|file|max:10240',
+            'assignment_file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:10240',
         ]);
 
         $data['subject_id'] = $subject->id;
@@ -110,7 +119,7 @@ class AssignmentController extends Controller
 
         Assignment::create($data);
 
-        return redirect()->route('admin.subjects.assignments.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.assignments.index', $subject->id))
             ->with('success', 'Assignment created!');
     }
 
@@ -137,7 +146,7 @@ class AssignmentController extends Controller
             'allow_late' => 'nullable|boolean',
             'late_penalty' => 'nullable|numeric|min:0|max:100',
             'is_published' => 'nullable|boolean',
-            'assignment_file' => 'nullable|file|max:10240',
+            'assignment_file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:10240',
         ]);
 
         $data['allow_late'] = true;
@@ -153,35 +162,27 @@ class AssignmentController extends Controller
 
         $assignment->update($data);
 
-        return redirect()->route('admin.subjects.assignments.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.assignments.index', $subject->id))
             ->with('success', 'Assignment updated!');
     }
 
     public function destroy(\App\Models\Subject $subject, Assignment $assignment)
     {
         $assignment->delete();
-        return redirect()->route('admin.subjects.assignments.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.assignments.index', $subject->id))
             ->with('success', 'Assignment deleted!');
     }
 
-    public function browse()
+    public function browse(Request $request)
     {
-        $subjects = Subject::with(['course.faculty', 'level', 'semester'])->get();
-
-        $grouped = $subjects
-            ->groupBy(function ($s) { return optional(optional($s->course)->faculty)->name ?? 'Unassigned Faculty'; })
-            ->map(function ($facultySubjects) {
-                return $facultySubjects->groupBy(function ($s) { return optional($s->course)->name ?? 'Unassigned Course'; })
-                    ->map(function ($courseSubjects) {
-                        return $courseSubjects->groupBy(function ($s) { return optional($s->level)->name ?? 'Unassigned Level'; })
-                            ->map(function ($levelSubjects) {
-                                return $levelSubjects->groupBy(function ($s) { return optional($s->semester)->name ?? 'Unassigned Semester'; });
-                            });
-                    });
-            });
-
-        return view('admin.assignments.browse', compact('grouped'));
+        return view('admin.academic-browser', [
+            'title' => 'Assignments',
+            'subtitle' => 'Pick a faculty, course, level and semester, then a subject to see its assignments.',
+            'icon' => 'journal-text',
+            'tree' => AcademicTree::build($request, fn ($subject) => route('admin.subjects.assignments.index', $subject->id)),
+        ]);
     }
+
 
     // SUBMISSIONS
     public function submissions($id)
@@ -199,11 +200,11 @@ class AssignmentController extends Controller
 
         $submission->load('assignment');
         if ($submission->assignment && now()->gt($submission->assignment->due_date)) {
-            return back()->with('error', 'Deadline has passed — you can no longer edit your submission.');
+            return back()->with('error', 'Deadline has passed - you can no longer edit your submission.');
         }
 
         $request->validate([
-            'file' => 'required|file',
+            'file' => 'required|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:20480',
         ]);
 
         if ($submission->file) {
@@ -225,7 +226,7 @@ class AssignmentController extends Controller
 
         $submission->load('assignment');
         if ($submission->assignment && now()->gt($submission->assignment->due_date)) {
-            return back()->with('error', 'Deadline has passed — you can no longer delete your submission.');
+            return back()->with('error', 'Deadline has passed - you can no longer delete your submission.');
         }
 
         if ($submission->file) {

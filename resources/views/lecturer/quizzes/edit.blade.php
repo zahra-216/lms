@@ -1,104 +1,77 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Edit Quiz - {{ $quiz->title }}</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.lecturer')
+@section('title')
+Edit Quiz - {{ $quiz->title }}
+@endsection
+@section('back', route('lecturer.quizzes.index', $subject->id))
+@push('styles')
 <style>
-    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-    @media (max-width:576px){ body { padding:20px 12px; } }
-
-    .container { max-width:1200px; margin:auto; }
-
-    .back-btn{
-        border:none; background:#fff; color:#012147; font-weight:600;
-        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
-        text-decoration:none; display:inline-flex; align-items:center; gap:6px;
-    }
-    .back-btn:hover{ background:#012147; color:#fff; }
-
-    .page-header{
-        background:linear-gradient(120deg,#012147,#1e3a6e);
-        color:#fff; border-radius:18px; padding:24px 28px; margin:18px 0 26px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-    }
-    .page-header h3{ margin:0; font-weight:700; font-size:20px; }
-    .page-header small{ opacity:0.85; }
-
-    .alert-soft-success{ background:#e7f8ee; color:#0f5c33; border:none; border-radius:12px; }
-
-    .section-card{
+.alert-soft-success { background:#e7f8ee; color:#0f5c33; border:none; border-radius:12px;
+}
+.section-card {
         background:#fff; border-radius:14px; padding:24px;
         box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:20px;
-    }
-    .section-card h6{ font-weight:700; color:#012147; font-size:15px; margin-bottom:18px; display:flex; align-items:center; gap:8px; }
-
-    .form-label{ font-weight:600; color:#012147; font-size:14px; }
-    .form-control, .form-select{ border-radius:10px; border:1px solid #e2e8f0; padding:10px 14px; }
-    .form-control:focus, .form-select:focus{ border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
-
-    .form-check-input{ width:18px; height:18px; cursor:pointer; }
-    .form-check-label{ cursor:pointer; }
-
-    .btn-navy{ background:#012147; color:#fff; border:none; padding:11px; font-weight:600; border-radius:10px; width:100%; }
-    .btn-navy:hover{ background:#1e3a6e; color:#fff; }
-
-    .alert-note{ background:#e6f0ff; color:#0a3d91; border-radius:12px; padding:14px 16px; font-size:13.5px; }
-
-    .question-item{
+}
+.section-card h6 { font-weight:700; color:#012147; font-size:15px; margin-bottom:18px; display:flex; align-items:center; gap:8px;
+}
+.form-check-input { width:18px; height:18px; cursor:pointer;
+}
+.form-check-label { cursor:pointer;
+}
+.alert-note { background:#e6f0ff; color:#0a3d91; border-radius:12px; padding:14px 16px; font-size:13.5px;
+}
+.question-item {
         background:#f8fafc; border-left:4px solid #012147; border-radius:10px;
         padding:16px; margin-bottom:14px;
-    }
-    .qtype-badge{ font-size:11px; font-weight:700; padding:4px 9px; border-radius:8px; color:#fff; }
-    .qtype-mc{ background:#2563eb; }
-    .qtype-tf{ background:#0ea5b7; }
-    .qtype-sa{ background:#f59e0b; }
-    .pts-badge{ font-size:11px; font-weight:700; padding:4px 9px; border-radius:8px; background:#64748b; color:#fff; }
-
-    .icon-btn{
+}
+.qtype-badge { font-size:11px; font-weight:700; padding:4px 9px; border-radius:8px; color:#fff;
+}
+.qtype-mc { background:#2563eb;
+}
+.qtype-tf { background:#0ea5b7;
+}
+.qtype-sa { background:#f59e0b;
+}
+.pts-badge { font-size:11px; font-weight:700; padding:4px 9px; border-radius:8px; background:#64748b; color:#fff;
+}
+.icon-btn {
         border:1px solid #e2e8f0; background:#fff; color:#012147; border-radius:8px;
         width:32px; height:32px; display:inline-flex; align-items:center; justify-content:center;
-    }
-    .icon-btn:hover{ background:#012147; color:#fff; }
-    .icon-btn-danger:hover{ background:#b91c1c; color:#fff; border-color:#b91c1c; }
-
-    .option-line{ font-size:13.5px; color:#475569; margin-bottom:3px; }
-    .option-correct{ color:#0f5c33; font-weight:600; }
-
-    .type-section{
+}
+.icon-btn:hover { background:#012147; color:#fff;
+}
+.icon-btn-danger:hover { background:#b91c1c; color:#fff; border-color:#b91c1c;
+}
+.option-line { font-size:13.5px; color:#475569; margin-bottom:3px;
+}
+.option-correct { color:#0f5c33; font-weight:600;
+}
+.type-section {
         background:#fff; border:1px solid #e2e8f0; border-radius:10px; padding:16px; margin-top:10px;
-    }
-    .option-row{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-    .option-row input[type="radio"]{ width:18px; height:18px; flex-shrink:0; cursor:pointer; }
-
-    .btn-add-option{
+}
+.option-row { display:flex; align-items:center; gap:10px; margin-bottom:10px;
+}
+.option-row input[type="radio"] { width:18px; height:18px; flex-shrink:0; cursor:pointer;
+}
+.btn-add-option {
         border:1px dashed #94a3b8; background:#fff; color:#012147; border-radius:8px;
         padding:7px 14px; font-size:13px; font-weight:600;
-    }
-    .btn-add-option:hover{ background:#012147; color:#fff; }
-
-    .empty-hint{ text-align:center; color:#94a3b8; padding:30px 0; }
+}
+.btn-add-option:hover { background:#012147; color:#fff;
+}
+.empty-hint { text-align:center; color:#94a3b8; padding:30px 0;
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
-    <a href="{{ route('lecturer.quizzes.index', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-pencil-square"></i> Edit Quiz: {{ $quiz->title }}</h3>
         <small>{{ $subject->name }}</small>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-soft-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+    
 
     @if($errors->any())
         <div class="alert alert-danger rounded-3">
@@ -224,7 +197,7 @@
                         @elseif($question->type === 'true_false')
                             <p class="option-line option-correct mb-0">Correct: {{ ucfirst($question->correct_answer) }}</p>
                         @else
-                            <p class="option-line mb-0">Short answer (manual grading)</p>
+                            <p class="option-line mb-0">Short or long written answer (the lecturer marks it)</p>
                         @endif
                     </div>
                     @endforeach
@@ -244,7 +217,7 @@
                             <option value="">-- Select Type --</option>
                             <option value="multiple_choice">Multiple Choice</option>
                             <option value="true_false">True/False</option>
-                            <option value="short_answer">Short Answer</option>
+                            <option value="short_answer">Short / Long Answer</option>
                         </select>
                     </div>
 
@@ -260,7 +233,7 @@
 
                     <div id="mcSection" style="display:none;">
                         <div class="type-section">
-                            <label class="form-label">Answer Options — select the radio for the correct one <span class="text-danger">*</span></label>
+                            <label class="form-label">Answer Options - select the radio for the correct one <span class="text-danger">*</span></label>
                             <div id="answersContainer">
                                 <div class="option-row">
                                     <input type="radio" name="correct_answer_index" value="0">
@@ -335,7 +308,7 @@
 
                     @if($question->type === 'multiple_choice')
                         <div class="type-section">
-                            <label class="form-label">Answer Options — select the radio for the correct one</label>
+                            <label class="form-label">Answer Options - select the radio for the correct one</label>
                             @foreach($question->answers as $index => $answer)
                             <div class="option-row">
                                 <input type="radio" name="correct_answer_index" value="{{ $index }}" {{ $answer->is_correct ? 'checked' : '' }}>
@@ -370,8 +343,8 @@
     </div>
 </div>
 @endforeach
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+@endsection
+@push('scripts')
 <script>
 function updateQuestionForm() {
     const type = document.getElementById('questionType').value;
@@ -400,5 +373,4 @@ function addAnswerOption() {
     container.insertAdjacentHTML('beforeend', html);
 }
 </script>
-</body>
-</html>
+@endpush

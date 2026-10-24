@@ -1,86 +1,63 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Send Notification | Admin</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+Send Notification
+@endsection
+@push('styles')
 <style>
-    body { font-family:'Segoe UI', sans-serif; background:#f4f6fb; margin:0; padding:40px 20px; color:#012147; }
-    .container { max-width:800px; margin:auto; }
-
-    .page-header {
-        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
-        border-radius:18px; padding:26px 30px; margin-bottom:26px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
-    }
-    .page-header h2 { margin:0; font-weight:700; font-size:22px; }
-    .page-header small { opacity:0.85; }
-
-    .btn-back {
+.btn-back {
         background:#fff; color:#012147; font-weight:600; padding:10px 20px;
         border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
         transition:0.2s;
-    }
-    .btn-back:hover { background:#e2e8f0; color:#012147; }
-
-    .card-box { background:#fff; border-radius:16px; padding:28px; box-shadow:0 8px 26px rgba(0,0,0,0.06); }
-
-    .form-label { font-weight:600; font-size:14px; color:#012147; }
-    .form-control { border-radius:10px; padding:10px 14px; border:1px solid #e2e8f0; }
-    .form-control:focus { border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
-
-    .send-option {
+}
+.btn-back:hover { background:#e2e8f0; color:#012147;
+}
+.send-option {
         border:1px solid #e2e8f0; border-radius:12px; padding:12px 16px;
         cursor:pointer; display:flex; align-items:center; gap:10px; flex:1; transition:0.2s;
-    }
-    .send-option:hover { background:#f8fafc; }
-    .send-option input { accent-color:#012147; }
-    .send-option.active { border-color:#012147; background:#eef2f9; }
-
-    .lecturer-list {
+}
+.send-option:hover { background:#f8fafc;
+}
+.send-option input { accent-color:#012147;
+}
+.send-option.active { border-color:#012147; background:#eef2f9;
+}
+.lecturer-list {
         border:1px solid #e2e8f0; border-radius:12px; max-height:280px; overflow-y:auto; padding:6px;
-    }
-    .lecturer-item {
+}
+.lecturer-item {
         display:flex; align-items:center; gap:10px; padding:9px 12px;
         border-radius:8px; cursor:pointer; margin:0; font-size:14px;
-    }
-    .lecturer-item:hover { background:#f1f5f9; }
-    .lecturer-item input { accent-color:#012147; }
-    .lecturer-item small { color:#64748b; }
-
-    .btn-send {
+}
+.lecturer-item:hover { background:#f1f5f9;
+}
+.lecturer-item input { accent-color:#012147;
+}
+.lecturer-item small { color:#64748b;
+}
+.btn-send {
         background:#012147; color:#fff; border:none; font-weight:600;
         padding:12px 26px; border-radius:10px; display:inline-flex; align-items:center; gap:8px;
         transition:0.2s;
-    }
-    .btn-send:hover { background:#1e3a6e; color:#fff; }
-
-    @media (max-width:576px){
-        body { padding:20px 12px; }
-        .page-header { flex-direction:column; align-items:flex-start; }
-        .card-box { padding:18px; }
-        .send-options { flex-direction:column; }
-    }
+}
+.btn-send:hover { background:#1e3a6e; color:#fff;
+}
+@media (max-width:576px) {
+.send-options { flex-direction:column;
+}
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
     <div class="page-header">
         <div>
             <h2><i class="bi bi-megaphone"></i> Send Notification</h2>
             <small>Send a message to lecturers' dashboards</small>
         </div>
-        <a href="{{ route('admin.dashboard') }}" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Back
-        </a>
+        
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success rounded-3">{{ session('success') }}</div>
-    @endif
+    
 
     @if($errors->any())
         <div class="alert alert-danger rounded-3">
@@ -145,7 +122,8 @@
         </form>
     </div>
 </div>
-
+@endsection
+@push('scripts')
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const radios = document.querySelectorAll('input[name="send_to"]');
@@ -181,5 +159,4 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-</body>
-</html>
+@endpush

@@ -25,7 +25,7 @@ class LecturerAssignmentController extends Controller
             'late_penalty' => 'nullable|numeric|min:0|max:100',
             'submission_type' => 'nullable|string',
             'is_published' => 'nullable|boolean',
-            'assignment_file' => 'nullable|file|max:10240',
+            'assignment_file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:10240',
         ]);
 
         $validated['subject_id'] = $subject->id;
@@ -62,7 +62,7 @@ class LecturerAssignmentController extends Controller
             'late_penalty' => 'nullable|numeric|min:0|max:100',
             'submission_type' => 'nullable|string',
             'is_published' => 'nullable|boolean',
-            'assignment_file' => 'nullable|file|max:10240',
+            'assignment_file' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png|max:10240',
         ]);
 
         $validated['allow_late'] = true;
@@ -79,8 +79,7 @@ class LecturerAssignmentController extends Controller
 
         $assignment->update($validated);
 
-        return redirect()
-            ->route('lecturer.subject.assignments', $subject->id)
+        return $this->returnTo(route('lecturer.subject.assignments', $subject->id))
             ->with('success', 'Assignment updated successfully');
     }
 
@@ -95,8 +94,7 @@ class LecturerAssignmentController extends Controller
 
         $assignment->delete();
 
-        return redirect()
-            ->route('lecturer.subject.assignments', $subject->id)
+        return $this->returnTo(route('lecturer.subject.assignments', $subject->id))
             ->with('success', 'Assignment deleted successfully');
     }
 }

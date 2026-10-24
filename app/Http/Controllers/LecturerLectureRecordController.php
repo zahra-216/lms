@@ -43,12 +43,12 @@ class LecturerLectureRecordController extends Controller
                 $first = $group->first();
                 return [
                     'id' => $first->id, 
-                    'date' => $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—',
-                    'start' => $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—',
-                    'end' => $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—',
-                    'duration' => $first->duration ?? '—',
-                    'content' => $first->content_covered ?? '—',
-                    'remarks' => $first->remarks ?? '—',
+                    'date' => $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '-',
+                    'start' => $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '-',
+                    'end' => $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '-',
+                    'duration' => $first->duration ?? '-',
+                    'content' => $first->content_covered ?? '-',
+                    'remarks' => $first->remarks ?? '-',
                     'status' => ($first->content_covered && $first->date) ? 'Complete' : 'Pending',
                 ];
             })
@@ -74,7 +74,7 @@ class LecturerLectureRecordController extends Controller
             'created_by' => 'lecturer',
         ]);
 
-        return redirect()->route('lecturer.lecture-records.index')
+        return $this->returnTo(route('lecturer.lecture-records.index'))
             ->with('success', 'Lecture record created successfully.');
     }
 

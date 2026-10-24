@@ -1,99 +1,82 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>{{ $lecturer->name }} - Payments</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+{{ $lecturer->name }} - Payments
+@endsection
+@push('styles')
 <style>
-    * { box-sizing:border-box; }
-    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; margin:0; padding:40px 20px; color:#012147; }
-    .container { max-width:1200px; margin:auto; }
-
-    .back-btn {
-        border:none; background:#fff; color:#012147; font-weight:600;
-        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
-        text-decoration:none; display:inline-flex; align-items:center; gap:6px; margin-bottom:18px;
-    }
-    .back-btn:hover { background:#012147; color:#fff; }
-
-    .page-header {
-        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
-        border-radius:18px; padding:26px 30px; margin-bottom:22px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-    }
-    .page-header h2 { margin:0 0 4px; font-weight:700; font-size:22px; }
-    .page-header small { opacity:0.85; font-size:14px; }
-
-    .card-box {
-        background:#fff; border-radius:16px; box-shadow:0 8px 26px rgba(0,0,0,0.06);
-        padding:26px; margin-bottom:26px;
-    }
-    .card-box h5 {
+.card-box h5 {
         color:#012147; font-weight:700; margin-bottom:20px;
         display:flex; align-items:center; gap:8px; font-size:16px;
-    }
-
-    .course-pills { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px; }
-    .course-pill {
+}
+.course-pills { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:24px;
+}
+.course-pill {
         display:inline-flex; align-items:center; gap:6px; background:#f1f5f9;
         border:1px solid #e2e8f0; border-radius:20px; padding:6px 14px;
         cursor:pointer; font-size:13px; transition:0.15s;
-    }
-    .course-pill:hover { background:#e2e8f0; }
-    .course-pill input { display:none; }
-    .course-pill:has(input:checked) { background:#012147; color:#fff; border-color:#012147; }
-
-    .form-label { font-size:12px; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:0.03em; margin-bottom:4px; }
-    .form-control, .form-select { border-radius:10px; border:1px solid #e2e8f0; padding:9px 12px; }
-    .form-control:focus, .form-select:focus { border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
-
-    .btn-add { background:#012147; color:#fff; border:none; border-radius:10px; padding:11px 26px; font-weight:600; }
-    .btn-add:hover { background:#0b2d5a; color:#fff; }
-
-    table.history { width:100%; border-collapse:separate; border-spacing:0; }
-    table.history thead th {
+}
+.course-pill:hover { background:#e2e8f0;
+}
+.course-pill input { display:none;
+}
+.course-pill:has(input:checked) { background:#012147; color:#fff; border-color:#012147;
+}
+.btn-add { background:#012147; color:#fff; border:none; border-radius:10px; padding:11px 26px; font-weight:600;
+}
+.btn-add:hover { background:#0b2d5a; color:#fff;
+}
+table.history { width:100%; border-collapse:separate; border-spacing:0;
+}
+table.history thead th {
         background:#012147; color:#fff; padding:12px 10px; font-size:13px; font-weight:600;
         text-align:center; white-space:nowrap;
-    }
-    table.history thead th:first-child { border-top-left-radius:10px; }
-    table.history thead th:last-child { border-top-right-radius:10px; }
-    table.history tbody td { padding:10px; text-align:center; font-size:13px; vertical-align:middle; }
-    table.history tbody tr:nth-child(even) { background:#f8fafc; }
-    table.history tbody tr:hover { background:#eef2f9; }
-
-    .badge-lecture { padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600; }
-    .badge-online { background:#dbeafe; color:#1d4ed8; }
-    .badge-physical { background:#fef3c7; color:#92400e; }
-
-    .due-positive { color:#dc2626; font-weight:700; }
-    .due-zero { color:#16a34a; font-weight:700; }
-
-    .action-btn { display:inline-flex; align-items:center; gap:4px; border:none; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; margin:2px; text-decoration:none; }
-    .btn-edit { background:#eef2f9; color:#012147; }
-    .btn-edit:hover { background:#012147; color:#fff; }
-    .btn-delete { background:#fee2e2; color:#991b1b; }
-    .btn-delete:hover { background:#dc2626; color:#fff; }
-
-    @media (max-width:576px){
-        body { padding:20px 12px; }
-        table.history { display:block; overflow-x:auto; white-space:nowrap; }
-    }
+}
+table.history thead th:first-child { border-top-left-radius:10px;
+}
+table.history thead th:last-child { border-top-right-radius:10px;
+}
+table.history tbody td { padding:10px; text-align:center; font-size:13px; vertical-align:middle;
+}
+table.history tbody tr:nth-child(even) { background:#f8fafc;
+}
+table.history tbody tr:hover { background:#eef2f9;
+}
+.badge-lecture { padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600;
+}
+.badge-online { background:#dbeafe; color:#1d4ed8;
+}
+.badge-physical { background:#fef3c7; color:#92400e;
+}
+.due-positive { color:#dc2626; font-weight:700;
+}
+.due-zero { color:#16a34a; font-weight:700;
+}
+.action-btn { display:inline-flex; align-items:center; gap:4px; border:none; border-radius:8px; padding:6px 12px; font-size:12px; font-weight:600; margin:2px; text-decoration:none;
+}
+.btn-edit { background:#eef2f9; color:#012147;
+}
+.btn-edit:hover { background:#012147; color:#fff;
+}
+.btn-delete { background:#fee2e2; color:#991b1b;
+}
+.btn-delete:hover { background:#dc2626; color:#fff;
+}
+@media (max-width:576px) {
+table.history { display:block; overflow-x:auto; white-space:nowrap;
+}
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
-    <a href="{{ route('admin.dashboard') }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h2>{{ $lecturer->name }}</h2>
         <small>{{ $lecturer->email }}</small>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success rounded-3">{{ session('success') }}</div>
-    @endif
+    
 
     <div class="card-box">
         <h5><i class="bi bi-plus-circle"></i> Add Payment Record</h5>
@@ -192,7 +175,7 @@
                                 </span>
                             </td>
                             <td>{{ $payment->date }}</td>
-                            <td>{{ $payment->total_hours ?? '—' }}</td>
+                            <td>{{ $payment->total_hours ?? '-' }}</td>
                             <td>{{ ucfirst(str_replace('_', ' ', $payment->payment_type)) }}</td>
                             <td>{{ number_format($payment->rate_amount, 2) }}</td>
                             <td>{{ number_format($payment->total_payment, 2) }}</td>
@@ -200,9 +183,9 @@
                             <td class="{{ $payment->payment_due > 0 ? 'due-positive' : 'due-zero' }}">
                                 {{ number_format($payment->payment_due, 2) }}
                             </td>
-                            <td>{{ $payment->paid_date ?? '—' }}</td>
-                            <td>{{ $payment->invoice_no ?? '—' }}</td>
-                            <td>{{ $payment->remarks ?? '—' }}</td>
+                            <td>{{ $payment->paid_date ?? '-' }}</td>
+                            <td>{{ $payment->invoice_no ?? '-' }}</td>
+                            <td>{{ $payment->remarks ?? '-' }}</td>
                             <td>
                                 <a href="{{ route('admin.lecturer-payments.edit', $payment->id) }}" class="action-btn btn-edit">
                                     <i class="bi bi-pencil"></i>
@@ -224,5 +207,4 @@
         </div>
     </div>
 </div>
-</body>
-</html>
+@endsection

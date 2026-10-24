@@ -1,84 +1,80 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Students | Admin</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.admin')
+@section('title')
+Students
+@endsection
+@push('head')
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+@endpush
+@push('styles')
 <style>
-    body { font-family:'Segoe UI', sans-serif; background:#f4f6fb; color:#012147; margin:0; padding:40px 20px; }
-    .container { max-width:1200px; margin:auto; }
+    .level-pick { width:100%; background:#fff; border:2px solid var(--line); border-radius:18px; padding:20px; text-align:left; display:flex; flex-direction:column; gap:4px; box-shadow:var(--shadow-card); transition:all .15s; cursor:pointer; }
+    .level-pick:hover { border-color:var(--brand-500); transform:translateY(-2px); }
+    .level-pick.active { border-color:var(--brand-700); background:var(--sky-soft); }
+    .level-pick .lp-icon { width:46px; height:46px; border-radius:14px; background:var(--sky-soft); color:var(--brand-700); display:grid; place-items:center; font-size:20px; margin-bottom:8px; }
+    .level-pick.active .lp-icon { background:#fff; }
+    .level-pick .lp-name { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:19px; color:var(--navy-900); }
+    .level-pick .lp-count { color:var(--muted); font-size:13.5px; font-weight:600; }
 
-    .page-header {
-        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
-        border-radius:18px; padding:26px 30px; margin-bottom:22px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-        display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
-    }
-    .page-header h2 { margin:0; font-weight:700; font-size:22px; }
-
-    .add-btn {
-        background:#fff; color:#012147; padding:10px 18px; border-radius:10px;
-        text-decoration:none; font-weight:600; display:inline-flex; align-items:center; gap:8px;
-    }
-    .add-btn:hover { background:#e2e8f0; color:#012147; }
-
-    .search-box { max-width:420px; margin:0 auto 25px; }
-    .search-box .form-control { border-radius:10px 0 0 10px; }
-    .search-box .btn { border-radius:0 10px 10px 0; }
-
-    .level-card { background:#012147; color:#fff; border-radius:12px; margin-bottom:18px; overflow:hidden; }
-    .level-card .level-header { padding:16px 22px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; }
-    .level-card .level-body { background:#f4f6fb; color:#012147; padding:20px; display:none; }
-    .level-card .level-body.show { display:block; }
-
-    .faculty-block { background:#fff; border-radius:10px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
-    .faculty-header {
+.search-box { max-width:420px; margin:0 auto 25px;
+}
+.search-box .form-control { border-radius:10px 0 0 10px;
+}
+.search-box .btn { border-radius:0 10px 10px 0;
+}
+.level-card { background:#012147; color:#fff; border-radius:12px; margin-bottom:18px; overflow:hidden;
+}
+.level-card .level-header { padding:16px 22px; cursor:pointer; display:flex; justify-content:space-between; align-items:center;
+}
+.level-card .level-body { background:#f4f6fb; color:#012147; padding:20px; display:none;
+}
+.level-card .level-body.show { display:block;
+}
+.faculty-block { background:#fff; border-radius:10px; margin-bottom:14px; box-shadow:0 2px 8px rgba(0,0,0,.06);
+}
+.faculty-header {
         padding:12px 18px; font-weight:600; cursor:pointer; display:flex;
         justify-content:space-between; align-items:center; background:#e9edf5; border-radius:10px 10px 0 0;
-    }
-    .faculty-body { display:none; padding:15px; }
-    .faculty-body.show { display:block; }
-
-    .course-block { margin-bottom:16px; }
-    .course-title { font-weight:600; color:#012147; margin-bottom:8px; }
-
-    table { width:100%; border-collapse:collapse; margin-bottom:10px; }
-    th, td { padding:10px; border:1px solid #e2e8f0; text-align:center; font-size:13.5px; }
-    th { background:#012147; color:#fff; font-weight:600; }
-    tbody tr:nth-child(even) { background:#f8fafc; }
-
-    .btn-sm-action { padding:6px 12px; border:none; border-radius:8px; cursor:pointer; text-decoration:none; margin:2px; display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:600; }
-    .edit-btn { background:#eef2f9; color:#012147; }
-    .edit-btn:hover { background:#012147; color:#fff; }
-    .delete-btn { background:#fee2e2; color:#991b1b; }
-    .delete-btn:hover { background:#dc2626; color:#fff; }
-    .change-sem-btn { background:#012147; color:#fff; border:none; }
-    .change-sem-btn:hover { background:#1e3a6e; }
-
-    .empty-note { text-align:center; color:#6b7280; padding:10px; }
-    .chevron { transition:.2s; }
-    .rotate { transform:rotate(180deg); }
-
-    @media (max-width:576px){
-        body { padding:20px 12px; }
-        .page-header { flex-direction:column; align-items:flex-start; }
-        table { display:block; overflow-x:auto; white-space:nowrap; }
-    }
+}
+.faculty-body { display:none; padding:15px;
+}
+.faculty-body.show { display:block;
+}
+.course-block { margin-bottom:16px;
+}
+.course-title { font-weight:600; color:#012147; margin-bottom:8px;
+}
+tbody tr:nth-child(even) { background:#f8fafc;
+}
+.btn-sm-action { padding:6px 12px; border:none; border-radius:8px; cursor:pointer; text-decoration:none; margin:2px; display:inline-flex; align-items:center; gap:5px; font-size:13px; font-weight:600;
+}
+.edit-btn { background:#eef2f9; color:#012147;
+}
+.edit-btn:hover { background:#012147; color:#fff;
+}
+.delete-btn { background:#fee2e2; color:#991b1b;
+}
+.delete-btn:hover { background:#dc2626; color:#fff;
+}
+.change-sem-btn { background:#012147; color:#fff; border:none;
+}
+.change-sem-btn:hover { background:#1e3a6e;
+}
+.empty-note { text-align:center; color:#6b7280; padding:10px;
+}
+.chevron { transition:.2s;
+}
+.rotate { transform:rotate(180deg);
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
     <div class="page-header">
         <h2><i class="bi bi-people"></i> Students</h2>
         <a href="{{ route('admin.students.create') }}" class="add-btn"><i class="bi bi-plus-circle"></i> Add Student</a>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-success rounded-3 text-center">{{ session('success') }}</div>
-    @endif
+    
 
     <form method="GET" action="{{ route('admin.students.index') }}" class="search-box">
         <div class="input-group">
@@ -90,18 +86,29 @@
         </div>
     </form>
 
-    @php $levelIcons = ['Diploma' => 'fa-certificate', 'HND' => 'fa-graduation-cap', 'Top-up' => 'fa-arrow-up', 'Degree' => 'fa-award']; @endphp
+    @php
+        $levelIcons = ['Diploma' => 'fa-certificate', 'HND' => 'fa-graduation-cap', 'Top-up' => 'fa-arrow-up', 'Degree' => 'fa-award'];
+        $firstWithStudents = collect($grouped)->filter(fn ($f) => $f->flatten(1)->flatten(1)->count() > 0)->keys()->first() ?? array_key_first($grouped);
+    @endphp
 
-    @foreach($grouped as $levelName => $faculties)
-        @php $levelId = \Illuminate\Support\Str::slug($levelName); @endphp
-        <div class="level-card">
-            <div class="level-header" onclick="toggleBlock('level-{{ $levelId }}', this)">
-                <span><i class="fa {{ $levelIcons[$levelName] ?? 'fa-layer-group' }}"></i> {{ $levelName }}
-                    <span class="badge bg-light text-dark ms-2">{{ $faculties->flatten(1)->flatten(1)->count() }} students</span>
-                </span>
-                <i class="fa fa-chevron-down chevron"></i>
+    <div class="row g-3 mb-4" id="levelCards">
+        @foreach ($grouped as $levelName => $faculties)
+            @php $count = $faculties->flatten(1)->flatten(1)->count(); @endphp
+            <div class="col-6 col-lg-3">
+                <button type="button" class="level-pick {{ $levelName === $firstWithStudents ? 'active' : '' }}" data-level="level-{{ \Illuminate\Support\Str::slug($levelName) }}">
+                    <span class="lp-icon"><i class="fa {{ $levelIcons[$levelName] ?? 'fa-layer-group' }}"></i></span>
+                    <span class="lp-name">{{ $levelName }}</span>
+                    <span class="lp-count">{{ $count }} {{ \Illuminate\Support\Str::plural('student', $count) }}</span>
+                </button>
             </div>
-            <div class="level-body" id="level-{{ $levelId }}">
+        @endforeach
+    </div>
+
+
+    @foreach ($grouped as $levelName => $faculties)
+        @php $levelId = \Illuminate\Support\Str::slug($levelName); @endphp
+        <div class="level-panel" id="level-{{ $levelId }}" @if ($levelName !== $firstWithStudents) hidden @endif>
+            <div>
                 @forelse($faculties as $facultyName => $courses)
                     @php $facultyId = $levelId.'-'.\Illuminate\Support\Str::slug($facultyName); @endphp
                     <div class="faculty-block">
@@ -144,7 +151,7 @@
                                                 <td>{{ $student->name }}</td>
                                                 <td>{{ $student->email }}</td>
                                                 <td>{{ $student->branch }}</td>
-                                                <td>{{ $student->semester->name ?? '—' }}</td>
+                                                <td>{{ $student->semester->name ?? '-' }}</td>
                                                 <td>
                                                     <a href="{{ route('admin.students.edit', $student->id) }}" class="btn-sm-action edit-btn">
                                                         <i class="fa fa-edit"></i>
@@ -171,7 +178,7 @@
                                                 <form method="POST" action="{{ route('admin.students.bulk.semester.update') }}" class="bulk-sem-form" data-course="{{ $courseSlug }}">
                                                     @csrf
                                                     <div class="modal-header">
-                                                        <h5>Change Semester — {{ $courseName }}</h5>
+                                                        <h5>Change Semester - {{ $courseName }}</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <div class="modal-body">
@@ -198,13 +205,20 @@
                 @empty
                     <p class="empty-note">No students found under {{ $levelName }}.</p>
                 @endforelse
-            </div>
         </div>
     @endforeach
 
 </div>
-
+@endsection
+@push('scripts')
 <script>
+document.querySelectorAll('.level-pick').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        document.querySelectorAll('.level-pick').forEach(function (b) { b.classList.toggle('active', b === btn); });
+        document.querySelectorAll('.level-panel').forEach(function (p) { p.hidden = p.id !== btn.dataset.level; });
+    });
+});
+
 function toggleBlock(id, headerEl) {
     const el = document.getElementById(id);
     el.classList.toggle('show');
@@ -255,6 +269,4 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 @endif
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endpush

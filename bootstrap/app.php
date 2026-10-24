@@ -23,8 +23,12 @@ return Application::configure(basePath: dirname(__DIR__))
             return route('login');
         });
 
+        $middleware->appendToGroup('web', \App\Http\Middleware\RememberPreviousPage::class);
+
         $middleware->alias([
             'student.auth' => \App\Http\Middleware\EnsureStudentLoggedIn::class,
+            'student.subject' => \App\Http\Middleware\EnsureStudentCanAccessSubject::class,
+            'lecturer.subject' => \App\Http\Middleware\EnsureLecturerOwnsSubject::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

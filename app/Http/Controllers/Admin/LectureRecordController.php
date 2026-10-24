@@ -36,7 +36,7 @@ class LectureRecordController extends Controller
         $idArray = array_filter(explode(',', $ids));
         $count = LectureRecord::whereIn('id', $idArray)->delete();
 
-        return redirect()->route('admin.lecture-records.index')
+        return $this->returnTo(route('admin.lecture-records.index'))
             ->with('success', "{$count} lecture record(s) deleted.");
     }
 
@@ -78,7 +78,7 @@ class LectureRecordController extends Controller
 
         $count = count($data['subject_ids']);
 
-        return redirect()->route('admin.lecture-records.index')
+        return $this->returnTo(route('admin.lecture-records.index'))
             ->with('success', "{$count} lecture record(s) created successfully.");
     }
 
@@ -134,7 +134,7 @@ class LectureRecordController extends Controller
         $nullSubjectRecords = $records->whereNull('subject_id')->values(); // e.g. record #55-style rows
 
         if ($newSubjectIds->isEmpty()) {
-            // No modules selected — just update shared fields on all rows as-is (subject stays whatever it was)
+            // No modules selected - just update shared fields on all rows as-is (subject stays whatever it was)
             LectureRecord::whereIn('id', $idArray)->update($shared);
         } else {
             foreach ($newSubjectIds as $subjectId) {
@@ -165,7 +165,7 @@ class LectureRecordController extends Controller
             }
         }
 
-        return redirect()->route('admin.lecture-records.index')
+        return $this->returnTo(route('admin.lecture-records.index'))
             ->with('success', 'Lecture record(s) updated successfully.');
     }
 
@@ -292,7 +292,7 @@ class LectureRecordController extends Controller
             ->map(function ($group) {
                 $first = $group->first();
                 return [
-                    'content' => trim($first->content_covered ?? '') ?: '—',
+                    'content' => trim($first->content_covered ?? '') ?: '-',
                     'modules' => $group->pluck('subject')->filter()
                         ->map(fn($s) => $s->code . ' - ' . $s->name)
                         ->unique()->values(),
@@ -319,7 +319,7 @@ class LectureRecordController extends Controller
             'generated_at' => now(),
         ]);
 
-        return redirect()->route('admin.lecture-records.reports.index')
+        return $this->returnTo(route('admin.lecture-records.reports.index'))
             ->with('success', 'Report generated successfully.');
     }
 
@@ -336,7 +336,7 @@ class LectureRecordController extends Controller
         \Illuminate\Support\Facades\Storage::disk('public')->delete($report->file_path);
         $report->delete();
 
-        return redirect()->route('admin.lecture-records.reports.index')
+        return $this->returnTo(route('admin.lecture-records.reports.index'))
             ->with('success', 'Report deleted.');
     }
 

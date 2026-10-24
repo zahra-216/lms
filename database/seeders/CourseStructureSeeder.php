@@ -117,7 +117,7 @@ class CourseStructureSeeder extends Seeder
         $letters = '';
 
         foreach ($words as $word) {
-            $clean = trim($word, "()–—.,");
+            $clean = trim($word, "()--.,");
             if ($clean === '') continue;
 
             if (in_array(strtolower($clean), $this->fillerWords)) continue;
@@ -193,7 +193,7 @@ class CourseStructureSeeder extends Seeder
                 'Semester 4' => [
                     'Data Analytics and Visualization',
                     'Computer Networks and Internet Technologies',
-                    'Human–Computer Interaction',
+                    'Human-Computer Interaction',
                     'Research Methods and Ethics',
                 ],
                 'Semester 5' => [
@@ -535,8 +535,8 @@ class CourseStructureSeeder extends Seeder
                 ],
                 'Semester 3' => [
                     'Object-Oriented Programming (Java / Kotlin / Swift basics)',
-                    'Android App Development – I',
-                    'iOS App Development – I',
+                    'Android App Development - I',
+                    'iOS App Development - I',
                     'Mobile UI/UX Design Principles',
                 ],
                 'Semester 4' => [
@@ -621,7 +621,7 @@ class CourseStructureSeeder extends Seeder
                     'Management Accounting Techniques',
                     'Corporate Law for Accountants',
                     'Principles of Taxation',
-                    'Accounting Software Applications (Tally / QuickBooks / SAP – Basics)',
+                    'Accounting Software Applications (Tally / QuickBooks / SAP - Basics)',
                 ],
                 'Semester 4' => [
                     'Internal Control & Risk Management',
@@ -692,7 +692,7 @@ class CourseStructureSeeder extends Seeder
                     'Principles of Management',
                     'Business Communication',
                     'Microeconomics',
-                    'Financial Accounting – I',
+                    'Financial Accounting - I',
                 ],
                 'Semester 2' => [
                     'Business Mathematics & Statistics',
@@ -703,7 +703,7 @@ class CourseStructureSeeder extends Seeder
                 'Semester 3' => [
                     'Organizational Behaviour',
                     'Human Resource Management',
-                    'Financial Accounting – II',
+                    'Financial Accounting - II',
                     'Cost & Management Accounting',
                 ],
                 'Semester 4' => [
@@ -965,13 +965,13 @@ class CourseStructureSeeder extends Seeder
                 'Semester 2' => [
                     'Advanced AutoCAD (2D Drafting)',
                     'Engineering Drawing & Standards',
-                    'Electrical Systems – Basics',
-                    'Mechanical Systems – Basics',
+                    'Electrical Systems - Basics',
+                    'Mechanical Systems - Basics',
                 ],
                 'Semester 3' => [
                     'AutoCAD 3D Modeling',
                     'Plumbing & Drainage Systems',
-                    'HVAC Systems – Fundamentals',
+                    'HVAC Systems - Fundamentals',
                     'Building Construction Technology',
                 ],
                 'Semester 4' => [
@@ -984,7 +984,7 @@ class CourseStructureSeeder extends Seeder
                 'Semester 5' => [
                     'MEP Quantity Take-Off & Estimation',
                     'MEP Project Planning & Management',
-                    'BIM Concepts (Revit for MEP – Basics)',
+                    'BIM Concepts (Revit for MEP - Basics)',
                 ],
                 'Semester 6' => [
                     'Health, Safety & Environment (HSE)',
@@ -1024,26 +1024,26 @@ class CourseStructureSeeder extends Seeder
                     'Engineering Mathematics II',
                     'Strength of Materials',
                     'Building Materials & Construction',
-                    'Surveying – I',
-                    'Environmental Engineering – I',
+                    'Surveying - I',
+                    'Environmental Engineering - I',
                 ],
                 'Semester 3' => [
                     'Structural Mechanics',
                     'Concrete Technology',
-                    'Surveying – II',
-                    'Geotechnical Engineering – I (Soil Mechanics)',
+                    'Surveying - II',
+                    'Geotechnical Engineering - I (Soil Mechanics)',
                     'Fluid Mechanics',
                 ],
                 'Semester 4' => [
                     'Structural Analysis',
                     'Reinforced Concrete Design',
                     'Transportation Engineering',
-                    'Environmental Engineering – II',
+                    'Environmental Engineering - II',
                     'Hydrology & Irrigation Engineering',
                 ],
                 'Semester 5' => [
                     'Steel Structure Design',
-                    'Geotechnical Engineering – II (Foundation Engineering)',
+                    'Geotechnical Engineering - II (Foundation Engineering)',
                     'Construction Planning & Management',
                     'Quantity Surveying & Cost Estimation',
                 ],
@@ -1109,14 +1109,14 @@ class CourseStructureSeeder extends Seeder
                 ],
                 'Semester 2' => [
                     'Design History & Theory',
-                    'Materials & Finishes – I',
+                    'Materials & Finishes - I',
                     'Computer Applications for Design',
                     'Communication & Study Skills',
                 ],
                 'Semester 3' => [
                     'Space Planning & Ergonomics',
                     'Furniture Design',
-                    'Materials & Finishes – II',
+                    'Materials & Finishes - II',
                     'Lighting Design',
                 ],
                 'Semester 4' => [
@@ -1187,9 +1187,9 @@ class CourseStructureSeeder extends Seeder
             'Degree' => [
                 'Semester 1' => [
                     'Introduction to Quantity Surveying',
-                    'Construction Technology – I',
+                    'Construction Technology - I',
                     'Construction Materials',
-                    'Measurement & Quantification – I',
+                    'Measurement & Quantification - I',
                 ],
                 'Semester 2' => [
                     'Mathematics for Construction',
@@ -1198,15 +1198,15 @@ class CourseStructureSeeder extends Seeder
                     'Communication & Study Skills',
                 ],
                 'Semester 3' => [
-                    'Measurement & Quantification – II',
-                    'Construction Technology – II',
+                    'Measurement & Quantification - II',
+                    'Construction Technology - II',
                     'Contract Law & Procurement',
                     'Estimating & Cost Planning',
                 ],
                 'Semester 4' => [
                     'Building Economics',
                     'Project Management Fundamentals',
-                    'Building Services – Advanced',
+                    'Building Services - Advanced',
                     'Health, Safety & Environmental Management',
                 ],
                 'Semester 5' => [
@@ -1257,13 +1257,13 @@ class CourseStructureSeeder extends Seeder
                 'Semester 3' => [
                     'Semantics & Pragmatics',
                     'Discourse Analysis',
-                    'English Literature – Introduction',
+                    'English Literature - Introduction',
                     'Research Skills in Linguistics',
                 ],
                 'Semester 4' => [
                     'Sociolinguistics',
                     'Psycholinguistics',
-                    'English Language Teaching – Basics',
+                    'English Language Teaching - Basics',
                     'Professional Communication',
                 ],
                 'Semester 5' => [

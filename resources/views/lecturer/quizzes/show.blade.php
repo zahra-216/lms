@@ -1,106 +1,83 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>{{ $quiz->title }} - {{ $subject->name }}</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.lecturer')
+@section('title')
+{{ $quiz->title }} - {{ $subject->name }}
+@endsection
+@section('back', route('lecturer.quizzes.index', $subject->id))
+@push('styles')
 <style>
-    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-    @media (max-width:576px){ body { padding:20px 12px; } }
-
-    .container { max-width:1100px; margin:auto; }
-
-    .back-btn{
-        border:none; background:#fff; color:#012147; font-weight:600;
-        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
-        text-decoration:none; display:inline-flex; align-items:center; gap:6px;
-    }
-    .back-btn:hover{ background:#012147; color:#fff; }
-
-    .page-header{
-        background:linear-gradient(120deg,#012147,#1e3a6e);
-        color:#fff; border-radius:18px; padding:24px 28px; margin:18px 0 26px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-    }
-    .page-header h3{ margin:0; font-weight:700; font-size:20px; }
-    .page-header small{ opacity:0.85; }
-
-    .alert-soft-success{ background:#e7f8ee; color:#0f5c33; border:none; border-radius:12px; }
-
-    .card-box{
-        background:#fff; padding:22px; border-radius:14px;
-        box-shadow:0 6px 20px rgba(0,0,0,0.06); height:100%;
-    }
-    .card-box h6{ font-weight:700; color:#012147; font-size:14px; margin-bottom:14px; display:flex; align-items:center; gap:6px; }
-
-    .info-row{ display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #f1f5f9; font-size:13.5px; }
-    .info-row:last-child{ border-bottom:none; }
-    .info-row span:first-child{ color:#64748b; }
-    .info-row span:last-child{ font-weight:600; color:#012147; }
-
-    .badge-status{ font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:20px; }
-    .badge-published{ background:#e7f8ee; color:#0f5c33; }
-    .badge-draft{ background:#fff4e0; color:#8a5b00; }
-
-    .stat-number{ font-size:28px; font-weight:800; color:#012147; text-align:center; margin-bottom:2px; }
-    .stat-label{ font-size:12.5px; color:#64748b; text-align:center; margin-bottom:16px; }
-
-    .qtype-row{ display:flex; align-items:center; gap:8px; font-size:13.5px; margin-bottom:10px; }
-    .qtype-badge{ font-size:11px; font-weight:700; padding:4px 9px; border-radius:8px; color:#fff; }
-    .qtype-mc{ background:#2563eb; }
-    .qtype-tf{ background:#0ea5b7; }
-    .qtype-sa{ background:#f59e0b; }
-
-    .btn-navy{ background:#012147; color:#fff; border:none; padding:10px; font-weight:600; border-radius:10px; text-decoration:none; display:flex; align-items:center; justify-content:center; gap:6px; }
-    .btn-navy:hover{ background:#1e3a6e; color:#fff; }
-    .btn-soft-danger{ border:1px solid #f4c7c7; color:#b91c1c; background:#fff; padding:10px; font-weight:600; border-radius:10px; width:100%; }
-    .btn-soft-danger:hover{ background:#b91c1c; color:#fff; }
-    .alert-locked{ background:#fdeaea; color:#8a1f1f; border-radius:10px; padding:12px; font-size:13px; }
-
-    .section-card{
+.alert-soft-success { background:#e7f8ee; color:#0f5c33; border:none; border-radius:12px;
+}
+.card-box h6 { font-weight:700; color:#012147; font-size:14px; margin-bottom:14px; display:flex; align-items:center; gap:6px;
+}
+.info-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #f1f5f9; font-size:13.5px;
+}
+.info-row:last-child { border-bottom:none;
+}
+.info-row span:first-child { color:#64748b;
+}
+.info-row span:last-child { font-weight:600; color:#012147;
+}
+.badge-status { font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:20px;
+}
+.badge-published { background:#e7f8ee; color:#0f5c33;
+}
+.badge-draft { background:#fff4e0; color:#8a5b00;
+}
+.stat-number { font-size:28px; font-weight:800; color:#012147; text-align:center; margin-bottom:2px;
+}
+.stat-label { font-size:12.5px; color:#64748b; text-align:center; margin-bottom:16px;
+}
+.qtype-row { display:flex; align-items:center; gap:8px; font-size:13.5px; margin-bottom:10px;
+}
+.qtype-badge { font-size:11px; font-weight:700; padding:4px 9px; border-radius:8px; color:#fff;
+}
+.qtype-mc { background:#2563eb;
+}
+.qtype-tf { background:#0ea5b7;
+}
+.qtype-sa { background:#f59e0b;
+}
+.btn-soft-danger { border:1px solid #f4c7c7; color:#b91c1c; background:#fff; padding:10px; font-weight:600; border-radius:10px; width:100%;
+}
+.btn-soft-danger:hover { background:#b91c1c; color:#fff;
+}
+.alert-locked { background:#fdeaea; color:#8a1f1f; border-radius:10px; padding:12px; font-size:13px;
+}
+.section-card {
         background:#fff; border-radius:14px; padding:24px;
         box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:20px;
-    }
-    .section-card h6{ font-weight:700; color:#012147; font-size:15px; margin-bottom:18px; display:flex; align-items:center; gap:8px; }
-
-    .question-block{ padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid #f1f5f9; }
-    .question-block:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
-    .question-block strong{ color:#012147; }
-
-    .option-line{ font-size:13.5px; color:#475569; margin-bottom:4px; }
-    .option-correct{ color:#0f5c33; font-weight:600; }
-
-    table{ font-size:13.5px; }
-    th{ color:#64748b; font-weight:600; border-bottom:2px solid #f1f5f9 !important; }
-    td{ vertical-align:middle; }
-
-    .btn-soft{
+}
+.section-card h6 { font-weight:700; color:#012147; font-size:15px; margin-bottom:18px; display:flex; align-items:center; gap:8px;
+}
+.question-block { padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid #f1f5f9;
+}
+.question-block:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0;
+}
+.question-block strong { color:#012147;
+}
+.option-line { font-size:13.5px; color:#475569; margin-bottom:4px;
+}
+.option-correct { color:#0f5c33; font-weight:600;
+}
+.btn-soft {
         border-radius:8px; font-weight:600; font-size:12.5px; padding:6px 12px;
         border:1px solid #e2e8f0; background:#fff; color:#012147; text-decoration:none;
         display:inline-flex; align-items:center; gap:5px;
-    }
-    .btn-soft:hover{ background:#012147; color:#fff; }
+}
+.btn-soft:hover { background:#012147; color:#fff;
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
-    <a href="{{ route('lecturer.quizzes.index', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back to Quizzes
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-puzzle-fill"></i> {{ $quiz->title }}</h3>
         <small>{{ $subject->name }}</small>
     </div>
 
-    @if(session('success'))
-        <div class="alert alert-soft-success alert-dismissible fade show" role="alert">
-            {{ session('success') }}
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    @endif
+    
 
     <div class="row g-3 mb-3">
         <div class="col-lg-3 col-md-6">
@@ -151,7 +128,7 @@
                 @endphp
                 <div class="qtype-row"><span class="qtype-badge qtype-mc">MC</span> {{ $mcCount }} Multiple Choice</div>
                 <div class="qtype-row"><span class="qtype-badge qtype-tf">T/F</span> {{ $tfCount }} True/False</div>
-                <div class="qtype-row"><span class="qtype-badge qtype-sa">SA</span> {{ $saCount }} Short Answer</div>
+                <div class="qtype-row"><span class="qtype-badge qtype-sa">SA</span> {{ $saCount }} Short / Long Answer</div>
             </div>
         </div>
 
@@ -253,7 +230,7 @@
                                 @if($submission->isGraded())
                                     <strong>{{ number_format($submission->getTotalScore(), 2) }} / {{ $quiz->total_points }}</strong>
                                 @else
-                                    <span class="text-muted">—</span>
+                                    <span class="text-muted">-</span>
                                 @endif
                             </td>
                             <td>
@@ -271,7 +248,4 @@
         @endif
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection

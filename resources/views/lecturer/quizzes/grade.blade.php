@@ -1,71 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Grade Submission - {{ $quiz->title }}</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+@extends('layouts.lecturer')
+@section('title')
+Grade Submission - {{ $quiz->title }}
+@endsection
+@section('back', route('lecturer.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]))
+@push('styles')
 <style>
-    body { background:#f4f6fb; font-family:'Segoe UI', sans-serif; padding:40px 15px; }
-    @media (max-width:576px){ body { padding:20px 12px; } }
-
-    .container { max-width:1200px; margin:auto; }
-
-    .back-btn{
-        border:none; background:#fff; color:#012147; font-weight:600;
-        padding:8px 16px; border-radius:10px; box-shadow:0 4px 12px rgba(0,0,0,0.06);
-        text-decoration:none; display:inline-flex; align-items:center; gap:6px;
-    }
-    .back-btn:hover{ background:#012147; color:#fff; }
-
-    .page-header{
-        background:linear-gradient(120deg,#012147,#1e3a6e);
-        color:#fff; border-radius:18px; padding:24px 28px; margin:18px 0 26px;
-        box-shadow:0 10px 30px rgba(1,33,71,0.25);
-    }
-    .page-header h3{ margin:0; font-weight:700; font-size:20px; }
-    .page-header small{ opacity:0.85; }
-
-    .section-card{
+.section-card {
         background:#fff; border-radius:14px; padding:22px;
         box-shadow:0 6px 20px rgba(0,0,0,0.06); margin-bottom:20px;
-    }
-    .section-card h6{ font-weight:700; color:#012147; font-size:14px; margin-bottom:16px; display:flex; align-items:center; gap:6px; }
-
-    .info-row{ display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #f1f5f9; font-size:13.5px; }
-    .info-row:last-child{ border-bottom:none; }
-    .info-row span:first-child{ color:#64748b; }
-    .info-row span:last-child{ font-weight:600; color:#012147; }
-
-    .score-box{ border-radius:10px; padding:12px 14px; font-size:13.5px; margin-bottom:12px; }
-    .score-box-auto{ background:#e6f0ff; color:#0a3d91; }
-    .score-box-manual{ background:#e7f8ee; color:#0f5c33; }
-    .score-box-status{ background:#fff4e0; color:#8a5b00; }
-
-    .form-label{ font-weight:600; color:#012147; font-size:14px; }
-    .form-control, .form-select{ border-radius:10px; border:1px solid #e2e8f0; padding:10px 14px; }
-    .form-control:focus, .form-select:focus{ border-color:#012147; box-shadow:0 0 0 3px rgba(1,33,71,0.1); }
-    .input-group-text{ border-radius:0 10px 10px 0; background:#f8fafc; font-weight:600; color:#012147; }
-
-    .btn-navy{ background:#012147; color:#fff; border:none; padding:13px; font-weight:600; border-radius:10px; width:100%; }
-    .btn-navy:hover{ background:#1e3a6e; color:#fff; }
-
-    .answer-block{ padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid #f1f5f9; }
-    .answer-block:last-child{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
-    .pts-badge{ font-size:11px; font-weight:700; padding:4px 9px; border-radius:8px; background:#64748b; color:#fff; }
-
-    .answer-box{ background:#f8fafc; border-radius:10px; padding:14px; margin-top:8px; font-size:13.5px; }
-    .answer-tag{ font-size:11.5px; font-weight:600; color:#8a5b00; background:#fff4e0; padding:4px 10px; border-radius:20px; display:inline-flex; align-items:center; gap:4px; }
-    .answer-tag-correct{ color:#0f5c33; background:#e7f8ee; }
-    .answer-tag-incorrect{ color:#8a1f1f; background:#fdeaea; }
+}
+.section-card h6 { font-weight:700; color:#012147; font-size:14px; margin-bottom:16px; display:flex; align-items:center; gap:6px;
+}
+.info-row { display:flex; justify-content:space-between; padding:7px 0; border-bottom:1px solid #f1f5f9; font-size:13.5px;
+}
+.info-row:last-child { border-bottom:none;
+}
+.info-row span:first-child { color:#64748b;
+}
+.info-row span:last-child { font-weight:600; color:#012147;
+}
+.score-box { border-radius:10px; padding:12px 14px; font-size:13.5px; margin-bottom:12px;
+}
+.score-box-auto { background:#e6f0ff; color:#0a3d91;
+}
+.score-box-manual { background:#e7f8ee; color:#0f5c33;
+}
+.score-box-status { background:#fff4e0; color:#8a5b00;
+}
+.input-group-text { border-radius:0 10px 10px 0; background:#f8fafc; font-weight:600; color:#012147;
+}
+.answer-block { padding-bottom:18px; margin-bottom:18px; border-bottom:1px solid #f1f5f9;
+}
+.answer-block:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0;
+}
+.pts-badge { font-size:11px; font-weight:700; padding:4px 9px; border-radius:8px; background:#64748b; color:#fff;
+}
+.answer-box { background:#f8fafc; border-radius:10px; padding:14px; margin-top:8px; font-size:13.5px;
+}
+.answer-tag { font-size:11.5px; font-weight:600; color:#8a5b00; background:#fff4e0; padding:4px 10px; border-radius:20px; display:inline-flex; align-items:center; gap:4px;
+}
+.answer-tag-correct { color:#0f5c33; background:#e7f8ee;
+}
+.answer-tag-incorrect { color:#8a1f1f; background:#fdeaea;
+}
 </style>
-</head>
-<body>
+@endpush
+@section('content')
 <div class="container">
-    <a href="{{ route('lecturer.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back to Quiz
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-clipboard-check"></i> Grade Submission</h3>
@@ -89,7 +71,7 @@
                         @if($submission->submitted_at)
                             {{ $submission->started_at->diffInMinutes($submission->submitted_at) }} min
                         @else
-                            —
+                            -
                         @endif
                     </span>
                 </div>
@@ -214,7 +196,4 @@
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+@endsection

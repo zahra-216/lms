@@ -87,7 +87,7 @@ class LecturerPaymentController extends Controller
         $payment->update($request->except('course_ids'));
         $payment->courses()->sync($request->course_ids);
 
-        return redirect()->route('admin.lecturer-payments.show', $payment->lecturer_id)
+        return $this->returnTo(route('admin.lecturer-payments.show', $payment->lecturer_id))
             ->with('success', 'Payment updated!');
     }
 
@@ -97,7 +97,7 @@ class LecturerPaymentController extends Controller
         $lecturerId = $payment->lecturer_id;
         $payment->delete();
 
-        return redirect()->route('admin.lecturer-payments.show', $lecturerId)
+        return $this->returnTo(route('admin.lecturer-payments.show', $lecturerId))
             ->with('success', 'Payment deleted!');
     }
 }

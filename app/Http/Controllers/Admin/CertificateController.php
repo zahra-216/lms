@@ -94,7 +94,7 @@ class CertificateController extends Controller
 
         $certificate->update($validated);
 
-        return redirect()->route('admin.certificates.student', $certificate->student_id)
+        return $this->returnTo(route('admin.certificates.student', $certificate->student_id))
             ->with('success', 'Certificate updated successfully.');
     }
 
@@ -106,7 +106,7 @@ class CertificateController extends Controller
         $studentId = $certificate->student_id;
         $certificate->delete();
 
-        return redirect()->route('admin.certificates.student', $studentId)
+        return $this->returnTo(route('admin.certificates.student', $studentId))
             ->with('success', 'Certificate deleted successfully.');
     }
 }

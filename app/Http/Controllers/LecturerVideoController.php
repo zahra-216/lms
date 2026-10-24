@@ -83,8 +83,7 @@ class LecturerVideoController extends Controller
         unset($validated['video_file']);
         $video->update($validated);
 
-        return redirect()
-            ->route('lecturer.subject.videos', $subject->id)
+        return $this->returnTo(route('lecturer.subject.videos', $subject->id))
             ->with('success', 'Video updated successfully');
     }
 

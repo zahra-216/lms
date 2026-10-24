@@ -36,7 +36,7 @@
     </tr>
 </table>
 
-<h2>Attendance Report — {{ $subject->code }} - {{ $subject->name }} ({{ $start->format('F Y') }})</h2>
+<h2>Attendance Report - {{ $subject->code }} - {{ $subject->name }} ({{ $start->format('F Y') }})</h2>
 
 <table class="data">
     <tr>
@@ -53,7 +53,7 @@
                 <td>
                     @if($status === 'present') <span class="present">&#10003;</span>
                     @elseif($status === 'absent') <span class="absent">&#10007;</span>
-                    @else <span class="unmarked">&ndash;</span>
+                    @else <span class="unmarked">-</span>
                     @endif
                 </td>
             @endforeach
