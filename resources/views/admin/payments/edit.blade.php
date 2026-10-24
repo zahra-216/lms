@@ -2,9 +2,10 @@
 @section('title')
 Edit Payment
 @endsection
+@section('back', route('admin.payments.show', $payment->student_id))
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.payments.show', $payment->student_id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-pencil-square"></i> Edit Payment</h3>

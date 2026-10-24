@@ -57,22 +57,6 @@ class StudentController extends Controller
         return view('student.grades', compact('semesterGroups', 'student'));
     }
 
-   public function subjectGrades($id)
-    {
-        $studentId = session('student_id');
-
-        if (!$studentId) {
-            return redirect('/login');
-        }
-
-        $student = \App\Models\Student::find($studentId);
-
-        $subject = Subject::with(['assignments.marks' => function ($q) use ($studentId) {
-            $q->where('student_id', $studentId);
-        }])->findOrFail($id);
-
-        return view('student.subject-grades', compact('subject', 'student'));
-    }
 
     public function myPayments()
     {

@@ -2,6 +2,7 @@
 @section('title')
 Create Assignment
 @endsection
+@section('back', route('admin.subjects.show', $subject->id))
 @push('styles')
 <style>
 .form-check-input { width:18px; height:18px; cursor:pointer;
@@ -12,9 +13,7 @@ Create Assignment
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.subjects.show', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-journal-plus"></i> Create Assignment</h3>

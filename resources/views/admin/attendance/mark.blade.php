@@ -2,6 +2,7 @@
 @section('title')
 {{ $subject->name }} - Mark Attendance
 @endsection
+@section('back', route('admin.attendance.show', $subject->id))
 @push('styles')
 <style>
 @media (max-width:576px) {
@@ -41,12 +42,8 @@ table.attendance-table tbody tr:hover { background:#eef2f9;
 @section('content')
 <div class="container">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <a href="{{ route('admin.attendance.show', $subject->id) }}" class="back-btn">
-            <i class="bi bi-arrow-left"></i> Back
-        </a>
-        <a href="{{ route('admin.attendance.history', $subject->id) }}" class="back-btn">
-            <i class="bi bi-clock-history"></i> View History
-        </a>
+        
+        
     </div>
 
     <div class="page-header">

@@ -2,6 +2,7 @@
 @section('title')
 Edit Certificate
 @endsection
+@section('back', route('admin.certificates.student', $student->id))
 @push('styles')
 <style>
 label { font-weight:600; font-size:13.5px; margin-bottom:6px; display:block;
@@ -24,7 +25,7 @@ label { font-weight:600; font-size:13.5px; margin-bottom:6px; display:block;
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.certificates.student', $student->id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h2><i class="bi bi-pencil-square"></i> Edit Certificate</h2>

@@ -28,7 +28,8 @@
             @unless (View::hasSection('no_back'))
                 <div class="container lms-back-row">
                     @php $explicitBack = trim($__env->yieldContent('back')); @endphp
-                    <a href="{{ $explicitBack ?: '#' }}" class="back-btn" @if (! $explicitBack) data-lms-back data-fallback="{{ $homeUrl }}" @endif>
+                    {{-- Goes to the page the user came from; the parent page is only used when there is no such page (bookmark, new tab). --}}
+                    <a href="{{ $explicitBack ?: $homeUrl }}" class="back-btn" data-lms-back data-fallback="{{ $explicitBack ?: $homeUrl }}">
                         <i class="bi bi-arrow-left"></i> Back
                     </a>
                 </div>

@@ -44,10 +44,10 @@ use App\Http\Controllers\Admin\MarkController;
 
 Route::get('/', [FrontendController::class, 'home'])->name('home');
 
+// Lecturers browse faculty -> course -> subject here (it links into lecturer-only pages).
 Route::get('/faculty/{facultyId}/courses', [FrontendController::class, 'facultyCourses'])
+    ->middleware('auth:lecturer')
     ->name('faculty.courses');
-
-Route::get('/course/{courseId}/levels', [FrontendController::class, 'courseLevels']);
 
 Route::get('/login', [FrontendController::class, 'loginPage'])->name('login');
 Route::post('/login', [FrontendController::class, 'login'])->name('login.submit');

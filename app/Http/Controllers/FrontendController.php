@@ -26,12 +26,6 @@ class FrontendController extends Controller
         return view('faculty.courses', compact('faculty'));
     }
 
-    public function courseLevels($id)
-    {
-        $course = Course::with('levels')->findOrFail($id);
-        return view('frontend.levels', compact('course'));
-    }
-
     // ================= LOGIN PAGE =================
 public function loginPage(Request $request)
 {

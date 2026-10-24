@@ -2,6 +2,7 @@
 @section('title')
 {{ $subject->name }} - Attendance History
 @endsection
+@section('back', route('admin.attendance.show', $subject->id))
 @push('styles')
 <style>
 .month-card {
@@ -20,9 +21,7 @@
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.attendance.show', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <h2><i class="bi bi-clock-history"></i> {{ $subject->code }} - Attendance History</h2>

@@ -2,6 +2,7 @@
 @section('title')
 Edit Quiz - {{ $quiz->title }}
 @endsection
+@section('back', route('admin.subjects.quizzes.index', $subject->id))
 @push('styles')
 <style>
 .alert-soft-success { background:#e7f8ee; color:#0f5c33; border:none; border-radius:12px;
@@ -63,9 +64,7 @@ Edit Quiz - {{ $quiz->title }}
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.subjects.quizzes.index', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-pencil-square"></i> Edit Quiz: {{ $quiz->title }}</h3>

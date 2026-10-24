@@ -2,6 +2,7 @@
 @section('title')
 {{ $subject->name }} - Assignments
 @endsection
+@section('back', route('lecturer.subject.show', $subject->id))
 @push('styles')
 <style>
 :root {
@@ -102,9 +103,7 @@ table.sub-table tbody tr:hover { background:#fff;
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <div>

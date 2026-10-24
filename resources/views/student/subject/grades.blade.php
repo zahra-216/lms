@@ -2,6 +2,7 @@
 @section('title')
 {{ $subject->name }} - Grades
 @endsection
+@section('back', route('student.subject.portal.show', $subject->id))
 @push('styles')
 <style>
 table.marks-table { border-collapse:separate; border-spacing:0;
@@ -37,9 +38,7 @@ table.marks-table tbody tr:hover { background:#eef2f9;
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('student.subject.portal.show', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <div>

@@ -2,6 +2,7 @@
 @section('title')
 Timetable - {{ $subject->name }}
 @endsection
+@section('back', route('admin.subjects.show', $subject->id))
 @push('styles')
 <style>
 .btn-add { background:#fff; color:#012147; font-weight:600; padding:10px 20px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:8px;
@@ -26,7 +27,7 @@ tbody tr:nth-child(even) { background:#f8fafc;
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.subjects.show', $subject->id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <div>

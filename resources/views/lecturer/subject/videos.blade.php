@@ -2,6 +2,7 @@
 @section('title')
 {{ $subject->name }} - Lecture Videos
 @endsection
+@section('back', route('lecturer.subject.show', $subject->id))
 @push('styles')
 <style>
 @media (max-width:576px) {
@@ -42,9 +43,7 @@ table.videos-table tbody tr:hover { background:#eef2f9;
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <h2><i class="bi bi-camera-video"></i> {{ $subject->code }} - {{ $subject->name }} — Lecture Videos</h2>

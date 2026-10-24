@@ -2,6 +2,7 @@
 @section('title')
 Timetable - {{ $subject->name }}
 @endsection
+@section('back', route('lecturer.subject.show', $subject->id))
 @push('styles')
 <style>
 .badge-day { background:#eef2ff; color:#4338ca; padding:5px 12px; border-radius:8px; font-size:13px; font-weight:600; margin:3px; display:inline-block;
@@ -10,7 +11,7 @@ Timetable - {{ $subject->name }}
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h2><i class="bi bi-calendar-week"></i> Timetable - {{ $subject->code }}</h2>

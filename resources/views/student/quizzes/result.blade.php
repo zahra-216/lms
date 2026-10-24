@@ -2,6 +2,7 @@
 @section('title')
 Quiz Result - {{ $quiz->title }}
 @endsection
+@section('back', route('student.quiz.index', $quiz->subject_id))
 @push('styles')
 <style>
 .status-card {
@@ -49,9 +50,7 @@ Quiz Result - {{ $quiz->title }}
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('student.quiz.index', $quiz->subject_id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back to Quizzes
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-check-circle"></i> Quiz Submitted</h3>

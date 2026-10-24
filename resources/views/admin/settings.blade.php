@@ -52,7 +52,7 @@ Settings
         <button type="submit" class="btn-navy">Update Password</button>
     </form>
 
-    <a href="{{ route('admin.dashboard') }}" class="back-link"><i class="bi bi-arrow-left"></i> Back to Dashboard</a>
+    
 </div>
 @endsection
 @push('scripts')

@@ -2,11 +2,10 @@
 @section('title')
 Add Note
 @endsection
+@section('back', route('lecturer.subject.notes', $subject->id))
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.subject.notes', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-file-earmark-plus"></i> Add Note</h3>

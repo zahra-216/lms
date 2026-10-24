@@ -54,9 +54,7 @@ Send Notification
             <h2><i class="bi bi-megaphone"></i> Send Notification</h2>
             <small>Send a message to lecturers' dashboards</small>
         </div>
-        <a href="{{ route('admin.dashboard') }}" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Back
-        </a>
+        
     </div>
 
     

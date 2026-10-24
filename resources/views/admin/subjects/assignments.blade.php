@@ -2,6 +2,7 @@
 @section('title')
 {{ $subject->name }} - Assignments
 @endsection
+@section('back', route('admin.subjects.show', $subject->id))
 @push('styles')
 <style>
 @media (max-width:576px) {
@@ -42,7 +43,7 @@ table.sub-table tbody tr:hover { background:#eef2f9;
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.subjects.show', $subject->id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h2><i class="bi bi-journal-text"></i> {{ $subject->code }} - {{ $subject->name }} — Assignments</h2>

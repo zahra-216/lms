@@ -2,6 +2,7 @@
 @section('title')
 Edit Recording
 @endsection
+@section('back', route('lecturer.subject.recordings', $subject->id))
 @push('styles')
 <style>
 .hint { font-size:12px; color:#6b7280; margin-top:6px;
@@ -10,7 +11,7 @@ Edit Recording
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.subject.recordings', $subject->id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-pencil-square"></i> Edit Recording</h3>

@@ -2,6 +2,7 @@
 @section('title')
 Enter Marks
 @endsection
+@section('back', route('lecturer.subject.grades', $assignment->subject_id))
 @push('styles')
 <style>
 table.marks-entry-table { border-collapse:separate; border-spacing:0;
@@ -24,9 +25,7 @@ table.marks-entry-table tbody tr:hover { background:#eef2f9;
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.subject.grades', $assignment->subject_id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back to Grades
-    </a>
+    
 
     <div class="page-header">
         <h4><i class="bi bi-pencil-square"></i> {{ $assignment->title }} - Marks Entry</h4>

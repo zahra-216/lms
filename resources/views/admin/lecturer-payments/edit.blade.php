@@ -2,6 +2,7 @@
 @section('title')
 Edit Payment
 @endsection
+@section('back', route('admin.lecturer-payments.show', $payment->lecturer_id))
 @push('styles')
 <style>
 .course-check-row { display:flex; flex-wrap:wrap; gap:14px; margin-bottom:18px;
@@ -12,7 +13,7 @@ Edit Payment
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.lecturer-payments.show', $payment->lecturer_id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-pencil-square"></i> Edit Payment Record</h3>

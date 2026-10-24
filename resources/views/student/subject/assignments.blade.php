@@ -2,6 +2,7 @@
 @section('title')
 {{ $subject->name }} - Assignments
 @endsection
+@section('back', route('student.subject.portal.show', $subject->id))
 @push('styles')
 <style>
 :root {
@@ -99,9 +100,7 @@
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('student.subject.portal.show', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <div>

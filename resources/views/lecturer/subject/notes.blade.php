@@ -2,6 +2,7 @@
 @section('title')
 {{ $subject->name }} - Notes
 @endsection
+@section('back', route('lecturer.subject.show', $subject->id))
 @push('styles')
 <style>
 @media (max-width:576px) {
@@ -42,9 +43,7 @@ table.notes-table tbody tr:hover { background:#eef2f9;
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <h2><i class="bi bi-file-earmark-text"></i> {{ $subject->code }} - {{ $subject->name }} — Notes</h2>

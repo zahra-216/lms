@@ -2,6 +2,7 @@
 @section('title')
 Grade Submission - {{ $quiz->title }}
 @endsection
+@section('back', route('admin.subjects.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]))
 @push('styles')
 <style>
 .section-card {
@@ -46,9 +47,7 @@ Grade Submission - {{ $quiz->title }}
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.subjects.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back to Quiz
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-clipboard-check"></i> Grade Submission</h3>

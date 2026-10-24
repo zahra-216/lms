@@ -19,7 +19,7 @@ class LecturerNoteController extends Controller
         $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'type' => 'required|string',
+            'type' => 'required|in:document,video,link,text,image',
             'file_path' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png,mp3,mp4|max:51200',
             'url' => 'nullable|string',
         ]);
@@ -47,7 +47,7 @@ class LecturerNoteController extends Controller
         $validated = $request->validate([
             'title' => 'required|string',
             'description' => 'nullable|string',
-            'type' => 'required|string',
+            'type' => 'required|in:document,video,link,text,image',
             'file_path' => 'nullable|file|mimes:pdf,doc,docx,ppt,pptx,xls,xlsx,csv,txt,zip,rar,jpg,jpeg,png,mp3,mp4|max:51200',
             'url' => 'nullable|string',
             'order' => 'nullable|integer',

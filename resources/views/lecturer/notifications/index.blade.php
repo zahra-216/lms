@@ -55,13 +55,9 @@ Notifications
         </div>
         <div class="header-btns">
             @if($lecturer->unreadNotifications->count())
-                <button type="button" class="btn-back" onclick="markAllRead()">
-                    <i class="bi bi-check2-all"></i> Mark all as read
-                </button>
+                
             @endif
-            <a href="{{ route('lecturer.dashboard') }}" class="btn-back">
-                <i class="bi bi-arrow-left"></i> Back
-            </a>
+            
         </div>
     </div>
 

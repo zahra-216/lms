@@ -2,6 +2,7 @@
 @section('title')
 Quizzes - {{ $subject->name }}
 @endsection
+@section('back', route('admin.subjects.show', $subject->id))
 @push('styles')
 <style>
 .alert-soft-success { background:#e7f8ee; color:#0f5c33; border:none; border-radius:12px;
@@ -50,9 +51,7 @@ Quizzes - {{ $subject->name }}
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.subjects.show', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <div>

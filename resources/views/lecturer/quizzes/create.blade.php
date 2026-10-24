@@ -2,6 +2,7 @@
 @section('title')
 Create Quiz
 @endsection
+@section('back', route('lecturer.quizzes.index', $subject->id))
 @push('styles')
 <style>
 .form-check-input { width:18px; height:18px; cursor:pointer;
@@ -16,9 +17,7 @@ Create Quiz
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.quizzes.index', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back to Quizzes
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-plus-circle"></i> Create New Quiz</h3>

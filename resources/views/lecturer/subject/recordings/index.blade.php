@@ -2,6 +2,7 @@
 @section('title')
 {{ $subject->name }} - Recordings
 @endsection
+@section('back', route('lecturer.subject.show', $subject->id))
 @push('styles')
 <style>
 .rec-card { background:#fff; border-radius:14px; padding:18px 20px; box-shadow:0 6px 20px rgba(0,0,0,0.06); display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;
@@ -18,7 +19,7 @@
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.subject.show', $subject->id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <div>

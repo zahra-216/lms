@@ -2,6 +2,7 @@
 @section('title')
 {{ $editGroup ? 'Edit' : 'Add' }} Timetable - {{ $subject->name }}
 @endsection
+@section('back', route('admin.subjects.timetables.index', $subject->id))
 @push('head')
 <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
 @endpush
@@ -29,7 +30,7 @@ label { font-weight:600; color:#012147; font-size:14px; margin-bottom:6px;
 @endpush
 @section('content')
 <div class="container">
-    <a href="{{ route('admin.subjects.timetables.index', $subject->id) }}" class="back-btn"><i class="bi bi-arrow-left"></i> Back</a>
+    
 
     <div class="page-header">
         <h2><i class="bi bi-calendar-week"></i> {{ $editGroup ? 'Edit' : 'Add' }} Timetable</h2>

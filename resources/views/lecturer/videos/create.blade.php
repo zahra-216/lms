@@ -2,11 +2,10 @@
 @section('title')
 Add Video
 @endsection
+@section('back', route('lecturer.subject.videos', $subject->id))
 @section('content')
 <div class="container">
-    <a href="{{ route('lecturer.subject.videos', $subject->id) }}" class="back-btn">
-        <i class="bi bi-arrow-left"></i> Back
-    </a>
+    
 
     <div class="page-header">
         <h3><i class="bi bi-camera-video"></i> Add Lecture Video</h3>
