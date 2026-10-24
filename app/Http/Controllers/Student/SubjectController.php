@@ -15,6 +15,20 @@ use App\Models\AssignmentSubmission;
 class SubjectController extends Controller
 {
 
+    /** Subjects of one semester for the dashboard list (only semesters the student may open). */
+    public function bySemester($id)
+    {
+        $student = Student::findOrFail(session('student_id'));
+        $semester = Semester::findOrFail($id);
+
+        abort_unless(\App\Support\StudentSubjectAccess::canOpenSemester($student, $semester), 403, 'This semester is not available to you yet.');
+
+        return response()->json([
+            'semester' => $semester->name,
+            'subjects' => Subject::where('semester_id', $semester->id)->orderBy('code')->get(['id', 'code', 'name']),
+        ]);
+    }
+
     /* DOWNLOAD */
     public function download($id)
     {

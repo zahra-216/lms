@@ -314,9 +314,8 @@ Route::prefix('student')->name('student.')->middleware(['student.auth', 'student
     Route::get('/chat/{lecturer}/poll', [App\Http\Controllers\Student\ChatController::class, 'poll'])
         ->name('chat.poll');
 
-    Route::post('/verify-subject', [StudentSubjectController::class, 'verifySubject']);
 
-    Route::get('/semester/{id}/subjects', [SemesterController::class, 'getSubjects']);
+    Route::get('/semester/{id}/subjects', [StudentSubjectController::class, 'bySemester']);
 
     Route::get('/subject/{id}/notes', fn ($id) => redirect()->route('student.subject.portal.notes', $id));
 

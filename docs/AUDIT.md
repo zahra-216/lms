@@ -31,7 +31,7 @@ Branch: `redesign-and-fixes`. This page records what was found in the review, wh
 | High | No limit on student / lecturer password guesses. | 5 tries then a 2 minute wait (per account and address), same as the admin login. |
 | High | Student login said whether a registration number existed. | One generic message. |
 | Medium | Session id not renewed after student login (session fixation). | `session()->regenerate()` after sign-in. |
-| Medium | A student could open any subject's notes, videos, quizzes and grades by changing the number in the address. | Student pages are limited to subjects of the student's own course and level. |
+| Medium | A student could open any subject's notes, videos, quizzes and grades by changing the number in the address (the dashboard hid later semesters, the server did not). | Server-side rule: own course and level, Semester 1 up to the current semester. `App\Support\StudentSubjectAccess`. |
 | Medium | A note, video or quiz could be changed through a different subject's address. | Content under `/subject/{id}` must belong to that subject (otherwise 404). |
 | Low | Note `type` accepted any text; the database accepts five values, so a wrong value crashed. | Validated against the allowed list. |
 
@@ -61,8 +61,8 @@ Branch: `redesign-and-fixes`. This page records what was found in the review, wh
 
 ## 5. Still recommended (not changed, needs a decision)
 
-1. **Assign lecturers to subjects.** The database has no lecturer-subject link, so every lecturer can open every subject. Add a `lecturer_subject` table (or use the timetable) and tighten `EnsureLecturerOwnsSubject`.
-2. **Enforce subject unlock on the server.** The "enter subject code" step only guards the dashboard flow; the pages themselves are open to any student of that course.
+1. Lecturers are not linked to subjects, so every lecturer can open every subject. This matches how the campus works today and was left as it is. If it ever needs to change, add a `lecturer_subject` table and tighten `EnsureLecturerOwnsSubject`.
+2. ~~Subject unlock~~ **Removed.** The code was shown next to each subject, so it protected nothing. Access is now enforced on the server: a student opens subjects of their own course and level from Semester 1 up to their current semester (the admin moves them on by changing their semester).
 3. **Password reset for students and lecturers** (only admins have it).
 4. **Set `APP_DEBUG=false`** in the live `.env` and make sure `APP_ENV=production`.
 5. Use `$fillable` / validation on every model write (many models still use broad mass assignment).

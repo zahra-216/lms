@@ -4,13 +4,14 @@ namespace App\Http\Middleware;
 
 use App\Models\Quiz;
 use App\Models\Student;
+use App\Support\StudentSubjectAccess;
 use App\Models\Subject;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * A student may only open subjects of their own course and level.
+ * A student may only open subjects of their own course and level, up to their current semester.
  *
  * Stops a signed-in student from reading another course's notes, videos, quizzes or grades
  * by typing a different subject number into the address bar.
@@ -29,12 +30,10 @@ class EnsureStudentCanAccessSubject
         $subjectId = $this->subjectIdFrom($route);
 
         if ($subjectId !== null) {
-            $allowed = Subject::whereKey($subjectId)
-                ->where('course_id', $student->course_id)
-                ->where('level_id', $student->level_id)
-                ->exists();
+            $subject = Subject::find($subjectId);
+            $allowed = $subject && StudentSubjectAccess::canOpenSubject($student, $subject);
 
-            abort_unless($allowed, 403, 'This subject is not part of your course.');
+            abort_unless($allowed, 403, 'This subject is not available to you yet.');
         }
 
         return $next($request);

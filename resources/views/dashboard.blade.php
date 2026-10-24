@@ -120,26 +120,6 @@ Dashboard
     </div>
 </div>
 
-{{-- Subject code modal: a subject opens after its code has been entered once --}}
-<div class="modal fade" id="subjectModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Enter subject code</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <input type="hidden" id="subject_id">
-                <label class="form-label" for="subject_code">Subject code</label>
-                <input type="text" id="subject_code" class="form-control" autocomplete="off">
-                <small class="text-danger" id="errorMsg"></small>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn-navy" onclick="checkSubject()">Open subject</button>
-            </div>
-        </div>
-    </div>
-</div>
 @endsection
 
 @push('scripts')
@@ -159,41 +139,16 @@ function loadSubjects(semesterId) {
             } else {
                 html = '<div class="list-group">';
                 data.subjects.forEach(sub => {
-                    html += `<div class="list-group-item subject-row d-flex justify-content-between align-items-center" onclick="openSubject(${Number(sub.id)}, ${sub.unlocked ? 'true' : 'false'})">
+                    html += `<a href="/student/subject/${Number(sub.id)}/show" class="list-group-item list-group-item-action subject-row d-flex justify-content-between align-items-center">
                         <div><b>${esc(sub.code)}</b> ${esc(sub.name)}</div>
-                        <span>${sub.unlocked ? '<i class="bi bi-unlock text-success"></i>' : '<i class="bi bi-lock text-muted"></i>'}</span>
-                    </div>`;
+                        <i class="bi bi-chevron-right text-muted"></i>
+                    </a>`;
                 });
                 html += '</div>';
             }
             document.getElementById('subjectBox' + semesterId).innerHTML = html;
         })
         .catch(() => { document.getElementById('subjectBox' + semesterId).textContent = 'Could not load subjects. Please try again.'; });
-}
-
-function openSubject(subjectId, unlocked) {
-    if (unlocked) { window.location.href = '/student/subject/' + subjectId + '/show'; return; }
-    document.getElementById('subject_id').value = subjectId;
-    document.getElementById('errorMsg').textContent = '';
-    new bootstrap.Modal(document.getElementById('subjectModal')).show();
-}
-
-function checkSubject() {
-    fetch('/student/verify-subject', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-        body: JSON.stringify({ subject_id: document.getElementById('subject_id').value, code: document.getElementById('subject_code').value })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.status) {
-            bootstrap.Modal.getInstance(document.getElementById('subjectModal')).hide();
-            window.location.href = '/student/subject/' + data.subject_id + '/show';
-        } else {
-            document.getElementById('errorMsg').textContent = data.message;
-        }
-    })
-    .catch(() => { document.getElementById('errorMsg').textContent = 'Server error. Please try again.'; });
 }
 
 (function () {
