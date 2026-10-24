@@ -95,10 +95,8 @@ class QuizController extends Controller
         $submittedAnswers = $submission->answers()->pluck('answer_text', 'quiz_question_id')
             ->toArray();
 
-        $startedAt = $submission->started_at;
-        $elapsedSeconds = now()->diffInSeconds($startedAt);
-        $totalSeconds = $quiz->duration_minutes * 60;
-        $remainingSeconds = max(0, $totalSeconds - $elapsedSeconds);
+        // Seconds left until the deadline. (diffInSeconds is signed in Carbon 3: negative when the deadline is in the past.)
+        $remainingSeconds = max(0, (int) now()->diffInSeconds($this->deadline($submission), false));
 
         if ($remainingSeconds <= 0 && !$submission->submitted_at) {
             $this->finalize($submission, []);

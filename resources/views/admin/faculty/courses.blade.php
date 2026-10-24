@@ -88,7 +88,7 @@
         @foreach($faculty->courses as $course)
         @php
             $imgPath = $course->image && file_exists(public_path('storage/courses/'.$course->image))
-                ? 'storage/courses/'.$course->image : 'https://picsum.photos/300x220?random='.$course->id;
+                ? 'storage/courses/'.$course->image : asset('images/ttmc.jpeg');
         @endphp
         <div class="course-card" style="background-image:url('{{ asset($imgPath) }}'); background-size:cover; background-position:center;"
              onclick="openCourseStructure('course-{{ $course->id }}')">

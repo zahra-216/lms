@@ -52,7 +52,7 @@ Faculties
                 $relativePath = 'storage/faculty/'.$faculty->image;
                 $imgPath = ($faculty->image && file_exists(public_path($relativePath)))
                     ? asset($relativePath)
-                    : 'https://picsum.photos/320/220?random='.$faculty->id;
+                    : asset('images/ttmc.jpeg');
             @endphp
             <div class="faculty-card">
                 <a href="{{ route('admin.faculties.courses', $faculty->id) }}" class="faculty-card-link" aria-label="Manage {{ $faculty->name }}"></a>
