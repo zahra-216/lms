@@ -60,7 +60,7 @@ class LevelController extends Controller
         $level = Level::findOrFail($id);
         $level->update($request->all());
 
-        return redirect()->route('admin.levels.index')->with('success','Updated Successfully');
+        return $this->returnTo(route('admin.levels.index'))->with('success','Updated Successfully');
     }
 
     // ==========================

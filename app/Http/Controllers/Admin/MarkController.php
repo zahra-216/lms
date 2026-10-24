@@ -52,7 +52,7 @@ class MarkController extends Controller
             );
         }
 
-        return redirect()->route('admin.marks.index')
+        return $this->returnTo(route('admin.marks.index'))
             ->with('success','Marks saved successfully');
     }
 

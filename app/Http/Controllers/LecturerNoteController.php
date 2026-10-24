@@ -65,8 +65,7 @@ class LecturerNoteController extends Controller
 
         $note->update($validated);
 
-        return redirect()
-            ->route('lecturer.subject.notes', $subject->id)
+        return $this->returnTo(route('lecturer.subject.notes', $subject->id))
             ->with('success', 'Note updated successfully');
     }
 

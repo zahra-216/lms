@@ -47,7 +47,7 @@ class FacultyController extends Controller
 
         $faculty->save();
 
-        return redirect()->route('admin.faculties.index')
+        return $this->returnTo(route('admin.faculties.index'))
             ->with('success', 'Faculty added successfully!');
     }
 
@@ -88,7 +88,7 @@ class FacultyController extends Controller
 
         $faculty->save();
 
-        return redirect()->route('admin.faculties.index')
+        return $this->returnTo(route('admin.faculties.index'))
             ->with('success', 'Faculty updated successfully!');
     }
 
@@ -103,7 +103,7 @@ class FacultyController extends Controller
 
         $faculty->delete();
 
-        return redirect()->route('admin.faculties.index')
+        return $this->returnTo(route('admin.faculties.index'))
             ->with('success', 'Faculty deleted!');
     }
 

@@ -63,7 +63,7 @@ class SubjectController extends Controller
             );
         }
 
-        return redirect()->route('admin.subjects.grades', $subject->id)
+        return $this->returnTo(route('admin.subjects.grades', $subject->id))
             ->with('success', 'Marks saved successfully');
     }
 
@@ -129,7 +129,7 @@ class SubjectController extends Controller
         ]);
 
         $subject->update($request->all());
-        return redirect()->route('admin.subjects.index')->with('success','Subject updated successfully!');
+        return $this->returnTo(route('admin.subjects.index'))->with('success','Subject updated successfully!');
     }
 
     public function destroy(Subject $subject)

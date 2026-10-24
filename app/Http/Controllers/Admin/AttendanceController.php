@@ -146,7 +146,7 @@ class AttendanceController extends Controller
             ->whereBetween('date', [$start->toDateString(), $end->toDateString()])
             ->delete();
 
-        return redirect()->route('admin.attendance.history', $id)
+        return $this->returnTo(route('admin.attendance.history', $id))
             ->with('success', 'Attendance for ' . $start->format('F Y') . ' deleted.');
     }
 }

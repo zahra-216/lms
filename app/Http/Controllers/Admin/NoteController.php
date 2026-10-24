@@ -42,8 +42,7 @@ class NoteController extends Controller
 
         Note::create($validated);
 
-        return redirect()
-            ->route('admin.subjects.notes.index',$subject->id)
+        return $this->returnTo(route('admin.subjects.notes.index',$subject->id))
             ->with('success','Note Added Successfully');
     }
 
@@ -78,8 +77,7 @@ class NoteController extends Controller
 
         $note->update($validated);
 
-        return redirect()
-            ->route('admin.subjects.notes.index',$subject->id)
+        return $this->returnTo(route('admin.subjects.notes.index',$subject->id))
             ->with('success','Note Updated Successfully');
     }
 

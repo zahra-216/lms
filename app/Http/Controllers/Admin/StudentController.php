@@ -98,7 +98,7 @@ class StudentController extends Controller
 
         Student::create($data);
 
-        return redirect()->route('admin.students.index')
+        return $this->returnTo(route('admin.students.index'))
             ->with('success', 'Student added successfully!');
     }
 
@@ -149,7 +149,7 @@ class StudentController extends Controller
 
         $student->save();
 
-        return redirect()->route('admin.students.index')
+        return $this->returnTo(route('admin.students.index'))
             ->with('success', 'Student updated successfully!');
     }
 
@@ -157,7 +157,7 @@ class StudentController extends Controller
     {
         Student::findOrFail($id)->delete();
 
-        return redirect()->route('admin.students.index')
+        return $this->returnTo(route('admin.students.index'))
             ->with('success', 'Student deleted!');
     }
 

@@ -33,7 +33,7 @@ class RecordingController extends Controller
             'youtube_video_id' => $this->extractVideoId($request->youtube_video_id),
         ]);
 
-        return redirect()->route('admin.subjects.recordings.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.recordings.index', $subject->id))
             ->with('success', 'Recording added successfully!');
     }
 
@@ -54,14 +54,14 @@ class RecordingController extends Controller
             'youtube_video_id' => $this->extractVideoId($request->youtube_video_id),
         ]);
 
-        return redirect()->route('admin.subjects.recordings.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.recordings.index', $subject->id))
             ->with('success', 'Recording updated successfully!');
     }
 
     public function destroy(Subject $subject, Recording $recording)
     {
         $recording->delete();
-        return redirect()->route('admin.subjects.recordings.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.recordings.index', $subject->id))
             ->with('success', 'Recording deleted!');
     }
 

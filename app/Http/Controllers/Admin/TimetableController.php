@@ -60,7 +60,7 @@ class TimetableController extends Controller
         $lecturer = Lecturer::find($data['lecturer_id']);
         $lecturer->notify(new TimetableAssigned($subject, 'assigned'));
 
-        return redirect()->route('admin.subjects.timetables.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.timetables.index', $subject->id))
             ->with('success', 'Timetable added successfully');
     }
 
@@ -112,7 +112,7 @@ class TimetableController extends Controller
         $lecturer = Lecturer::find($data['lecturer_id']);
         $lecturer->notify(new TimetableAssigned($subject, 'updated'));
 
-        return redirect()->route('admin.subjects.timetables.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.timetables.index', $subject->id))
             ->with('success', 'Timetable updated successfully');
     }
 
@@ -120,7 +120,7 @@ class TimetableController extends Controller
     {
         Timetable::where('subject_id', $subject->id)->where('group_id', $groupId)->delete();
 
-        return redirect()->route('admin.subjects.timetables.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.timetables.index', $subject->id))
             ->with('success', 'Timetable deleted successfully');
     }
 

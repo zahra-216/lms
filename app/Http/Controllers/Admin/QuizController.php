@@ -97,7 +97,7 @@ class QuizController extends Controller
 
         $quiz->update($validated);
 
-        return redirect()->route('admin.subjects.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id])
+        return $this->returnTo(route('admin.subjects.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]))
             ->with('success', 'Quiz updated successfully');
     }
 
@@ -135,7 +135,21 @@ class QuizController extends Controller
 
         $quiz->delete();
 
-        return redirect()->route('admin.subjects.quizzes.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.quizzes.index', $subject->id))
+            ->with('success', 'Quiz deleted successfully');
+    
+        if ($quiz->subject_id !== $subject->id) {
+            abort(403);
+        }
+
+        // Can't delete if quiz has started
+        if (!$quiz->canBeEdited()) {
+            return back()->with('error', 'Cannot delete quiz after start date');
+        }
+
+        $quiz->delete();
+
+        return $this->returnTo(route('admin.subjects.quizzes.index', $subject->id))
             ->with('success', 'Quiz deleted successfully');
     }
 

@@ -75,7 +75,7 @@ class SemesterController extends Controller
             'name' => $request->name,
         ]);
 
-        return redirect()->route('admin.semesters.index')
+        return $this->returnTo(route('admin.semesters.index'))
             ->with('success','Semester Updated Successfully!');
     }
 

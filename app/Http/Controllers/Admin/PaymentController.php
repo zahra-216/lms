@@ -104,7 +104,7 @@ class PaymentController extends Controller
         $payment = StudentPayment::findOrFail($id);
         $payment->update($request->all());
 
-        return redirect()->route('admin.payments.show', $payment->student_id)
+        return $this->returnTo(route('admin.payments.show', $payment->student_id))
             ->with('success', 'Payment updated!');
     }
 
@@ -114,7 +114,7 @@ class PaymentController extends Controller
         $studentId = $payment->student_id;
         $payment->delete();
 
-        return redirect()->route('admin.payments.show', $studentId)
+        return $this->returnTo(route('admin.payments.show', $studentId))
             ->with('success', 'Payment deleted!');
     }
 }

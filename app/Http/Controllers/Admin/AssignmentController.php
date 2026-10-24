@@ -110,7 +110,7 @@ class AssignmentController extends Controller
 
         Assignment::create($data);
 
-        return redirect()->route('admin.subjects.assignments.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.assignments.index', $subject->id))
             ->with('success', 'Assignment created!');
     }
 
@@ -153,14 +153,14 @@ class AssignmentController extends Controller
 
         $assignment->update($data);
 
-        return redirect()->route('admin.subjects.assignments.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.assignments.index', $subject->id))
             ->with('success', 'Assignment updated!');
     }
 
     public function destroy(\App\Models\Subject $subject, Assignment $assignment)
     {
         $assignment->delete();
-        return redirect()->route('admin.subjects.assignments.index', $subject->id)
+        return $this->returnTo(route('admin.subjects.assignments.index', $subject->id))
             ->with('success', 'Assignment deleted!');
     }
 

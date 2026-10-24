@@ -74,7 +74,7 @@ class LecturerLectureRecordController extends Controller
             'created_by' => 'lecturer',
         ]);
 
-        return redirect()->route('lecturer.lecture-records.index')
+        return $this->returnTo(route('lecturer.lecture-records.index'))
             ->with('success', 'Lecture record created successfully.');
     }
 

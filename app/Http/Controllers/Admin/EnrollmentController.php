@@ -104,7 +104,7 @@ class EnrollmentController extends Controller
 
         Enrollment::create($request->all());
 
-        return redirect()->route('admin.enrollments.index')
+        return $this->returnTo(route('admin.enrollments.index'))
             ->with('success', 'Enrollment Added!');
     }
 
@@ -144,7 +144,7 @@ class EnrollmentController extends Controller
             'enrolled_at' => $request->enrolled_at,
         ]);
 
-        return redirect()->route('admin.enrollments.index')
+        return $this->returnTo(route('admin.enrollments.index'))
             ->with('success', 'Enrollment Updated Successfully!');
     }
 }

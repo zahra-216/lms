@@ -79,8 +79,7 @@ class LecturerAssignmentController extends Controller
 
         $assignment->update($validated);
 
-        return redirect()
-            ->route('lecturer.subject.assignments', $subject->id)
+        return $this->returnTo(route('lecturer.subject.assignments', $subject->id))
             ->with('success', 'Assignment updated successfully');
     }
 
@@ -95,8 +94,7 @@ class LecturerAssignmentController extends Controller
 
         $assignment->delete();
 
-        return redirect()
-            ->route('lecturer.subject.assignments', $subject->id)
+        return $this->returnTo(route('lecturer.subject.assignments', $subject->id))
             ->with('success', 'Assignment deleted successfully');
     }
 }
