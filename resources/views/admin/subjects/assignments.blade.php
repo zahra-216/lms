@@ -46,7 +46,7 @@ table.sub-table tbody tr:hover { background:#eef2f9;
     
 
     <div class="page-header">
-        <h2><i class="bi bi-journal-text"></i> {{ $subject->code }} - {{ $subject->name }} — Assignments</h2>
+        <h2><i class="bi bi-journal-text"></i> {{ $subject->code }} - {{ $subject->name }} - Assignments</h2>
         <a href="{{ route('admin.subjects.assignments.create', $subject->id) }}" class="add-btn">
             <i class="bi bi-plus-circle"></i> Add Assignment
         </a>
@@ -111,9 +111,9 @@ table.sub-table tbody tr:hover { background:#eef2f9;
                                 <tr>
                                     <td>{{ $submission->student->registration_no ?? 'N/A' }}</td>
                                     <td>{{ $submission->student->name ?? 'Unknown student' }}</td>
-                                    <td>{{ $submission->submitted_at?->format('d M Y, h:i A') ?? '—' }}</td>
+                                    <td>{{ $submission->submitted_at?->format('d M Y, h:i A') ?? '-' }}</td>
                                     <td>
-                                        @if($isLate === null) <span class="text-muted">—</span>
+                                        @if($isLate === null) <span class="text-muted">-</span>
                                         @elseif($isLate) <span class="badge late-badge">Late</span>
                                         @else <span class="badge ontime-badge">On time</span>
                                         @endif

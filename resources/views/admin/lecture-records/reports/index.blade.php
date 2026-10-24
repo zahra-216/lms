@@ -73,9 +73,9 @@ table.lr-table tbody tr:hover { background:#eef2f9;
             <tbody>
                 @forelse($reports as $report)
                     <tr>
-                        <td>{{ $report->lecturer->name ?? '—' }}</td>
+                        <td>{{ $report->lecturer->name ?? '-' }}</td>
                         <td>{{ $report->month->format('F Y') }}</td>
-                        <td>{{ $report->generated_at?->format('d M Y, h:i A') ?? '—' }}</td>
+                        <td>{{ $report->generated_at?->format('d M Y, h:i A') ?? '-' }}</td>
                         <td>
                             <div class="row-actions">
                                 <a href="{{ route('admin.lecture-records.reports.download', $report->id) }}" class="action-btn">

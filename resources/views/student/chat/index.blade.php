@@ -2,6 +2,21 @@
 @section('title')
 Chat with Lecturers
 @endsection
+@push('scripts')
+<script>
+document.getElementById('lecturerSearch')?.addEventListener('input', function () {
+    var q = this.value.trim().toLowerCase(), shown = 0;
+    document.querySelectorAll('#contactList .contact-item').forEach(function (a) {
+        var hit = a.querySelector('.contact-name').textContent.toLowerCase().includes(q);
+        a.style.display = hit ? '' : 'none';
+        if (hit) shown++;
+    });
+    var none = document.getElementById('noLecturer');
+    if (!none) { none = document.createElement('div'); none.id = 'noLecturer'; none.className = 'text-center text-muted p-4'; none.textContent = 'No lecturer found.'; document.getElementById('contactList').appendChild(none); }
+    none.style.display = shown ? 'none' : '';
+});
+</script>
+@endpush
 @push('styles')
 <style>
 .contact-list { background:#fff; border-radius:14px; box-shadow:0 6px 20px rgba(0,0,0,0.06); overflow:hidden;
@@ -40,7 +55,11 @@ Chat with Lecturers
     </div>
 
     @if($lecturers->count() > 0)
-    <div class="contact-list">
+    <div class="input-group mb-3">
+        <span class="input-group-text"><i class="bi bi-search"></i></span>
+        <input type="search" id="lecturerSearch" class="form-control" placeholder="Search for a lecturer by name..." autocomplete="off">
+    </div>
+    <div class="contact-list" id="contactList">
         @foreach($lecturers as $lecturer)
         <a href="{{ route('student.chat.show', $lecturer->id) }}" class="contact-item">
             <div class="avatar">{{ strtoupper(substr($lecturer->name, 0, 1)) }}</div>
@@ -50,7 +69,7 @@ Chat with Lecturers
                     @if($lecturer->last_message)
                         {{ $lecturer->last_message->sender_type === 'student' ? 'You: ' : '' }}{{ Str::limit($lecturer->last_message->message, 40) }}
                     @else
-                        <span class="text-muted">No messages yet — say hi</span>
+                        <span class="text-muted">No messages yet - say hi</span>
                     @endif
                 </div>
             </div>

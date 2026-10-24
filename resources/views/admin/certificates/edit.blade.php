@@ -29,7 +29,7 @@ label { font-weight:600; font-size:13.5px; margin-bottom:6px; display:block;
 
     <div class="page-header">
         <h2><i class="bi bi-pencil-square"></i> Edit Certificate</h2>
-        <small>{{ $student->name }} — {{ $student->registration_no }}</small>
+        <small>{{ $student->name }} - {{ $student->registration_no }}</small>
     </div>
 
     @if($errors->any())

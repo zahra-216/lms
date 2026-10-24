@@ -61,7 +61,7 @@ table.marks-entry-table tbody tr:hover { background:#eef2f9;
                 @foreach($submissions as $sub)
                 <tr>
                     <td>{{ $sub->student->name ?? 'Unknown' }}</td>
-                    <td>{{ $sub->student->registration_no ?? '—' }}</td>
+                    <td>{{ $sub->student->registration_no ?? '-' }}</td>
                     <td>
                         @if($sub->file)
                             <a href="{{ asset('storage/'.$sub->file) }}" target="_blank"><i class="bi bi-download"></i> View</a>
@@ -88,7 +88,7 @@ table.marks-entry-table tbody tr:hover { background:#eef2f9;
         </button>
     </form>
     @else
-        <p class="text-muted mb-0">No students have submitted this assignment yet — marks can't be entered until there's a submission.</p>
+        <p class="text-muted mb-0">No students have submitted this assignment yet - marks can't be entered until there's a submission.</p>
     @endif
     </div>
 </div>

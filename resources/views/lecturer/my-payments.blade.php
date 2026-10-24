@@ -46,15 +46,15 @@ table.payments-table tbody td { border-bottom:1px solid #eef0f4;
                         <td>{{ $payment->courses->pluck('name')->implode(', ') }}</td>
                         <td>{{ ucfirst($payment->type_of_lecture) }}</td>
                         <td>{{ $payment->date }}</td>
-                        <td>{{ $payment->total_hours ?? '—' }}</td>
+                        <td>{{ $payment->total_hours ?? '-' }}</td>
                         <td>{{ ucfirst(str_replace('_', ' ', $payment->payment_type)) }}</td>
                         <td>{{ number_format($payment->rate_amount, 2) }}</td>
                         <td>{{ number_format($payment->total_payment, 2) }}</td>
                         <td>{{ number_format($payment->completed_payment, 2) }}</td>
                         <td>{{ number_format($payment->payment_due, 2) }}</td>
-                        <td>{{ $payment->paid_date ?? '—' }}</td>
-                        <td>{{ $payment->invoice_no ?? '—' }}</td>
-                        <td>{{ $payment->remarks ?? '—' }}</td>
+                        <td>{{ $payment->paid_date ?? '-' }}</td>
+                        <td>{{ $payment->invoice_no ?? '-' }}</td>
+                        <td>{{ $payment->remarks ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr><td colspan="12" class="text-muted py-3">No payment records yet.</td></tr>

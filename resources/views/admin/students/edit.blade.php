@@ -66,7 +66,7 @@ Edit Student
                 <label class="form-label">Branch</label>
                 <select name="branch" class="form-select" required>
                     <option value="">Select Branch</option>
-                    <option value="Head Office – Mount Lavinia" {{ $student->branch == 'Head Office – Mount Lavinia' ? 'selected' : '' }}>Head Office – Mount Lavinia</option>
+                    <option value="Head Office - Mount Lavinia" {{ $student->branch == 'Head Office - Mount Lavinia' ? 'selected' : '' }}>Head Office - Mount Lavinia</option>
                     <option value="Sammanthurai Branch" {{ $student->branch == 'Sammanthurai Branch' ? 'selected' : '' }}>Sammanthurai Branch</option>
                     <option value="Batticaloa Branch" {{ $student->branch == 'Batticaloa Branch' ? 'selected' : '' }}>Batticaloa Branch</option>
                     <option value="Trincomalee Branch" {{ $student->branch == 'Trincomalee Branch' ? 'selected' : '' }}>Trincomalee Branch</option>

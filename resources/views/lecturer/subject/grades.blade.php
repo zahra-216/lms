@@ -164,7 +164,7 @@ table.marks-table tbody tr:hover { background:#eef2f9;
                                     $badgeClass = $fg ? ($fg === 'AB' ? 'grade-none' : 'grade-'.$fg[0]) : 'grade-none';
                                 @endphp
                                 <span class="grade-badge {{ $badgeClass }}">
-                                    {{ $fg ?? '—' }}
+                                    {{ $fg ?? '-' }}
                                 </span>
                             </td>
                         </tr>
@@ -202,7 +202,7 @@ table.marks-table tbody tr:hover { background:#eef2f9;
             badge.classList.remove('grade-A','grade-B','grade-C','grade-D','grade-F','grade-none');
 
             if (raw === '') {
-                badge.textContent = '—';
+                badge.textContent = '-';
                 badge.classList.add('grade-none');
                 return;
             }
@@ -215,7 +215,7 @@ table.marks-table tbody tr:hover { background:#eef2f9;
 
             const val = parseFloat(raw);
             if (isNaN(val)) {
-                badge.textContent = '—';
+                badge.textContent = '-';
                 badge.classList.add('grade-none');
                 return;
             }

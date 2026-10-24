@@ -35,7 +35,7 @@ table.videos-table tbody tr:hover { background:#eef2f9;
     
 
     <div class="page-header">
-        <h2><i class="bi bi-camera-video"></i> {{ $subject->code }} - {{ $subject->name }} — Lecture Videos</h2>
+        <h2><i class="bi bi-camera-video"></i> {{ $subject->code }} - {{ $subject->name }} - Lecture Videos</h2>
     </div>
 
     <div class="card-box">
@@ -60,7 +60,7 @@ table.videos-table tbody tr:hover { background:#eef2f9;
                                     <i class="bi bi-play-circle"></i> Watch
                                 </a>
                             @else
-                                <span class="text-muted">—</span>
+                                <span class="text-muted">-</span>
                             @endif
                         </td>
                     </tr>

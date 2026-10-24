@@ -46,7 +46,7 @@ table.notes-table tbody tr:hover { background:#eef2f9;
     
 
     <div class="page-header">
-        <h2><i class="bi bi-file-earmark-text"></i> {{ $subject->code }} - {{ $subject->name }} — Notes</h2>
+        <h2><i class="bi bi-file-earmark-text"></i> {{ $subject->code }} - {{ $subject->name }} - Notes</h2>
         <a href="{{ route('lecturer.notes.create', $subject->id) }}" class="add-btn">
             <i class="bi bi-plus-circle"></i> Add Note
         </a>
@@ -83,7 +83,7 @@ table.notes-table tbody tr:hover { background:#eef2f9;
                         @elseif($note->url)
                             <a href="{{ $note->url }}" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Open Link</a>
                         @else
-                            —
+                            -
                         @endif
                     </td>
                     <td>

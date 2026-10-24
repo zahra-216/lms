@@ -16,7 +16,7 @@ Certificate verified
 @section('content')
 <div class="pub-wrap" style="max-width:620px;margin-top:48px">
     <div class="card-box p-0 overflow-hidden">
-        <div class="text-center text-white py-4" style="background:linear-gradient(120deg,#047857,#059669)">
+        <div class="text-center text-white py-4" style="background:#047857">
             <i class="bi bi-check-circle-fill" style="font-size:44px"></i>
             <h1 class="h4 fw-bold mt-2 mb-0 text-white">Certificate verified</h1>
         </div>

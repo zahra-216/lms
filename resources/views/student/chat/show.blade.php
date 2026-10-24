@@ -5,7 +5,7 @@ Chat with {{ $lecturer->name }}
 @push('styles')
 <style>
 .chat-header {
-        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
+        background:#012147; color:#fff;
         padding:14px 20px; display:flex; align-items:center; gap:14px;
         box-shadow:0 4px 12px rgba(1,33,71,0.2); flex-shrink:0;
 }
@@ -57,7 +57,6 @@ Chat with {{ $lecturer->name }}
 @endpush
 @section('content')
 <div class="chat-header">
-    <a href="{{ route('student.chat.index') }}"><i class="bi bi-arrow-left"></i></a>
     <div class="avatar">{{ strtoupper(substr($lecturer->name, 0, 1)) }}</div>
     <div class="name">{{ $lecturer->name }}</div>
 </div>

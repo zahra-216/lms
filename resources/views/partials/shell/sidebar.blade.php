@@ -8,14 +8,10 @@
             'People' => [
                 ['Students', 'admin.students.index', 'people', ['admin.students.*']],
                 ['Lecturers', 'admin.lecturers.index', 'person-workspace', ['admin.lecturers.*']],
-                ['Enrollments', 'admin.enrollments.index', 'person-plus', ['admin.enrollments.*']],
             ],
             'Academics' => [
                 ['Faculties', 'admin.faculties.index', 'building', ['admin.faculties.*']],
                 ['Courses', 'admin.courses.index', 'mortarboard', ['admin.courses.*']],
-                ['Levels', 'admin.levels.index', 'layers', ['admin.levels.*']],
-                ['Semesters', 'admin.semesters.index', 'calendar3', ['admin.semesters.*']],
-                ['Subjects', 'admin.subjects.index', 'book', ['admin.subjects.*']],
             ],
             'Teaching' => [
                 ['Assignments', 'admin.assignments.browse', 'journal-text', ['admin.assignments.*']],

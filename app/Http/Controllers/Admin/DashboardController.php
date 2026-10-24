@@ -20,7 +20,7 @@ class DashboardController extends Controller
             ['Lecturers', Lecturer::count(), 'person-workspace', route('admin.lecturers.index')],
             ['Faculties', Faculty::count(), 'building', route('admin.faculties.index')],
             ['Courses', Course::count(), 'mortarboard', route('admin.courses.index')],
-            ['Subjects', Subject::count(), 'book', route('admin.subjects.index')],
+            ['Subjects', Subject::count(), 'book', route('admin.faculties.index')],
             ['Marked present today', Attendance::whereDate('date', today())->where('status', 'present')->count(), 'calendar-check', route('admin.attendance.index')],
         ];
 

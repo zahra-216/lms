@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title')
-{{ $student->name }} — Certificates
+{{ $student->name }} - Certificates
 @endsection
 @section('back', route('admin.certificates.index'))
 @push('styles')
@@ -48,7 +48,7 @@
     <div class="page-header">
         <div>
             <h2><i class="bi bi-person-badge"></i> {{ $student->name }}</h2>
-            <small>{{ $student->registration_no }} — Certificates on record</small>
+            <small>{{ $student->registration_no }} - Certificates on record</small>
         </div>
         <a href="{{ route('admin.certificates.create', $student->id) }}" class="add-btn"><i class="bi bi-plus-circle"></i> Add Certificate</a>
     </div>
@@ -63,7 +63,7 @@
             <div class="cert-info">
                 <div class="cert-number">Cert No: {{ $cert->certificate_number }}</div>
                 <div class="cert-meta">{{ $cert->course }}</div>
-                <div class="cert-meta">{{ $cert->course_start->format('d M Y') }} — {{ $cert->course_end->format('d M Y') }}</div>
+                <div class="cert-meta">{{ $cert->course_start->format('d M Y') }} - {{ $cert->course_end->format('d M Y') }}</div>
             </div>
             <span class="status-badge status-{{ $cert->award_status }}">{{ $cert->award_status }}</span>
             <div>

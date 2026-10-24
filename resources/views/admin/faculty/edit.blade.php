@@ -29,9 +29,7 @@ Edit Faculty
 
     <div class="card-box">
         @php
-            $img = $faculty->image
-                ? asset('storage/faculty/'.$faculty->image)
-                : 'https://via.placeholder.com/100';
+            $img = \App\Support\StockImages::forFaculty($faculty);
         @endphp
         <img src="{{ $img }}" class="preview-img">
 

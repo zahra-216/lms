@@ -26,7 +26,7 @@
         <div class="pub-wrap d-flex align-items-center justify-content-between gap-3">
             <a href="{{ url('/') }}" class="pub-brand">
                 <img src="{{ asset('images/logo.jpeg') }}" alt="TT Metro Campus">
-                <span><b>TT METRO CAMPUS</b><small>Learning Portal</small></span>
+                <span><b>TT METRO CAMPUS</b><small>Empowering Minds, Shaping Futures.</small></span>
             </a>
             <div class="pub-links">
                 <a href="{{ url('/') }}" class="{{ request()->is('/') ? 'active' : '' }}">Home</a>
@@ -46,18 +46,7 @@
 
     <main>@yield('content')</main>
 
-    <footer class="pub-footer">
-        <div class="pub-wrap d-flex justify-content-between flex-wrap gap-3">
-            <div>
-                <b>TT Metro Campus</b><br>
-                <span><i class="bi bi-geo-alt"></i> No 11 A1, Galle Road, Mount Lavinia</span>
-            </div>
-            <div class="text-md-end">
-                <a href="{{ route('lecturer.login') }}">Lecturer login</a> &middot; <a href="{{ route('admin.login') }}">Admin login</a><br>
-                <small>&copy; {{ date('Y') }} TT Metro Campus. All rights reserved.</small>
-            </div>
-        </div>
-    </footer>
+    @include('partials.shell.footer')
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     @stack('scripts')

@@ -40,10 +40,7 @@
             @yield('content')
         </main>
 
-        <footer class="lms-footer">
-            &copy; {{ date('Y') }} TT Metro Campus. All rights reserved. &middot;
-            <a href="https://ttmetrocampus.com/" target="_blank" rel="noopener">ttmetrocampus.com</a>
-        </footer>
+        @include('partials.shell.footer')
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

@@ -8,7 +8,7 @@
 <style>
     .course-tile { position:relative; display:flex; align-items:flex-end; min-height:170px; border-radius:var(--radius); overflow:hidden; cursor:pointer; color:#fff; background-size:cover; background-position:center; box-shadow:var(--shadow-card); transition:transform .2s, box-shadow .2s; }
     .course-tile:hover { transform:translateY(-4px); box-shadow:var(--shadow-lift); }
-    .course-tile::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(6,26,51,.15) 0%, rgba(6,26,51,.88) 100%); }
+    .course-tile::before { content:''; position:absolute; inset:0; background:rgba(6,26,51,.58); }
     .course-tile > div { position:relative; padding:16px 18px; width:100%; }
     .course-tile h5 { color:#fff; font-size:15.5px; font-weight:800; margin:0 0 6px; }
     .structure-card { border:1px solid var(--line); border-radius:var(--radius); background:#fff; box-shadow:var(--shadow-card); margin-bottom:14px; padding:18px 22px; }
@@ -38,8 +38,7 @@
         <div class="row g-3 mb-5" id="coursesContainer">
             @foreach ($faculty->courses as $course)
                 @php
-                    $rel = 'storage/courses/'.$course->image;
-                    $img = ($course->image && file_exists(public_path($rel))) ? asset($rel) : asset('images/ttmc.jpeg');
+                    $img = \App\Support\StockImages::forCourse($course);
                 @endphp
                 <div class="col-6 col-md-4 col-xl-3 course-item">
                     <div class="course-tile" style="background-image:url('{{ $img }}')" onclick="openCourseStructure('course-{{ $course->id }}')">

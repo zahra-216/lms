@@ -33,7 +33,7 @@ Quizzes - {{ $subject->name }}
 <div class="container">
     <div class="page-header">
         <h3><i class="bi bi-puzzle"></i> Quizzes</h3>
-        <small>{{ $subject->name }} — Available quizzes for this subject</small>
+        <small>{{ $subject->name }} - Available quizzes for this subject</small>
     </div>
 
     @if($quizzes->count() > 0)

@@ -46,7 +46,7 @@ table.videos-table tbody tr:hover { background:#eef2f9;
     
 
     <div class="page-header">
-        <h2><i class="bi bi-camera-video"></i> {{ $subject->code }} - {{ $subject->name }} — Lecture Videos</h2>
+        <h2><i class="bi bi-camera-video"></i> {{ $subject->code }} - {{ $subject->name }} - Lecture Videos</h2>
         <a href="{{ route('lecturer.videos.create', $subject->id) }}" class="add-btn">
             <i class="bi bi-plus-circle"></i> Add Video
         </a>
@@ -83,7 +83,7 @@ table.videos-table tbody tr:hover { background:#eef2f9;
                         @elseif($video->video_url)
                             <a href="{{ $video->video_url }}" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Open Link</a>
                         @else
-                            —
+                            -
                         @endif
                     </td>
                     <td>

@@ -5,7 +5,7 @@
 @push('styles')
 <style>
 .chat-header {
-        background:linear-gradient(120deg,#012147,#1e3a6e); color:#fff;
+        background:#012147; color:#fff;
         padding:16px 24px; display:flex; align-items:center; gap:14px;
         box-shadow:0 4px 12px rgba(1,33,71,0.2);
 }
@@ -39,7 +39,6 @@
 @endpush
 @section('content')
 <div class="chat-header">
-    <a href="{{ route('admin.chats.index') }}"><i class="bi bi-arrow-left"></i></a>
     <div>
         <div class="name">{{ $student->name }} ↔ {{ $lecturer->name }}</div>
         <div class="sub">Read-only conversation view</div>
@@ -58,6 +57,6 @@
     @empty
         <p class="text-center text-muted">No messages</p>
     @endforelse
-    <div class="readonly-note">Admin view — messages cannot be sent from here</div>
+    <div class="readonly-note">Admin view - messages cannot be sent from here</div>
 </div>
 @endsection

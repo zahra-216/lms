@@ -38,7 +38,7 @@ Edit Recording
             <div class="mb-3">
                 <label class="form-label">YouTube Link or Video ID</label>
                 <input type="text" name="youtube_video_id" class="form-control" value="{{ $recording->youtube_video_id }}" required>
-                <div class="hint">Paste the full YouTube link or just the video ID — either works.</div>
+                <div class="hint">Paste the full YouTube link or just the video ID - either works.</div>
             </div>
             <button type="submit" class="btn-navy">Update Recording</button>
         </form>

@@ -13,7 +13,7 @@
 }
 .course-card:hover { transform:translateY(-5px);
 }
-.course-card::before { content:''; position:absolute; inset:0; background:linear-gradient(180deg, rgba(1,33,71,0) 40%, rgba(1,33,71,0.9) 100%);
+.course-card::before { content:''; position:absolute; inset:0; background:rgba(6,26,51,.58);
 }
 .course-card .card-body { position:absolute; bottom:0; left:0; right:0; padding:14px 16px; z-index:2;
 }
@@ -87,10 +87,9 @@
     <div class="course-grid">
         @foreach($faculty->courses as $course)
         @php
-            $imgPath = $course->image && file_exists(public_path('storage/courses/'.$course->image))
-                ? 'storage/courses/'.$course->image : asset('images/ttmc.jpeg');
+            $imgPath = \App\Support\StockImages::forCourse($course);
         @endphp
-        <div class="course-card" style="background-image:url('{{ asset($imgPath) }}'); background-size:cover; background-position:center;"
+        <div class="course-card" style="background-image:url('{{ $imgPath }}'); background-size:cover; background-position:center;"
              onclick="openCourseStructure('course-{{ $course->id }}')">
             <div class="course-card-actions">
                 <a href="{{ route('admin.courses.edit', $course->id) }}" class="icon-edit" onclick="event.stopPropagation()"><i class="bi bi-pencil"></i></a>

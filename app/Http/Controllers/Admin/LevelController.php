@@ -12,13 +12,6 @@ class LevelController extends Controller
     // ==========================
     // MAIN INDEX PAGE
     // ==========================
-    public function index()
-    {
-        $levels = Level::with('course')->get();
-        $courses = Course::all();
-
-        return view('admin.levels.index', compact('levels','courses'));
-    }
 
     // ==========================
     // STORE NEW LEVEL
@@ -38,30 +31,10 @@ class LevelController extends Controller
     // ==========================
     // EDIT LEVEL
     // ==========================
-    public function edit($id)
-    {
-        $editLevel = Level::findOrFail($id);
-        $levels = Level::with('course')->get();
-        $courses = Course::all();
-
-        return view('admin.levels.index', compact('editLevel','levels','courses'));
-    }
 
     // ==========================
     // UPDATE LEVEL
     // ==========================
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'course_id' => 'required',
-            'name' => 'required'
-        ]);
-
-        $level = Level::findOrFail($id);
-        $level->update($request->all());
-
-        return $this->returnTo(route('admin.levels.index'))->with('success','Updated Successfully');
-    }
 
     // ==========================
     // DELETE LEVEL

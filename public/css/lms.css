@@ -13,6 +13,7 @@
     --brand-500: #2a7fd4;
     --sky: #6eb5ff;
     --sky-soft: #e8f2fd;
+    --bar: #1b6fc4;
     --ink: #0f1f33;
     --muted: #5b6b80;
     --line: #e3eaf3;
@@ -38,14 +39,14 @@ html { scroll-behavior: smooth; }
 body.lms {
     font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
     background: var(--surface);
-    color: var(--ink);
+    color: var(--navy-900);
     margin: 0;
     -webkit-font-smoothing: antialiased;
 }
 /* :where() keeps this rule's specificity at zero so any component (page header, sidebar, banners) can set its own colour */
 :where(body.lms) :is(h1, h2, h3, h4, h5, h6) {
     font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
-    color: var(--navy-900);
+    color: inherit;
     letter-spacing: -.01em;
 }
 :where(body.lms) a { color: var(--brand-600); }
@@ -57,7 +58,7 @@ body.lms {
 
 .lms-sidebar {
     position: fixed; inset: 0 auto 0 0; width: var(--sidebar-w); z-index: 1040;
-    background: linear-gradient(180deg, var(--navy-900) 0%, var(--navy-950) 100%);
+    background: var(--navy-900);
     color: #fff; display: flex; flex-direction: column; overflow-y: auto;
     transition: transform .25s ease;
 }
@@ -77,7 +78,7 @@ body.lms {
 }
 .lms-nav a i { font-size: 17px; width: 20px; text-align: center; opacity: .9; }
 .lms-nav a:hover { background: rgba(255,255,255,.08); color: #fff !important; }
-.lms-nav a.active { background: linear-gradient(90deg, var(--brand-600), var(--brand-700)); color: #fff !important; box-shadow: 0 6px 16px -6px rgba(17,96,180,.8); }
+.lms-nav a.active { background: var(--brand-600); color: #fff !important; box-shadow: 0 6px 16px -6px rgba(17,96,180,.8); }
 .lms-nav a .badge { margin-left: auto; }
 
 .lms-sidebar-foot { padding: 14px 22px 20px; border-top: 1px solid rgba(255,255,255,.08); font-size: 12px; color: rgba(255,255,255,.55); }
@@ -106,7 +107,7 @@ body.lms {
 
 /* ---------- Main ---------- */
 .lms-main { padding: 28px 32px 40px; flex: 1; width: 100%; }
-.lms-main .container { max-width: 1240px; padding: 0; margin: 0 auto; }
+
 .lms-footer { padding: 18px 32px 26px; font-size: 12.5px; color: var(--muted); text-align: center; border-top: 1px solid var(--line); background: #fff; }
 .lms-footer a { color: var(--brand-600); text-decoration: none; }
 
@@ -121,12 +122,11 @@ body.lms {
 /* ---------- Page header ---------- */
 .page-header {
     position: relative; overflow: hidden;
-    background: linear-gradient(120deg, var(--navy-900) 0%, var(--brand-700) 100%); color: #fff;
+    background: var(--navy-900); color: #fff;
     border-radius: 22px; padding: 26px 30px; margin-bottom: 24px;
     box-shadow: 0 16px 40px -16px rgba(10,42,82,.55);
     display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;
 }
-.page-header::after { content: ''; position: absolute; right: -60px; top: -80px; width: 240px; height: 240px; border-radius: 50%; background: rgba(110,181,255,.18); filter: blur(8px); pointer-events: none; }
 .page-header > * { position: relative; z-index: 1; }
 .page-header h1, .page-header h2, .page-header h3, .page-header h4 { color: #fff; margin: 0 0 4px; font-weight: 800; font-size: 24px; }
 .page-header small, .page-header p { color: rgba(255,255,255,.85); opacity: 1; margin: 0; }
@@ -185,7 +185,6 @@ body.lms {
 
 /* ---------- Tables ---------- */
 .table { --bs-table-bg: transparent; margin-bottom: 0; }
-.table thead th, table thead th, .table-light th { background: var(--surface) !important; color: var(--navy-900); font-size: 12px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; border-bottom: 1px solid var(--line); padding: 12px 14px; white-space: nowrap; }
 .table td { padding: 13px 14px; vertical-align: middle; border-color: var(--line); font-size: 14px; }
 .table-hover tbody tr:hover { background: var(--sky-soft); }
 .table-responsive { border-radius: var(--radius); }
@@ -212,7 +211,7 @@ body.lms {
 hr { border-color: var(--line); opacity: 1; }
 
 /* ---------- Auth / public pages ---------- */
-body.lms-guest { background: linear-gradient(135deg, var(--navy-950), var(--navy-800)); min-height: 100vh; }
+body.lms-guest { background: var(--navy-950); min-height: 100vh; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 991.98px) {
@@ -236,10 +235,9 @@ body.lms-guest { background: linear-gradient(135deg, var(--navy-950), var(--navy
 /* ---------- Sign-in pages (layouts/guest) ---------- */
 .auth-shell { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); min-height: 100vh; }
 .auth-side {
-    background: linear-gradient(150deg, var(--navy-950) 0%, var(--navy-800) 100%); color: #fff; padding: 40px 56px;
+    background: var(--navy-950); color: #fff; padding: 40px 56px;
     display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;
 }
-.auth-side::after { content: ''; position: absolute; right: -120px; bottom: -120px; width: 380px; height: 380px; border-radius: 50%; background: rgba(110,181,255,.16); }
 .auth-side h2 { color: #fff; font-size: 38px; line-height: 1.15; font-weight: 800; }
 .auth-side p { color: rgba(255,255,255,.8); font-size: 16px; max-width: 420px; margin-top: 14px; }
 .auth-side small { color: rgba(255,255,255,.55); }
@@ -261,7 +259,7 @@ body.lms-guest { background: linear-gradient(135deg, var(--navy-950), var(--navy
     .auth-shell { grid-template-columns: 1fr; }
     .auth-side { display: none; }
     .auth-mobile-brand { display: flex; }
-    .auth-main { background: linear-gradient(160deg, var(--navy-950), var(--navy-800)); }
+    .auth-main { background: var(--navy-950); }
 }
 
 /* ---------- Public pages (layouts/public) ---------- */
@@ -278,8 +276,7 @@ body.lms-guest { background: linear-gradient(135deg, var(--navy-950), var(--navy
 .pub-links a:hover, .pub-links a.active { background: var(--sky-soft); }
 .pub-footer { background: var(--navy-950); color: rgba(255,255,255,.75); padding: 26px 0; font-size: 14px; margin-top: 56px; }
 .pub-footer a { color: var(--sky) !important; text-decoration: none; }
-.hero-public { background: linear-gradient(135deg, var(--navy-950), var(--navy-800)); color: #fff; padding: 72px 0 90px; position: relative; overflow: hidden; }
-.hero-public::after { content: ''; position: absolute; right: -140px; top: -140px; width: 420px; height: 420px; border-radius: 50%; background: rgba(110,181,255,.14); }
+.hero-public { background: var(--navy-950); color: #fff; padding: 72px 0 90px; position: relative; overflow: hidden; }
 .hero-public h1 { color: #fff; font-size: clamp(32px, 5vw, 52px); font-weight: 800; line-height: 1.1; }
 .hero-public p { color: rgba(255,255,255,.82); font-size: 18px; max-width: 560px; }
 .portal-card { display: block; background: #fff; border: 1px solid var(--line); border-radius: 20px; padding: 26px; text-decoration: none; color: inherit; box-shadow: var(--shadow-card); height: 100%; transition: transform .2s, box-shadow .2s; }
@@ -289,3 +286,71 @@ body.lms-guest { background: linear-gradient(135deg, var(--navy-950), var(--navy
 .portal-card p { color: var(--muted); font-size: 14.5px; margin: 0 0 14px; }
 .portal-card span.go { color: var(--brand-700); font-weight: 700; font-size: 14px; }
 @media (max-width: 991.98px) { .pub-links { display: none; } .hero-public { padding: 48px 0 70px; } }
+
+/* ==========================================================================
+   Consistency layer (overrides older page styles)
+   ========================================================================== */
+
+/* Content uses the full width with a small side padding. */
+.lms-main { padding: 22px 24px 40px; }
+.lms-main .container, .lms-main .container-fluid { max-width: none !important; width: 100%; margin: 0 !important; padding-left: 0 !important; padding-right: 0 !important; }
+.lms-back-row { margin-bottom: 0; }
+@media (max-width: 991.98px) { .lms-main { padding: 18px 14px 32px; } }
+
+/* Tables: one look everywhere - dark header with light text, spaced cells, rounded corners. */
+.lms-main table, .table-wrap table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border: 1px solid var(--line); border-radius: 16px; }
+.lms-main table th, .lms-main table td { padding: 13px 18px; text-align: left; vertical-align: middle; border-bottom: 1px solid var(--line); font-size: 14px; }
+.lms-main table thead th, .lms-main table th {
+    background: var(--navy-800) !important; color: #fff !important; font-size: 12px; font-weight: 700;
+    letter-spacing: .06em; text-transform: uppercase; white-space: nowrap; border-bottom: 0 !important;
+}
+.lms-main table thead tr:first-child th:first-child { border-top-left-radius: 15px; }
+.lms-main table thead tr:first-child th:last-child { border-top-right-radius: 15px; }
+.lms-main table tbody tr:last-child td { border-bottom: 0; }
+.lms-main table tbody tr:last-child td:first-child { border-bottom-left-radius: 15px; }
+.lms-main table tbody tr:last-child td:last-child { border-bottom-right-radius: 15px; }
+.lms-main table tbody tr:hover td { background: var(--sky-soft); }
+.lms-main .table-wrap table, .lms-main .table-responsive table { border: 0; border-radius: 0; }
+.lms-main .table-wrap, .lms-main .table-responsive { border-radius: 16px; }
+.lms-main .table-wrap { overflow: hidden; }
+.lms-main #calendar table, .lms-main .calendar-grid table { border: 0; border-radius: 0; background: transparent; }
+.lms-main #calendar th, .lms-main #calendar td { padding: 8px 0; border: 0; background: transparent !important; color: inherit !important; text-align: center; text-transform: none; letter-spacing: 0; }
+.lms-main #calendar th { color: var(--muted) !important; font-size: 11px; text-transform: uppercase; }
+.lms-main #calendar td.today { background: var(--brand-700) !important; color: #fff !important; }
+.lms-main #calendar tr:hover td { background: transparent; }
+.lms-main #calendar td.today:hover { background: var(--brand-700) !important; }
+
+/* ---------- Footer (all layouts) ---------- */
+.site-footer { background: var(--navy-950); color: rgba(255,255,255,.8); padding: 28px 24px; font-size: 14px; }
+.site-footer .f-grid { display: grid; grid-template-columns: 1.3fr 1fr auto; gap: 28px; align-items: center; }
+.site-footer .f-brand { display: flex; align-items: center; gap: 16px; }
+.site-footer .f-brand img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: #fff; flex-shrink: 0; }
+.site-footer .f-name { display: block; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 24px; font-weight: 800; color: #fff; line-height: 1.15; }
+.site-footer .f-addr { display: block; margin-top: 4px; color: rgba(255,255,255,.75); }
+.site-footer .f-slogan { display: block; font-weight: 700; color: var(--sky); }
+.site-footer .f-phone { display: block; margin-top: 4px; }
+.site-footer .f-rights { text-align: right; color: rgba(255,255,255,.7); font-size: 13px; }
+@media (max-width: 991.98px) { .site-footer .f-grid { grid-template-columns: 1fr; } .site-footer .f-rights { text-align: left; } }
+
+/* ---------- Public pages: same blue bar and navbar as the main website ---------- */
+.pub-topbar { background: var(--bar, #1b6fc4); color: #fff; font-size: 14px; font-weight: 500; padding: 10px 24px; min-height: 44px; display: flex; align-items: center; }
+.pub-topbar .pub-wrap { width: 100%; }
+.pub-nav { height: 84px; padding: 0 24px; display: flex; align-items: center; }
+.pub-nav .pub-wrap { width: 100%; }
+.pub-wrap { max-width: none; margin: 0; padding: 0; }
+.pub-brand img { width: 48px; height: 48px; }
+.pub-brand b { font-size: 26px; }
+.pub-brand small { font-size: 13px; letter-spacing: .02em; }
+@media (min-width: 1536px) { .pub-brand b { font-size: 32px; } }
+.pub-content { padding: 0 24px; }
+.hero-public { padding-left: 24px; padding-right: 24px; }
+.pub-footer { display: none; }
+
+/* action buttons (edit / delete) sit side by side */
+.lms-main td form { display: inline-block; margin: 0; }
+.lms-main td:last-child { white-space: nowrap; }
+
+/* public pages: solid navy hero, small side padding, centred narrow cards */
+.hero-public, .auth-side { background: var(--navy-900) !important; }
+main .pub-wrap { padding-left: 24px; padding-right: 24px; }
+main .pub-wrap[style*="max-width"] { margin-left: auto !important; margin-right: auto !important; }

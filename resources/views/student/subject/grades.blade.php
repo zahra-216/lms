@@ -42,7 +42,7 @@ table.marks-table tbody tr:hover { background:#eef2f9;
 
     <div class="page-header">
         <div>
-            <h2><i class="bi bi-bar-chart-line"></i> {{ $subject->code }} — {{ $subject->name }}</h2>
+            <h2><i class="bi bi-bar-chart-line"></i> {{ $subject->code }} - {{ $subject->name }}</h2>
             <small>Grades</small>
         </div>
         <i class="bi bi-clipboard-data" style="font-size:44px; opacity:0.85;"></i>

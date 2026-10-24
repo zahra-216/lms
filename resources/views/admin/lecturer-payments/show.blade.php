@@ -175,7 +175,7 @@ table.history { display:block; overflow-x:auto; white-space:nowrap;
                                 </span>
                             </td>
                             <td>{{ $payment->date }}</td>
-                            <td>{{ $payment->total_hours ?? '—' }}</td>
+                            <td>{{ $payment->total_hours ?? '-' }}</td>
                             <td>{{ ucfirst(str_replace('_', ' ', $payment->payment_type)) }}</td>
                             <td>{{ number_format($payment->rate_amount, 2) }}</td>
                             <td>{{ number_format($payment->total_payment, 2) }}</td>
@@ -183,9 +183,9 @@ table.history { display:block; overflow-x:auto; white-space:nowrap;
                             <td class="{{ $payment->payment_due > 0 ? 'due-positive' : 'due-zero' }}">
                                 {{ number_format($payment->payment_due, 2) }}
                             </td>
-                            <td>{{ $payment->paid_date ?? '—' }}</td>
-                            <td>{{ $payment->invoice_no ?? '—' }}</td>
-                            <td>{{ $payment->remarks ?? '—' }}</td>
+                            <td>{{ $payment->paid_date ?? '-' }}</td>
+                            <td>{{ $payment->invoice_no ?? '-' }}</td>
+                            <td>{{ $payment->remarks ?? '-' }}</td>
                             <td>
                                 <a href="{{ route('admin.lecturer-payments.edit', $payment->id) }}" class="action-btn btn-edit">
                                     <i class="bi bi-pencil"></i>

@@ -7,6 +7,14 @@ Students
 @endpush
 @push('styles')
 <style>
+    .level-pick { width:100%; background:#fff; border:2px solid var(--line); border-radius:18px; padding:20px; text-align:left; display:flex; flex-direction:column; gap:4px; box-shadow:var(--shadow-card); transition:all .15s; cursor:pointer; }
+    .level-pick:hover { border-color:var(--brand-500); transform:translateY(-2px); }
+    .level-pick.active { border-color:var(--brand-700); background:var(--sky-soft); }
+    .level-pick .lp-icon { width:46px; height:46px; border-radius:14px; background:var(--sky-soft); color:var(--brand-700); display:grid; place-items:center; font-size:20px; margin-bottom:8px; }
+    .level-pick.active .lp-icon { background:#fff; }
+    .level-pick .lp-name { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:19px; color:var(--navy-900); }
+    .level-pick .lp-count { color:var(--muted); font-size:13.5px; font-weight:600; }
+
 .search-box { max-width:420px; margin:0 auto 25px;
 }
 .search-box .form-control { border-radius:10px 0 0 10px;
@@ -78,18 +86,29 @@ tbody tr:nth-child(even) { background:#f8fafc;
         </div>
     </form>
 
-    @php $levelIcons = ['Diploma' => 'fa-certificate', 'HND' => 'fa-graduation-cap', 'Top-up' => 'fa-arrow-up', 'Degree' => 'fa-award']; @endphp
+    @php
+        $levelIcons = ['Diploma' => 'fa-certificate', 'HND' => 'fa-graduation-cap', 'Top-up' => 'fa-arrow-up', 'Degree' => 'fa-award'];
+        $firstWithStudents = collect($grouped)->filter(fn ($f) => $f->flatten(1)->flatten(1)->count() > 0)->keys()->first() ?? array_key_first($grouped);
+    @endphp
 
-    @foreach($grouped as $levelName => $faculties)
-        @php $levelId = \Illuminate\Support\Str::slug($levelName); @endphp
-        <div class="level-card">
-            <div class="level-header" onclick="toggleBlock('level-{{ $levelId }}', this)">
-                <span><i class="fa {{ $levelIcons[$levelName] ?? 'fa-layer-group' }}"></i> {{ $levelName }}
-                    <span class="badge bg-light text-dark ms-2">{{ $faculties->flatten(1)->flatten(1)->count() }} students</span>
-                </span>
-                <i class="fa fa-chevron-down chevron"></i>
+    <div class="row g-3 mb-4" id="levelCards">
+        @foreach ($grouped as $levelName => $faculties)
+            @php $count = $faculties->flatten(1)->flatten(1)->count(); @endphp
+            <div class="col-6 col-lg-3">
+                <button type="button" class="level-pick {{ $levelName === $firstWithStudents ? 'active' : '' }}" data-level="level-{{ \Illuminate\Support\Str::slug($levelName) }}">
+                    <span class="lp-icon"><i class="fa {{ $levelIcons[$levelName] ?? 'fa-layer-group' }}"></i></span>
+                    <span class="lp-name">{{ $levelName }}</span>
+                    <span class="lp-count">{{ $count }} {{ \Illuminate\Support\Str::plural('student', $count) }}</span>
+                </button>
             </div>
-            <div class="level-body" id="level-{{ $levelId }}">
+        @endforeach
+    </div>
+
+
+    @foreach ($grouped as $levelName => $faculties)
+        @php $levelId = \Illuminate\Support\Str::slug($levelName); @endphp
+        <div class="level-panel" id="level-{{ $levelId }}" @if ($levelName !== $firstWithStudents) hidden @endif>
+            <div>
                 @forelse($faculties as $facultyName => $courses)
                     @php $facultyId = $levelId.'-'.\Illuminate\Support\Str::slug($facultyName); @endphp
                     <div class="faculty-block">
@@ -132,7 +151,7 @@ tbody tr:nth-child(even) { background:#f8fafc;
                                                 <td>{{ $student->name }}</td>
                                                 <td>{{ $student->email }}</td>
                                                 <td>{{ $student->branch }}</td>
-                                                <td>{{ $student->semester->name ?? '—' }}</td>
+                                                <td>{{ $student->semester->name ?? '-' }}</td>
                                                 <td>
                                                     <a href="{{ route('admin.students.edit', $student->id) }}" class="btn-sm-action edit-btn">
                                                         <i class="fa fa-edit"></i>
@@ -159,7 +178,7 @@ tbody tr:nth-child(even) { background:#f8fafc;
                                                 <form method="POST" action="{{ route('admin.students.bulk.semester.update') }}" class="bulk-sem-form" data-course="{{ $courseSlug }}">
                                                     @csrf
                                                     <div class="modal-header">
-                                                        <h5>Change Semester — {{ $courseName }}</h5>
+                                                        <h5>Change Semester - {{ $courseName }}</h5>
                                                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                                                     </div>
                                                     <div class="modal-body">
@@ -186,7 +205,6 @@ tbody tr:nth-child(even) { background:#f8fafc;
                 @empty
                     <p class="empty-note">No students found under {{ $levelName }}.</p>
                 @endforelse
-            </div>
         </div>
     @endforeach
 
@@ -194,6 +212,13 @@ tbody tr:nth-child(even) { background:#f8fafc;
 @endsection
 @push('scripts')
 <script>
+document.querySelectorAll('.level-pick').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+        document.querySelectorAll('.level-pick').forEach(function (b) { b.classList.toggle('active', b === btn); });
+        document.querySelectorAll('.level-panel').forEach(function (p) { p.hidden = p.id !== btn.dataset.level; });
+    });
+});
+
 function toggleBlock(id, headerEl) {
     const el = document.getElementById(id);
     el.classList.toggle('show');

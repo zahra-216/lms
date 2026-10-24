@@ -76,7 +76,7 @@ table.gl-table tbody tr:nth-child(even) { background:#f8fafc;
                             @if($row->check_in)
                                 <span class="badge-in">{{ \Carbon\Carbon::parse($row->check_in)->format('h:i A') }}</span>
                             @else
-                                <span class="badge-missing">—</span>
+                                <span class="badge-missing">-</span>
                             @endif
                         </td>
                         <td>

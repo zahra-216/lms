@@ -107,7 +107,7 @@ table.sub-table tbody tr:hover { background:#fff;
 
     <div class="page-header">
         <div>
-            <h2><i class="bi bi-journal-text me-2"></i>{{ $subject->code }} — {{ $subject->name }}</h2>
+            <h2><i class="bi bi-journal-text me-2"></i>{{ $subject->code }} - {{ $subject->name }}</h2>
             <div class="subtitle">Assignments</div>
         </div>
         <a href="{{ route('lecturer.assignments.create', $subject->id) }}" class="add-btn">
@@ -186,7 +186,7 @@ table.sub-table tbody tr:hover { background:#fff;
                                 <tbody>
                                     @foreach($assignment->submissions as $submission)
                                         @php
-                                            $isLate = null; $durationText = '—';
+                                            $isLate = null; $durationText = '-';
                                             if ($assignment->due_date && $submission->submitted_at) {
                                                 $isLate = $submission->submitted_at->gt($assignment->due_date);
                                                 $diff = $submission->submitted_at->diff($assignment->due_date);
@@ -200,17 +200,17 @@ table.sub-table tbody tr:hover { background:#fff;
                                         <tr>
                                             <td>{{ $submission->student->registration_no ?? 'N/A' }}</td>
                                             <td>{{ $submission->student->name ?? 'Unknown student' }}</td>
-                                            <td>{{ $submission->submitted_at?->format('d M Y, h:i A') ?? '—' }}</td>
+                                            <td>{{ $submission->submitted_at?->format('d M Y, h:i A') ?? '-' }}</td>
                                             <td>
                                                 @if($isLate === null)
-                                                    <span class="text-muted">—</span>
+                                                    <span class="text-muted">-</span>
                                                 @elseif($isLate)
                                                     <span class="late-badge">Late by {{ $durationText }}</span>
                                                 @else
                                                     <span class="ontime-badge">Early by {{ $durationText }}</span>
                                                 @endif
                                             </td>
-                                            <td>{{ $submission->comment ?? '—' }}</td>
+                                            <td>{{ $submission->comment ?? '-' }}</td>
                                             <td>
                                                 @if($submission->file)
                                                     <a href="{{ asset('storage/' . $submission->file) }}" target="_blank" class="icon-btn" title="View">

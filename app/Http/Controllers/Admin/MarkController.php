@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers\Admin;
 
+use App\Support\AcademicTree;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Mark;
@@ -106,14 +107,16 @@ class MarkController extends Controller
     }
 
     // INDEX PAGE
-    public function index()
+    public function index(Request $request)
     {
-        $marks = Mark::with(['student','assignment.subject'])
-            ->latest()
-            ->get();
-
-        return view('admin.marks.index', compact('marks'));
+        return view('admin.academic-browser', [
+            'title' => 'Marks',
+            'subtitle' => 'Pick a faculty, course, level and semester, then a subject to see and edit its marks.',
+            'icon' => 'award',
+            'tree' => AcademicTree::build($request, fn ($subject) => route('admin.subjects.grades', $subject->id)),
+        ]);
     }
+
 
     private function grade($marks)
     {

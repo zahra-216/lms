@@ -14,14 +14,6 @@ class SemesterController extends Controller
     // ==========================
     // INDEX
     // ==========================
-    public function index()
-    {
-        $semesters = Semester::with(['level', 'course'])->get();
-        $levels = Level::all();
-        $courses = Course::all();
-
-        return view('admin.semesters.index', compact('semesters', 'levels', 'courses'));
-    }
 
     // ==========================
     // STORE
@@ -46,38 +38,10 @@ class SemesterController extends Controller
     // ==========================
     // EDIT
     // ==========================
-    public function edit($id)
-    {
-        $editSemester = Semester::findOrFail($id);
-        $semesters = Semester::with(['level', 'course'])->get();
-        $levels = Level::all();
-        $courses = Course::all();
-
-        return view('admin.semesters.index', compact('editSemester','semesters','levels','courses'));
-    }
 
     // ==========================
     // UPDATE
     // ==========================
-    public function update(Request $request, $id)
-    {
-        $request->validate([
-            'level_id' => 'required|exists:levels,id',
-            'course_id' => 'required|exists:courses,id',
-            'name' => 'required|string|max:255',
-        ]);
-
-        $semester = Semester::findOrFail($id);
-
-        $semester->update([
-            'level_id' => $request->level_id,
-            'course_id' => $request->course_id,
-            'name' => $request->name,
-        ]);
-
-        return $this->returnTo(route('admin.semesters.index'))
-            ->with('success','Semester Updated Successfully!');
-    }
 
     // ==========================
     // DELETE

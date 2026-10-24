@@ -22,7 +22,7 @@ My Profile
     $initials = collect(preg_split('/\s+/', trim($student->name)))->filter()->take(2)->map(fn ($w) => mb_strtoupper(mb_substr($w, 0, 1)))->implode('');
     $online = $student->last_seen_at && \Carbon\Carbon::parse($student->last_seen_at)->diffInMinutes() < 5;
 @endphp
-<div class="container" style="max-width:900px">
+<div class="container">
     <div class="page-header flex-column text-center justify-content-center py-4">
         <form id="photoForm" action="{{ route('student.photo.update') }}" method="POST" enctype="multipart/form-data">
             @csrf

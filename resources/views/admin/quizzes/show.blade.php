@@ -128,7 +128,7 @@
                 @endphp
                 <div class="qtype-row"><span class="qtype-badge qtype-mc">MC</span> {{ $mcCount }} Multiple Choice</div>
                 <div class="qtype-row"><span class="qtype-badge qtype-tf">T/F</span> {{ $tfCount }} True/False</div>
-                <div class="qtype-row"><span class="qtype-badge qtype-sa">SA</span> {{ $saCount }} Short Answer</div>
+                <div class="qtype-row"><span class="qtype-badge qtype-sa">SA</span> {{ $saCount }} Short / Long Answer</div>
             </div>
         </div>
 
@@ -230,7 +230,7 @@
                                 @if($submission->isGraded())
                                     <strong>{{ number_format($submission->getTotalScore(), 2) }} / {{ $quiz->total_points }}</strong>
                                 @else
-                                    <span class="text-muted">—</span>
+                                    <span class="text-muted">-</span>
                                 @endif
                             </td>
                             <td>

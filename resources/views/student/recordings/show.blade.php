@@ -15,7 +15,6 @@
 @section('content')
     <div class="navy-header">
         <div class="container">
-            <a href="{{ route('student.recordings.subject', $subject->id) }}" class="text-white text-decoration-none"><i class="bi bi-arrow-left"></i> Back</a>
             <h4 class="mt-2 mb-0">{{ $recording->title }}</h4>
         </div>
     </div>

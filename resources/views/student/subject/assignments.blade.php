@@ -104,7 +104,7 @@
 
     <div class="page-header">
         <div>
-            <h2><i class="bi bi-journal-text me-2"></i>{{ $subject->code }} — {{ $subject->name }}</h2>
+            <h2><i class="bi bi-journal-text me-2"></i>{{ $subject->code }} - {{ $subject->name }}</h2>
             <div class="subtitle">Assignments</div>
         </div>
         <i class="bi bi-clipboard-check icon-deco"></i>
@@ -193,7 +193,7 @@
                                 <button class="btn-navy btn btn-sm">Replace File</button>
                             </form>
                         @else
-                            <div class="locked-note"><i class="bi bi-lock-fill"></i> Deadline passed — submission is locked.</div>
+                            <div class="locked-note"><i class="bi bi-lock-fill"></i> Deadline passed - submission is locked.</div>
                         @endif
                     </div>
 
@@ -210,7 +210,7 @@
                 @else
                     <div class="deadline-warning">
                         <i class="bi bi-exclamation-triangle-fill"></i>
-                        Deadline passed — late submissions are not allowed for this assignment.
+                        Deadline passed - late submissions are not allowed for this assignment.
                     </div>
                 @endif
             </div>

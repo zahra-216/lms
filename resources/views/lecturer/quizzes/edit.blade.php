@@ -197,7 +197,7 @@ Edit Quiz - {{ $quiz->title }}
                         @elseif($question->type === 'true_false')
                             <p class="option-line option-correct mb-0">Correct: {{ ucfirst($question->correct_answer) }}</p>
                         @else
-                            <p class="option-line mb-0">Short answer (manual grading)</p>
+                            <p class="option-line mb-0">Short or long written answer (the lecturer marks it)</p>
                         @endif
                     </div>
                     @endforeach
@@ -217,7 +217,7 @@ Edit Quiz - {{ $quiz->title }}
                             <option value="">-- Select Type --</option>
                             <option value="multiple_choice">Multiple Choice</option>
                             <option value="true_false">True/False</option>
-                            <option value="short_answer">Short Answer</option>
+                            <option value="short_answer">Short / Long Answer</option>
                         </select>
                     </div>
 
@@ -233,7 +233,7 @@ Edit Quiz - {{ $quiz->title }}
 
                     <div id="mcSection" style="display:none;">
                         <div class="type-section">
-                            <label class="form-label">Answer Options — select the radio for the correct one <span class="text-danger">*</span></label>
+                            <label class="form-label">Answer Options - select the radio for the correct one <span class="text-danger">*</span></label>
                             <div id="answersContainer">
                                 <div class="option-row">
                                     <input type="radio" name="correct_answer_index" value="0">
@@ -308,7 +308,7 @@ Edit Quiz - {{ $quiz->title }}
 
                     @if($question->type === 'multiple_choice')
                         <div class="type-section">
-                            <label class="form-label">Answer Options — select the radio for the correct one</label>
+                            <label class="form-label">Answer Options - select the radio for the correct one</label>
                             @foreach($question->answers as $index => $answer)
                             <div class="option-row">
                                 <input type="radio" name="correct_answer_index" value="{{ $index }}" {{ $answer->is_correct ? 'checked' : '' }}>

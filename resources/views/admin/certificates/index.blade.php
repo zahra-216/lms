@@ -60,7 +60,7 @@ tbody tr:hover { background:#eef2f9;
                     <tr>
                         <td>{{ $student->registration_no }}</td>
                         <td>{{ $student->name }}</td>
-                        <td>{{ $student->course->name ?? '—' }}</td>
+                        <td>{{ $student->course->name ?? '-' }}</td>
                         <td><span class="cert-badge">{{ $student->certificates_count }}</span></td>
                         <td>
                             <a href="{{ route('admin.certificates.student', $student->id) }}" class="manage-btn">

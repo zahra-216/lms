@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Support\AcademicTree;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Assignment;
@@ -164,24 +165,16 @@ class AssignmentController extends Controller
             ->with('success', 'Assignment deleted!');
     }
 
-    public function browse()
+    public function browse(Request $request)
     {
-        $subjects = Subject::with(['course.faculty', 'level', 'semester'])->get();
-
-        $grouped = $subjects
-            ->groupBy(function ($s) { return optional(optional($s->course)->faculty)->name ?? 'Unassigned Faculty'; })
-            ->map(function ($facultySubjects) {
-                return $facultySubjects->groupBy(function ($s) { return optional($s->course)->name ?? 'Unassigned Course'; })
-                    ->map(function ($courseSubjects) {
-                        return $courseSubjects->groupBy(function ($s) { return optional($s->level)->name ?? 'Unassigned Level'; })
-                            ->map(function ($levelSubjects) {
-                                return $levelSubjects->groupBy(function ($s) { return optional($s->semester)->name ?? 'Unassigned Semester'; });
-                            });
-                    });
-            });
-
-        return view('admin.assignments.browse', compact('grouped'));
+        return view('admin.academic-browser', [
+            'title' => 'Assignments',
+            'subtitle' => 'Pick a faculty, course, level and semester, then a subject to see its assignments.',
+            'icon' => 'journal-text',
+            'tree' => AcademicTree::build($request, fn ($subject) => route('admin.subjects.assignments.index', $subject->id)),
+        ]);
     }
+
 
     // SUBMISSIONS
     public function submissions($id)
@@ -199,7 +192,7 @@ class AssignmentController extends Controller
 
         $submission->load('assignment');
         if ($submission->assignment && now()->gt($submission->assignment->due_date)) {
-            return back()->with('error', 'Deadline has passed — you can no longer edit your submission.');
+            return back()->with('error', 'Deadline has passed - you can no longer edit your submission.');
         }
 
         $request->validate([
@@ -225,7 +218,7 @@ class AssignmentController extends Controller
 
         $submission->load('assignment');
         if ($submission->assignment && now()->gt($submission->assignment->due_date)) {
-            return back()->with('error', 'Deadline has passed — you can no longer delete your submission.');
+            return back()->with('error', 'Deadline has passed - you can no longer delete your submission.');
         }
 
         if ($submission->file) {

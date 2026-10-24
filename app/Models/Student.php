@@ -80,4 +80,10 @@ class Student extends Authenticatable
         return $this->qr_token;
     }
 
+
+    /** Branch names saved with a long dash are shown with a short hyphen. */
+    public function getBranchAttribute($value)
+    {
+        return $value === null ? null : str_replace(["\u{2013}", "\u{2014}"], '-', $value);
+    }
 }

@@ -106,15 +106,15 @@ table.lr-table tbody tr:hover { background:#eef2f9;
                             @forelse($modules as $subj)
                                 {{ $subj->code }} - {{ $subj->name }}<br>
                             @empty
-                                —
+                                -
                             @endforelse
                         </td>
-                        <td>{{ $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '—' }}</td>
-                        <td>{{ $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '—' }}</td>
-                        <td>{{ $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '—' }}</td>
-                        <td>{{ $first->duration ?? '—' }}</td>
-                        <td>{{ $first->lecturer->name ?? '—' }}</td>
-                        <td>{{ $first->content_covered ?? '—' }}</td>
+                        <td>{{ $first->date ? \Carbon\Carbon::parse($first->date)->format('d M Y') : '-' }}</td>
+                        <td>{{ $first->start_time ? \Carbon\Carbon::parse($first->start_time)->format('h:i A') : '-' }}</td>
+                        <td>{{ $first->end_time ? \Carbon\Carbon::parse($first->end_time)->format('h:i A') : '-' }}</td>
+                        <td>{{ $first->duration ?? '-' }}</td>
+                        <td>{{ $first->lecturer->name ?? '-' }}</td>
+                        <td>{{ $first->content_covered ?? '-' }}</td>
                         <td>
                             @if($first->content_covered && $first->date)
                                 <span class="badge-complete">Complete</span>
@@ -122,7 +122,7 @@ table.lr-table tbody tr:hover { background:#eef2f9;
                                 <span class="badge-pending">Pending</span>
                             @endif
                         </td>
-                        <td>{{ $first->remarks ?? '—' }}</td>
+                        <td>{{ $first->remarks ?? '-' }}</td>
                         <td>
                             <div class="actions-cell">
                                 <a href="{{ route('admin.lecture-records.edit', $idsCsv) }}" class="icon-btn" title="Edit">

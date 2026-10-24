@@ -26,7 +26,6 @@ use App\Http\Controllers\Admin\{
     SemesterController,
     SubjectController,
     NoteController,
-    EnrollmentController,
     AssignmentController,
     SubmissionController
 };
@@ -221,7 +220,7 @@ Route::prefix('lecturer')->group(function () {
             Route::post('/subject/{subject}/quizzes/{quiz}/submissions/{submission}/grades', [App\Http\Controllers\LecturerQuizController::class, 'saveGrades'])
                 ->name('quizzes.submissions.saveGrades');
 
-            // Lecture Records — read-only history + add content
+            // Lecture Records - read-only history + add content
             Route::get('/lecture-records', [App\Http\Controllers\LecturerLectureRecordController::class, 'index'])
                 ->name('lecture-records.index');
 
@@ -361,7 +360,7 @@ Route::prefix('student')->name('student.')->middleware(['student.auth', 'student
     })->name('notification.readAll');
 });
 
-// Not student-prefixed in URL — left top-level to preserve exact path
+// Not student-prefixed in URL - left top-level to preserve exact path
 Route::post('/assignment/submit', [AssignmentController::class, 'submit'])
     ->name('assignment.submit')
     ->middleware('student.auth');
@@ -374,7 +373,7 @@ Route::delete('/assignment/submission/{submission}', [AssignmentController::clas
 
 /*
 |--------------------------------------------------------------------------
-| Admin Routes — Public (no auth middleware)
+| Admin Routes - Public (no auth middleware)
 |--------------------------------------------------------------------------
 */
 
@@ -395,7 +394,7 @@ Route::prefix('admin')->group(function () {
 
 /*
 |--------------------------------------------------------------------------
-| Admin Routes — Protected (auth:admin)
+| Admin Routes - Protected (auth:admin)
 |--------------------------------------------------------------------------
 */
 
@@ -419,9 +418,9 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::resource('lecturers', LecturerController::class)->except(['show']);
     Route::resource('faculties', FacultyController::class)->except(['show']);
     Route::resource('courses', CourseController::class)->except(['show']);
-    Route::resource('levels', LevelController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
-    Route::resource('semesters', SemesterController::class)->only(['index', 'store', 'edit', 'update', 'destroy']);
-    Route::resource('subjects', SubjectController::class)->only(['index', 'show', 'store', 'edit', 'update', 'destroy']);
+    Route::resource('levels', LevelController::class)->only(['store', 'destroy']);
+    Route::resource('semesters', SemesterController::class)->only(['store', 'destroy']);
+    Route::resource('subjects', SubjectController::class)->only(['show', 'store', 'edit', 'update', 'destroy']);
 
     Route::get('/students/{id}/qr', [StudentController::class, 'showQr'])
         ->name('students.qr');
@@ -472,22 +471,6 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
 
     Route::get('/semester/{id}/subjects', [SemesterController::class, 'getSubjects'])
         ->name('semester.subjects');
-
-    // Enrollments (pending removal)
-    Route::get('enrollments/export/pdf', [EnrollmentController::class, 'exportPdf'])
-        ->name('enrollments.pdf');
-    Route::get('enrollments', [EnrollmentController::class, 'index'])
-        ->name('enrollments.index');
-    Route::get('enrollments/create', [EnrollmentController::class, 'create'])
-        ->name('enrollments.create');
-    Route::post('enrollments', [EnrollmentController::class, 'store'])
-        ->name('enrollments.store');
-    Route::get('enrollments/{id}/edit', [EnrollmentController::class, 'edit'])
-        ->name('enrollments.edit');
-    Route::put('enrollments/{id}', [EnrollmentController::class, 'update'])
-        ->name('enrollments.update');
-    Route::delete('enrollments/{id}', [EnrollmentController::class, 'destroy'])
-        ->name('enrollments.delete');
 
     // Notes / Assignments / Grades / Recordings (nested under subjects/{subject})
     Route::prefix('subjects/{subject}')->name('subjects.')->group(function () {

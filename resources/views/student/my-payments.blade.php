@@ -77,8 +77,8 @@ table.marks-table tbody tr:hover { background:#eef2f9;
                         <td>{{ ucfirst(str_replace('_', ' ', $payment->type_of_payment)) }}</td>
                         <td>{{ number_format($payment->amount, 2) }}</td>
                         <td>{{ $payment->date }}</td>
-                        <td>{{ $payment->invoice_no ?? '—' }}</td>
-                        <td>{{ $payment->remarks ?? '—' }}</td>
+                        <td>{{ $payment->invoice_no ?? '-' }}</td>
+                        <td>{{ $payment->remarks ?? '-' }}</td>
                     </tr>
                 @empty
                     <tr><td colspan="5" class="empty-state">No payments recorded yet.</td></tr>

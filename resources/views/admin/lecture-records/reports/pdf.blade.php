@@ -15,7 +15,7 @@
 <body>
     @include('partials.pdf-header')
 
-    <h2>Lecture Report — {{ $lecturer->name }}</h2>
+    <h2>Lecture Report - {{ $lecturer->name }}</h2>
     <div class="meta">{{ $month->format('F Y') }}</div>
 
     <table>
@@ -31,12 +31,12 @@
         <tbody>
             @forelse($grouped as $group)
                 <tr>
-                    <td>{{ $group['content'] ?: '—' }}</td>
+                    <td>{{ $group['content'] ?: '-' }}</td>
                     <td class="modules-cell">
                         @forelse($group['modules'] as $mod)
                             {{ $mod }}@if(!$loop->last)<br>@endif
                         @empty
-                            —
+                            -
                         @endforelse
                     </td>
                     <td>
@@ -46,7 +46,7 @@
                         @forelse($uniqueDates as $date)
                             {{ \Carbon\Carbon::parse($date)->format('d M Y') }}@if(!$loop->last)<br>@endif
                         @empty
-                            —
+                            -
                         @endforelse
                     </td>
                     <td>
@@ -56,7 +56,7 @@
                         @forelse($uniqueDurations as $duration)
                             {{ $duration }}@if(!$loop->last)<br>@endif
                         @empty
-                            —
+                            -
                         @endforelse
                     </td>
                     <td>
@@ -66,7 +66,7 @@
                         @forelse($uniqueRemarks as $remark)
                             {{ $remark }}@if(!$loop->last)<br>@endif
                         @empty
-                            —
+                            -
                         @endforelse
                     </td>
                 </tr>

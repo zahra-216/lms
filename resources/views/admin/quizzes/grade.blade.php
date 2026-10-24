@@ -71,7 +71,7 @@ Grade Submission - {{ $quiz->title }}
                         @if($submission->submitted_at)
                             {{ $submission->started_at->diffInMinutes($submission->submitted_at) }} min
                         @else
-                            —
+                            -
                         @endif
                     </span>
                 </div>

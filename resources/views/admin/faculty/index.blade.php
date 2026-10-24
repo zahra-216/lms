@@ -49,10 +49,7 @@ Faculties
     <div class="faculty-grid">
         @foreach($faculties as $faculty)
             @php
-                $relativePath = 'storage/faculty/'.$faculty->image;
-                $imgPath = ($faculty->image && file_exists(public_path($relativePath)))
-                    ? asset($relativePath)
-                    : asset('images/ttmc.jpeg');
+                $imgPath = \App\Support\StockImages::forFaculty($faculty);
             @endphp
             <div class="faculty-card">
                 <a href="{{ route('admin.faculties.courses', $faculty->id) }}" class="faculty-card-link" aria-label="Manage {{ $faculty->name }}"></a>

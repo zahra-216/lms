@@ -56,7 +56,7 @@ Add Student
                 <label class="form-label">Branch</label>
                 <select name="branch" class="form-select" required>
                     <option value="">Select Branch</option>
-                    <option value="Head Office – Mount Lavinia">Head Office – Mount Lavinia</option>
+                    <option value="Head Office - Mount Lavinia">Head Office - Mount Lavinia</option>
                     <option value="Sammanthurai Branch">Sammanthurai Branch</option>
                     <option value="Batticaloa Branch">Batticaloa Branch</option>
                     <option value="Trincomalee Branch">Trincomalee Branch</option>

@@ -7,7 +7,7 @@ Branch: `redesign-and-fixes`. This page records what was found in the review, wh
 | Step | What happens |
 |---|---|
 | Lecturer / admin creates a quiz | Title, duration (minutes), total points, max attempts, grading type (`automatic`, `manual`, `both`), start and end date, "show correct answers" switch. Questions are added on the edit page. A quiz **cannot be edited or deleted once its start date has passed**. |
-| Question types | `multiple_choice` (one correct option), `true_false`, `short_answer` (written). |
+| Question types | `multiple_choice` (one correct option), `true_false`, `short_answer` (written: short or long answers). |
 | Student starts | Allowed while the quiz is published, started and not ended, and attempts used < max attempts. The attempt records `started_at`; the deadline is `started_at + duration`. |
 | Student answers | Choice questions: pick an option. Written questions: a large text box. **Long answers are accepted**: the database column is `TEXT` (about 65,000 characters) and validation allows up to 50,000 characters. |
 | Submit / time out | The page counts down and submits by itself at 0:00. Blank answers are allowed. The **server enforces the limit too**: answers arriving more than 60 seconds after the deadline are not accepted. |
@@ -79,3 +79,15 @@ Announcements per course; discussion forum; assignment feedback and re-submissio
 * A crawler signs in as admin, lecturer and student on a copy of the database and opens every page: **137 pages, 0 errors** (the remaining 26 "not found" results are sample records that do not exist in the test data).
 * Quiz scenarios (blank answers on time-out, 30,000-character written answer, late submission, expired attempt, wrong answer id): 10 / 10.
 * Upload rules and delete-returns-to-list: 5 / 5. Edit-returns-to-list: 2 / 2.
+
+## 8. Second review round (look and navigation)
+
+* Solid colours only (no gradients). Table headers are dark with light text; every table has spaced cells and rounded corners.
+* Content uses the full width with a small side padding; the Back button sits at the left edge. One Back button per page (the extra arrows in the chat headers were removed).
+* Public pages use the same blue bar, navbar and footer layout as the main website. The footer shows logo, campus name, address, slogan, phone and "all rights reserved".
+* Removed: Enrollments, and the separate Levels, Semesters and Subjects list pages and addresses (add, delete and edit them from the Faculties page; subject editing has its own small page).
+* Attendance, Assignments and Marks use one shared card browser (faculty -> course -> level -> semester -> subject) with search. See `App\Support\AcademicTree`.
+* Students page: four white level cards instead of long dark bars.
+* Faculty and course cards use matching pictures (`public/images/courses`, taken from the website's own images) through `App\Support\StockImages`.
+* Chat: search box for finding a lecturer. Quiz wording: "Short / Long Answer".
+* Long dashes replaced by short hyphens (code, views and displayed branch names).

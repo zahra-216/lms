@@ -67,11 +67,9 @@ table.course-table { display:block; overflow-x:auto; white-space:nowrap;
                 <tr>
                     <td>
                         @php
-                            $imgPath = $course->image && file_exists(storage_path('app/public/courses/'.$course->image))
-                                       ? 'storage/courses/'.$course->image
-                                       : 'https://via.placeholder.com/80x60?text=No+Image';
+                            $imgPath = \App\Support\StockImages::forCourse($course);
                         @endphp
-                        <img src="{{ asset($imgPath) }}" class="course-thumb" alt="{{ $course->name }}">
+                        <img src="{{ $imgPath }}" class="course-thumb" alt="{{ $course->name }}">
                     </td>
                     <td>{{ $course->code }}</td>
                     <td>{{ $course->name }}</td>

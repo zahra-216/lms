@@ -77,15 +77,6 @@ class SubjectController extends Controller
         };
     }
 
-    public function index()
-    {
-        $subjects = Subject::with(['course','level','semester'])->paginate(10);
-        $courses = Course::all();
-        $levels = Level::all();
-        $semesters = Semester::all();
-
-        return view('admin.subjects.index', compact('subjects','courses','levels','semesters'));
-    }
 
     public function store(Request $request)
     {
@@ -97,39 +88,32 @@ class SubjectController extends Controller
             'name'=>'required',
         ]);
 
-        Subject::create($request->all());
+        Subject::create($request->only(['course_id', 'level_id', 'semester_id', 'code', 'name', 'credits']));
 
         return redirect()->back()->with('success','Subject added successfully!');
     }
 
     public function edit(Subject $subject)
     {
-        $subjects = Subject::with(['course','level','semester'])->paginate(10);
-        $courses = Course::all();
-        $levels = Level::where('course_id',$subject->course_id)->get();
-        $semesters = Semester::where('level_id',$subject->level_id)->get();
+        $subject->load(['course.faculty', 'level', 'semester']);
 
-        return view('admin.subjects.index', [
-            'editSubject'=>$subject,
-            'subjects'=>$subjects,
-            'courses'=>$courses,
-            'levels'=>$levels,
-            'semesters'=>$semesters,
-        ]);
+        return view('admin.subjects.edit', compact('subject'));
     }
 
     public function update(Request $request, Subject $subject)
     {
-        $request->validate([
-            'course_id'=>'required',
-            'level_id'=>'required',
-            'semester_id'=>'required',
-            'code'=>'required',
-            'name'=>'required',
+        $data = $request->validate([
+            'code' => 'required|string|max:50',
+            'name' => 'required|string|max:255',
+            'credits' => 'nullable|integer|min:0|max:100',
         ]);
 
-        $subject->update($request->all());
-        return $this->returnTo(route('admin.subjects.index'))->with('success','Subject updated successfully!');
+        $subject->update($data);
+
+        $faculty = optional($subject->course)->faculty_id;
+
+        return $this->returnTo($faculty ? route('admin.faculties.courses', $faculty) : route('admin.faculties.index'))
+            ->with('success', 'Subject updated successfully!');
     }
 
     public function destroy(Subject $subject)

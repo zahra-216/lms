@@ -52,7 +52,7 @@ Add Content
                 </div>
                 <div>
                     <label class="form-label">Duration</label>
-                    <input type="text" class="form-control" value="{{ $record->duration ?? '—' }}" readonly>
+                    <input type="text" class="form-control" value="{{ $record->duration ?? '-' }}" readonly>
                 </div>
             </div>
 

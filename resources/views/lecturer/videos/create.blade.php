@@ -50,7 +50,7 @@ Add Video
             </div>
 
             <div class="mb-3" id="fileField" style="display:none;">
-                <label class="form-label">Video File (mp4, mov, avi, mkv — max 100MB)</label>
+                <label class="form-label">Video File (mp4, mov, avi, mkv - max 100MB)</label>
                 <input type="file" name="video_file" class="form-control" accept="video/*">
             </div>
 

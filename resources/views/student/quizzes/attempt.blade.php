@@ -7,9 +7,9 @@
 @push('styles')
 <style>
     .quiz-side { position:sticky; top:calc(var(--topbar-h) + 18px); }
-    .timer-box { background:linear-gradient(120deg, var(--navy-900), var(--brand-700)); color:#fff; border-radius:16px; padding:18px; text-align:center; margin:14px 0; }
+    .timer-box { background:var(--navy-900); color:#fff; border-radius:16px; padding:18px; text-align:center; margin:14px 0; }
     .timer-box h4 { margin:0; font-weight:800; font-size:34px; color:#fff; font-variant-numeric:tabular-nums; }
-    .timer-box.low { background:linear-gradient(120deg, #991b1b, var(--danger)); animation:pulse 1s infinite; }
+    .timer-box.low { background:#991b1b; animation:pulse 1s infinite; }
     @keyframes pulse { 50% { opacity:.85; } }
     .info-row { display:flex; justify-content:space-between; font-size:13.5px; padding:7px 0; border-bottom:1px solid var(--line); }
     .info-row span:first-child { color:var(--muted); }

@@ -63,8 +63,7 @@ Dashboard
     <div class="faculty-grid">
         @foreach ($faculties as $faculty)
             @php
-                $rel = 'storage/faculty/'.$faculty->image;
-                $imageUrl = ($faculty->image && file_exists(public_path($rel))) ? asset($rel) : asset('images/ttmc.jpeg');
+                $imageUrl = \App\Support\StockImages::forFaculty($faculty);
             @endphp
             <a href="{{ route('faculty.courses', ['facultyId' => $faculty->id]) }}" class="faculty-card">
                 <div class="faculty-card-img"><img src="{{ $imageUrl }}" alt="{{ $faculty->name }}"></div>

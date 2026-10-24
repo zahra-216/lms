@@ -3,7 +3,7 @@
 Edit Profile
 @endsection
 @section('content')
-<div class="container mt-5" style="max-width:500px;">
+<div class="container mt-5">
     <a href="{{ route('student.profile') }}" class="btn btn-sm btn-outline-secondary mb-3">&larr; Back</a>
     <h3>Edit Profile</h3>
 

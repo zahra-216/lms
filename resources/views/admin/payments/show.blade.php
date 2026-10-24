@@ -53,9 +53,9 @@ table.pay-table { display:block; overflow-x:auto; white-space:nowrap;
         <h2>{{ $student->name }} ({{ $student->registration_no }})</h2>
         <div class="meta">
             Intake: <b>{{ $student->intake }}</b> &nbsp;|&nbsp;
-            Course: <b>{{ $student->course->name ?? '—' }}</b> &nbsp;|&nbsp;
-            Level: <b>{{ $student->level->name ?? '—' }}</b> &nbsp;|&nbsp;
-            Faculty: <b>{{ $student->course->faculty->name ?? '—' }}</b>
+            Course: <b>{{ $student->course->name ?? '-' }}</b> &nbsp;|&nbsp;
+            Level: <b>{{ $student->level->name ?? '-' }}</b> &nbsp;|&nbsp;
+            Faculty: <b>{{ $student->course->faculty->name ?? '-' }}</b>
         </div>
     </div>
 
@@ -135,8 +135,8 @@ table.pay-table { display:block; overflow-x:auto; white-space:nowrap;
                         <td>{{ ucfirst(str_replace('_', ' ', $payment->type_of_payment)) }}</td>
                         <td>{{ number_format($payment->amount, 2) }}</td>
                         <td>{{ $payment->date }}</td>
-                        <td>{{ $payment->invoice_no ?? '—' }}</td>
-                        <td>{{ $payment->remarks ?? '—' }}</td>
+                        <td>{{ $payment->invoice_no ?? '-' }}</td>
+                        <td>{{ $payment->remarks ?? '-' }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <a href="{{ route('admin.payments.payment.edit', $payment->id) }}" class="action-btn edit-btn">

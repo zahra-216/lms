@@ -79,7 +79,7 @@ table.lecturer-table { display:block; overflow-x:auto; white-space:nowrap;
                         <td>{{ $lecturer->id }}</td>
                         <td>{{ $lecturer->username }}</td>
                         <td>{{ $lecturer->name }}</td>
-                        <td>{{ $lecturer->email ?? '—' }}</td>
+                        <td>{{ $lecturer->email ?? '-' }}</td>
                         <td>
                             <div class="d-flex gap-2">
                                 <a href="{{ route('admin.lecturers.edit', $lecturer->id) }}" class="action-btn edit-btn">
