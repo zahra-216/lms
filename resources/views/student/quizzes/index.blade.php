@@ -45,7 +45,7 @@ Quizzes - {{ $subject->name }}
                     <div class="quiz-desc">{{ Str::limit($quiz->description, 90) }}</div>
 
                     <div class="quiz-meta">
-                        <div><i class="bi bi-question-circle"></i> {{ $quiz->questions->count() }} Questions</div>
+                        <div><i class="bi bi-question-circle"></i> {{ $quiz->questions_count }} Questions</div>
                         <div><i class="bi bi-hourglass-split"></i> {{ $quiz->duration_minutes }} minutes</div>
                         <div><i class="bi bi-award"></i> {{ $quiz->total_points }} points</div>
                         @if($quiz->start_date)
@@ -59,36 +59,35 @@ Quizzes - {{ $subject->name }}
                             $canAttempt = $quiz->can_attempt;
                         @endphp
                         <span class="badge-status badge-info">Attempts: {{ $attempts }} / {{ $quiz->max_attempts }}</span>
-                        @if(!$canAttempt && $attempts >= $quiz->max_attempts)
+                        @if($quiz->resume_id)
+                            <span class="badge-status badge-warn">In progress</span>
+                        @elseif(!$canAttempt && $attempts >= $quiz->max_attempts)
                             <span class="badge-status badge-danger">Max attempts reached</span>
                         @elseif(!$quiz->isAvailable())
                             <span class="badge-status badge-warn">Not available</span>
                         @endif
                     </div>
 
-                    @if($canAttempt)
+                    @if($quiz->resume_id)
+                    <a href="{{ route('student.quiz.attempt', $quiz->resume_id) }}" class="btn-navy" style="text-align:center;">
+                        <i class="bi bi-play-circle"></i> Resume Quiz
+                    </a>
+                    @elseif($canAttempt)
                     <form action="{{ route('student.quiz.start', $quiz->id) }}" method="POST">
                         @csrf
                         <button type="submit" class="btn-navy">
-                            <i class="bi bi-play-circle"></i> Start Quiz
+                            <i class="bi bi-play-circle"></i> {{ $attempts > 0 ? 'Start Another Attempt' : 'Start Quiz' }}
                         </button>
                     </form>
-                    @elseif($quiz->student_attempt > 0)
-                    @php
-                        $lastSubmission = $quiz->submissions()
-                            ->where('student_id', session('student_id'))
-                            ->latest('started_at')
-                            ->first();
-                    @endphp
-                    @if($lastSubmission)
-                    <a href="{{ route('student.quiz.result', $lastSubmission->id) }}" class="btn-navy" style="text-align:center;">
+                    @if($quiz->last_result_id)
+                    <a href="{{ route('student.quiz.result', $quiz->last_result_id) }}" class="mt-2 small" style="color:#012147; font-weight:600;">
+                        <i class="bi bi-clipboard-check"></i> View last result
+                    </a>
+                    @endif
+                    @elseif($quiz->last_result_id)
+                    <a href="{{ route('student.quiz.result', $quiz->last_result_id) }}" class="btn-navy" style="text-align:center;">
                         <i class="bi bi-clipboard-check"></i> View Result
                     </a>
-                    @else
-                    <button class="btn-navy" disabled>
-                        <i class="bi bi-lock"></i> Not Available
-                    </button>
-                    @endif
                     @else
                     <button class="btn-navy" disabled>
                         <i class="bi bi-lock"></i> Not Available

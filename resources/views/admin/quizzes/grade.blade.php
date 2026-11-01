@@ -87,7 +87,7 @@ Grade Submission - {{ $quiz->title }}
                 @endif
                 @if($quiz->grading_type !== 'automatic')
                 <div class="score-box score-box-manual">
-                    <div class="mb-1" style="font-size:12px; font-weight:600;">Manual Score</div>
+                    <div class="mb-1" style="font-size:12px; font-weight:600;">{{ $quiz->grading_type === 'manual' ? 'Lecturer Score' : 'Lecturer marks (written part)' }}</div>
                     <strong>{{ $submission->manual_score ?? 'Not graded' }}</strong> / {{ $quiz->total_points }}
                 </div>
                 @endif
@@ -113,27 +113,27 @@ Grade Submission - {{ $quiz->title }}
 
                 <div class="section-card">
                     <h6><i class="bi bi-file-earmark"></i> Student Answers</h6>
-                    @php $qIndex = 1; @endphp
-                    @foreach($submission->answers as $answer)
-                    @continue(!$answer->question)
+                    @foreach($quiz->questions as $qIndex => $question)
                     @php
-                        $question = $answer->question;
-                        $isCorrect = $answer->is_correct;
+                        $answer = $submission->answers->firstWhere('quiz_question_id', $question->id);
+                        $isCorrect = $answer?->is_correct;
                     @endphp
                     <div class="answer-block">
                         <div class="d-flex justify-content-between align-items-start mb-1">
-                            <strong>Q{{ $qIndex }}. {{ $question->question_text }}</strong>
+                            <strong>Q{{ $qIndex + 1 }}. {{ $question->question_text }}</strong>
                             <span class="pts-badge">{{ $question->points }} pts</span>
                         </div>
 
                         @if($question->type === 'multiple_choice')
                             <div class="answer-box">
                                 <small class="d-block text-muted mb-2">Student's Answer:</small>
-                                <strong>{{ $answer->answer?->answer_text ?? 'Not answered' }}</strong>
-                                @php $correctAnswer = $question->answers()->where('is_correct', true)->first(); @endphp
-                                <div class="mt-2"><strong class="text-success">Correct Answer:</strong> {{ $correctAnswer->answer_text }}</div>
+                                <strong>{{ $answer?->answer?->answer_text ?? 'Not answered' }}</strong>
+                                @php $correctAnswer = $question->answers->firstWhere('is_correct', true); @endphp
+                                <div class="mt-2"><strong class="text-success">Correct Answer:</strong> {{ $correctAnswer?->answer_text ?? '-' }}</div>
                                 <div class="mt-2">
-                                    @if($isCorrect)
+                                    @if(! $answer)
+                                        <span class="answer-tag">Not answered</span>
+                                    @elseif($isCorrect)
                                         <span class="answer-tag answer-tag-correct"><i class="bi bi-check"></i> Correct</span>
                                     @else
                                         <span class="answer-tag answer-tag-incorrect"><i class="bi bi-x"></i> Incorrect</span>
@@ -143,10 +143,12 @@ Grade Submission - {{ $quiz->title }}
                         @elseif($question->type === 'true_false')
                             <div class="answer-box">
                                 <small class="d-block text-muted mb-2">Student's Answer:</small>
-                                <strong>{{ ucfirst($answer->answer?->answer_text ?? 'Not answered') }}</strong>
+                                <strong>{{ ucfirst($answer?->answer?->answer_text ?? 'Not answered') }}</strong>
                                 <div class="mt-2"><strong class="text-success">Correct Answer:</strong> {{ ucfirst($question->correct_answer) }}</div>
                                 <div class="mt-2">
-                                    @if($isCorrect)
+                                    @if(! $answer)
+                                        <span class="answer-tag">Not answered</span>
+                                    @elseif($isCorrect)
                                         <span class="answer-tag answer-tag-correct"><i class="bi bi-check"></i> Correct</span>
                                     @else
                                         <span class="answer-tag answer-tag-incorrect"><i class="bi bi-x"></i> Incorrect</span>
@@ -156,31 +158,40 @@ Grade Submission - {{ $quiz->title }}
                         @else
                             <div class="answer-box">
                                 <small class="d-block text-muted mb-2">Student's Answer:</small>
-                                <p class="mb-2 pb-2 border-bottom">{{ $answer->answer_text ?? 'Not answered' }}</p>
+                                <p class="mb-2 pb-2 border-bottom">{{ $answer?->answer_text ?? 'Not answered' }}</p>
                                 <small class="d-block text-muted mb-1">Model Answer:</small>
                                 <p class="mb-2 text-success">{{ $question->correct_answer }}</p>
+                                @if($answer)
                                 <div class="form-check">
+                                    <input type="hidden" name="answer_corrections[{{ $answer->id }}]" value="0">
                                     <input class="form-check-input" type="checkbox" name="answer_corrections[{{ $answer->id }}]" value="1"
                                            id="correct{{ $answer->id }}" {{ $isCorrect ? 'checked' : '' }}>
                                     <label class="form-check-label" for="correct{{ $answer->id }}">Mark as Correct</label>
                                 </div>
+                                @endif
                             </div>
                         @endif
                     </div>
-                    @php $qIndex++; @endphp
                     @endforeach
                 </div>
 
                 <div class="section-card">
                     <h6><i class="bi bi-pencil-square"></i> Grading</h6>
+                    @php $manualMax = $quiz->grading_type === 'manual' ? $quiz->total_points : max(0, $quiz->total_points - ($submission->automatic_score ?? 0)); @endphp
                     <div class="mb-4">
-                        <label class="form-label">Manual Score <span class="text-danger">*</span></label>
+                        <label class="form-label">{{ $quiz->grading_type === 'manual' ? 'Score for the whole quiz' : 'Marks for the written answers' }} <span class="text-danger">*</span></label>
                         <div class="input-group">
-                            <input type="number" name="manual_score" class="form-control" min="0" max="{{ $quiz->total_points }}"
+                            <input type="number" name="manual_score" class="form-control" min="0" max="{{ $manualMax }}"
                                    value="{{ $submission->manual_score ?? '' }}" step="0.1" required>
-                            <span class="input-group-text">/ {{ $quiz->total_points }}</span>
+                            <span class="input-group-text">/ {{ $manualMax }}</span>
                         </div>
-                        <small class="d-block mt-1 text-muted">Enter the manual score for this submission</small>
+                        <small class="d-block mt-1 text-muted">
+                            @if($quiz->grading_type === 'manual')
+                                Enter the final score for this submission.
+                            @else
+                                The final score is the automatic score ({{ $submission->automatic_score ?? 0 }}) plus the marks you enter here. Enter 0 if there are no written answers.
+                            @endif
+                        </small>
                     </div>
 
                     <div class="mb-4">

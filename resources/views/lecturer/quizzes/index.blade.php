@@ -95,7 +95,7 @@ Quizzes - {{ $subject->name }}
                         @if($quiz->canBeEdited())
                             <span class="badge-status badge-editable">Can be edited</span>
                         @else
-                            <span class="badge-status badge-locked">Quiz started</span>
+                            <span class="badge-status badge-locked">Has attempts - questions locked</span>
                         @endif
                     </div>
 
@@ -103,10 +103,10 @@ Quizzes - {{ $subject->name }}
                         <a href="{{ route('lecturer.quizzes.show', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="btn-soft">
                             <i class="bi bi-eye"></i> View
                         </a>
-                        @if($quiz->canBeEdited())
                         <a href="{{ route('lecturer.quizzes.edit', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="btn-soft">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
+                        @if($quiz->canBeEdited())
                         <form action="{{ route('lecturer.quizzes.destroy', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" method="POST">
                             @csrf
                             @method('DELETE')

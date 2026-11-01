@@ -46,10 +46,10 @@ class Quiz extends Model
         return $this->hasMany(QuizSubmission::class);
     }
 
-    // Check if quiz has started
+    // Check if quiz has started (no start date means it opens as soon as it is published)
     public function hasStarted()
     {
-        return $this->start_date && $this->start_date <= now();
+        return ! $this->start_date || $this->start_date <= now();
     }
 
     // Check if quiz has ended
@@ -58,15 +58,27 @@ class Quiz extends Model
         return $this->end_date && $this->end_date <= now();
     }
 
-    // Check if quiz is available for taking
+    // Check if quiz is available for taking (a quiz without questions cannot be taken)
     public function isAvailable()
     {
-        return $this->is_published && $this->hasStarted() && !$this->hasEnded();
+        return $this->is_published && $this->hasStarted() && !$this->hasEnded() && $this->questions()->exists();
     }
 
-    // Check if quiz can be edited/deleted
+    // Has any student started an attempt?
+    public function hasAttempts()
+    {
+        return $this->submissions()->exists();
+    }
+
+    // Questions, points, duration and grading type are locked once a student has attempted the quiz
     public function canBeEdited()
     {
-        return !$this->hasStarted();
+        return !$this->hasAttempts();
+    }
+
+    // Sum of the points of all questions
+    public function questionPoints(): int
+    {
+        return (int) $this->questions()->sum('points');
     }
 }

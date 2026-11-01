@@ -103,12 +103,13 @@ Edit Quiz - {{ $quiz->title }}
 
                     <div class="mb-3">
                         <label class="form-label">Duration (minutes)</label>
-                        <input type="number" name="duration_minutes" class="form-control" min="1" value="{{ $quiz->duration_minutes }}" required>
+                        <input type="number" name="duration_minutes" class="form-control" min="1" value="{{ $quiz->duration_minutes }}" required {{ $locked ? 'readonly' : '' }}>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Total Points</label>
-                        <input type="number" name="total_points" class="form-control" min="1" value="{{ $quiz->total_points }}" required>
+                        <input type="number" name="total_points" class="form-control" min="1" value="{{ $quiz->total_points }}" required {{ $locked ? 'readonly' : '' }}>
+                        <small class="text-muted">The questions use {{ $questionPoints }} points.</small>
                     </div>
 
                     <div class="mb-3">
@@ -118,21 +119,21 @@ Edit Quiz - {{ $quiz->title }}
 
                     <div class="mb-3">
                         <label class="form-label">Grading Type</label>
-                        <select name="grading_type" class="form-select" required>
-                            <option value="automatic" {{ $quiz->grading_type === 'automatic' ? 'selected' : '' }}>Automatic</option>
-                            <option value="manual" {{ $quiz->grading_type === 'manual' ? 'selected' : '' }}>Manual</option>
-                            <option value="both" {{ $quiz->grading_type === 'both' ? 'selected' : '' }}>Both</option>
+                        <select name="grading_type" class="form-select" required {{ $locked ? 'disabled' : '' }}>
+                            <option value="automatic" {{ $quiz->grading_type === 'automatic' ? 'selected' : '' }}>Automatic - system marks choice questions (written answers wait for the lecturer)</option>
+                            <option value="manual" {{ $quiz->grading_type === 'manual' ? 'selected' : '' }}>Manual - lecturer marks the whole quiz</option>
+                            <option value="both" {{ $quiz->grading_type === 'both' ? 'selected' : '' }}>Automatic + lecturer - system marks choices, lecturer adds marks for written answers</option>
                         </select>
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label">Start Date & Time</label>
-                        <input type="datetime-local" name="start_date" class="form-control"
+                        <input type="datetime-local" name="start_date" class="form-control" {{ $locked ? 'readonly' : '' }}
                                value="{{ $quiz->start_date ? $quiz->start_date->format('Y-m-d\TH:i') : '' }}">
                     </div>
 
                     <div class="mb-3">
-                        <label class="form-label">End Date & Time</label>
+                        <label class="form-label">End Date & Time <small class="text-muted">(a student's timer never runs past this)</small></label>
                         <input type="datetime-local" name="end_date" class="form-control"
                                value="{{ $quiz->end_date ? $quiz->end_date->format('Y-m-d\TH:i') : '' }}">
                     </div>
@@ -157,13 +158,17 @@ Edit Quiz - {{ $quiz->title }}
 
             <div class="alert-note">
                 <i class="bi bi-info-circle"></i>
-                <strong>Note:</strong> Once quiz starts, you cannot edit or delete it.
+                @if($locked)
+                <strong>Locked:</strong> students have already attempted this quiz. Questions, points, duration, grading type and start date are fixed and the quiz cannot be deleted. You can still change the title, description, end date, attempts, "show correct answers" and untick Publish to hide it.
+                @else
+                <strong>Note:</strong> Once a student attempts this quiz, its questions, points, duration and grading type are locked. A quiz with no start date opens as soon as it is published.
+                @endif
             </div>
         </div>
 
         <div class="col-lg-8">
             <div class="section-card">
-                <h6><i class="bi bi-question-circle"></i> Questions ({{ $questions->count() }})</h6>
+                <h6><i class="bi bi-question-circle"></i> Questions ({{ $questions->count() }}) - {{ $questionPoints }} of {{ $quiz->total_points }} points used</h6>
                 @if($questions->count() > 0)
                     @foreach($questions as $question)
                     <div class="question-item">
@@ -174,6 +179,7 @@ Edit Quiz - {{ $quiz->title }}
                                 </span>
                                 <span class="pts-badge">{{ $question->points }} pts</span>
                             </div>
+                            @unless($locked)
                             <div class="d-flex gap-2">
                                 <button class="icon-btn" data-bs-toggle="modal" data-bs-target="#editQuestion{{ $question->id }}">
                                     <i class="bi bi-pencil"></i>
@@ -186,6 +192,7 @@ Edit Quiz - {{ $quiz->title }}
                                     </button>
                                 </form>
                             </div>
+                            @endunless
                         </div>
                         <p class="mb-2"><strong>{{ $question->question_text }}</strong></p>
                         @if($question->type === 'multiple_choice')
@@ -206,6 +213,7 @@ Edit Quiz - {{ $quiz->title }}
                 @endif
             </div>
 
+            @unless($locked)
             <div class="section-card">
                 <h6><i class="bi bi-plus-circle"></i> Add New Question</h6>
                 <form action="{{ route('lecturer.quizzes.questions.store', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" method="POST">
@@ -276,6 +284,7 @@ Edit Quiz - {{ $quiz->title }}
                     </button>
                 </form>
             </div>
+            @endunless
         </div>
     </div>
 </div>

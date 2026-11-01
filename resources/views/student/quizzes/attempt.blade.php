@@ -132,7 +132,7 @@
         var m = Math.floor(left / 60), s = left % 60;
         document.getElementById('timer').textContent = m + ':' + (s < 10 ? '0' : '') + s;
         document.getElementById('timerBox').classList.toggle('low', left <= 60);
-        if (left <= 0) { submitting = true; try { localStorage.removeItem(key); } catch (e) {} form.submit(); return; }
+        if (left <= 0) { submitting = true; form.submit(); return; }
         left--;
     }
     setInterval(tick, 1000);
@@ -140,7 +140,7 @@
 
     // ---- confirm before handing in, and say how many are still blank ----
     form.addEventListener('submit', function (e) {
-        if (submitting) return;
+        if (submitting) { e.preventDefault(); return; }
         var total = form.querySelectorAll('[data-question]').length;
         var blank = total - Object.keys(collect()).length;
         var msg = blank > 0
@@ -148,7 +148,8 @@
             : 'Submit your quiz now? You cannot change your answers afterwards.';
         if (!confirm(msg)) { e.preventDefault(); return; }
         submitting = true;
-        try { localStorage.removeItem(key); } catch (err) {}
+        // Stop a second click from handing the quiz in twice. (The draft on this device is cleared on the result page, so a failed submit loses nothing.)
+        setTimeout(function () { document.querySelectorAll('button[form="quizForm"], #quizForm button[type="submit"]').forEach(function (b) { b.disabled = true; }); }, 0);
     });
 
     window.addEventListener('beforeunload', function (e) { if (!submitting) { e.preventDefault(); e.returnValue = ''; } });

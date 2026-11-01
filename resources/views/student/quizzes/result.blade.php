@@ -64,7 +64,7 @@ Quiz Result - {{ $quiz->title }}
                 <div class="big-icon text-success-navy"><i class="bi bi-check-circle-fill"></i></div>
                 <div class="fw-bold text-success-navy mb-2" style="font-size:18px;">Submitted</div>
                 <p class="text-muted mb-0" style="font-size:13px;">
-                    Submitted at: {{ $submission->submitted_at->format('M d, Y H:i') }}
+                    Submitted at: {{ $submission->submitted_at?->format('M d, Y H:i') }}
                 </p>
             </div>
         </div>
@@ -98,25 +98,21 @@ Quiz Result - {{ $quiz->title }}
         @if($canShowAnswers)
         <div class="section-card">
             <h6><i class="bi bi-file-earmark"></i> Review Your Answers</h6>
-            @php $qIndex = 1; @endphp
-            @foreach($answersGrouped as $questionId => $answers)
-            @php
-                $question = $answers->first()->question;
-                $answer = $answers->first();
-            @endphp
+            @foreach($questions as $qIndex => $question)
+            @php $answer = $givenAnswers->get($question->id); @endphp
             <div class="answer-block">
                 <div class="d-flex justify-content-between align-items-start mb-1">
-                    <strong>Q{{ $qIndex }}. {{ $question->question_text }}</strong>
+                    <strong>Q{{ $qIndex + 1 }}. {{ $question->question_text }}</strong>
                     <span class="pts-badge">{{ $question->points }} pts</span>
                 </div>
 
                 @if($question->type === 'multiple_choice' || $question->type === 'true_false')
                     <div class="answer-box">
-                        <strong>Your Answer:</strong> {{ $answer->answer?->answer_text ?? 'Not answered' }}<br>
-                        @php $correct = $question->answers()->where('is_correct', true)->first(); @endphp
-                        <strong class="text-success">Correct Answer:</strong> {{ $correct->answer_text }}
+                        <strong>Your Answer:</strong> {{ $answer?->answer?->answer_text ?? 'Not answered' }}<br>
+                        @php $correct = $question->answers->firstWhere('is_correct', true); @endphp
+                        <strong class="text-success">Correct Answer:</strong> {{ $correct?->answer_text ?? '-' }}
                         <div>
-                            @if($answer->is_correct)
+                            @if($answer?->is_correct)
                                 <span class="answer-tag answer-tag-correct"><i class="bi bi-check"></i> Correct</span>
                             @else
                                 <span class="answer-tag answer-tag-incorrect"><i class="bi bi-x"></i> Incorrect</span>
@@ -126,7 +122,7 @@ Quiz Result - {{ $quiz->title }}
                 @else
                     <div class="answer-box mb-2">
                         <strong>Your Answer:</strong><br>
-                        {{ $answer->answer_text }}
+                        {{ $answer?->answer_text ?? 'Not answered' }}
                     </div>
                     <div class="answer-box">
                         <strong class="text-success">Model Answer:</strong><br>
@@ -134,7 +130,6 @@ Quiz Result - {{ $quiz->title }}
                     </div>
                 @endif
             </div>
-            @php $qIndex++; @endphp
             @endforeach
         </div>
         @else
@@ -157,3 +152,6 @@ Quiz Result - {{ $quiz->title }}
     </div>
 </div>
 @endsection
+@push('scripts')
+<script>try { localStorage.removeItem('quiz-draft-{{ $submission->id }}'); } catch (e) {}</script>
+@endpush

@@ -42,33 +42,26 @@ class QuizSubmission extends Model
         return $this->hasMany(QuizSubmissionAnswer::class);
     }
 
-    // Get total score (either automatic or manual, or both)
+    /**
+     * Final score.
+     * Manual quiz: the lecturer's score for the whole quiz.
+     * Automatic / both: the system's score for choice questions plus the lecturer's marks for the
+     * written part (if any), never more than the quiz total.
+     */
     public function getTotalScore()
     {
-        // If a lecturer/admin has manually graded this submission, that takes precedence
-        if ($this->status === 'graded' && $this->manual_score !== null) {
-            if ($this->quiz->grading_type === 'both' && $this->automatic_score !== null) {
-                return ($this->automatic_score + $this->manual_score) / 2;
-            }
+        if ($this->quiz->grading_type === 'manual') {
             return $this->manual_score;
         }
 
-        if ($this->quiz->grading_type === 'automatic') {
-            return $this->automatic_score;
-        }
+        $total = (float) ($this->automatic_score ?? 0) + (float) ($this->manual_score ?? 0);
 
-        return $this->manual_score;
+        return min($total, (float) $this->quiz->total_points);
     }
 
-    // Check if submission is graded
+    // Marking is finished only when the status says so (written answers wait for the lecturer)
     public function isGraded()
     {
-        if ($this->quiz->grading_type === 'automatic') {
-            return $this->automatic_score !== null;
-        } elseif ($this->quiz->grading_type === 'manual') {
-            return $this->manual_score !== null;
-        }
-        // For 'both', both scores should be present
-        return $this->automatic_score !== null && $this->manual_score !== null;
+        return $this->status === 'graded';
     }
 }

@@ -98,11 +98,9 @@
                 @if($quiz->end_date)
                 <div class="info-row"><span>End</span><span>{{ $quiz->end_date->format('M d, H:i') }}</span></div>
                 @endif
-                @if($quiz->canBeEdited())
                 <a href="{{ route('admin.subjects.quizzes.edit', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="btn-navy mt-3">
                     <i class="bi bi-pencil"></i> Edit
                 </a>
-                @endif
             </div>
         </div>
 
@@ -114,7 +112,7 @@
                 <div class="stat-number">{{ $analytics['unique_students'] }}</div>
                 <div class="stat-label">Unique Students</div>
                 <div class="stat-number">{{ number_format($analytics['average_score'], 1) }}</div>
-                <div class="stat-label">Average Score</div>
+                <div class="stat-label">Average Score (marked attempts)</div>
             </div>
         </div>
 
@@ -135,10 +133,10 @@
         <div class="col-lg-3 col-md-6">
             <div class="card-box">
                 <h6><i class="bi bi-sliders"></i> Actions</h6>
-                @if($quiz->canBeEdited())
                 <a href="{{ route('admin.subjects.quizzes.edit', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="btn-navy mb-2">
                     <i class="bi bi-pencil"></i> Edit Quiz
                 </a>
+                @if($quiz->canBeEdited())
                 <form action="{{ route('admin.subjects.quizzes.destroy', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" method="POST">
                     @csrf
                     @method('DELETE')
@@ -148,7 +146,7 @@
                 </form>
                 @else
                 <div class="alert-locked">
-                    <i class="bi bi-exclamation-circle"></i> Quiz has started. Cannot edit or delete.
+                    <i class="bi bi-exclamation-circle"></i> Students have attempted this quiz, so it cannot be deleted and its questions are locked. You can still unpublish it or change the end date.
                 </div>
                 @endif
             </div>
@@ -223,7 +221,7 @@
                             <td>
                                 <span class="badge-status {{ $submission->status === 'graded' ? 'badge-published' : ($submission->status === 'submitted' ? 'badge-editable' : 'badge-draft') }}"
                                       style="{{ $submission->status === 'submitted' ? 'background:#e6f0ff;color:#0a3d91;' : '' }}">
-                                    {{ ucfirst($submission->status) }}
+                                    {{ ucfirst(str_replace('_', ' ', $submission->status)) }}
                                 </span>
                             </td>
                             <td>
@@ -234,9 +232,13 @@
                                 @endif
                             </td>
                             <td>
+                                @if($submission->status === 'in_progress')
+                                    <span class="text-muted small">Still taking</span>
+                                @else
                                 <a href="{{ route('admin.subjects.quizzes.submissions.grade', ['subject' => $subject->id, 'quiz' => $quiz->id, 'submission' => $submission->id]) }}" class="btn-soft">
                                     <i class="bi bi-pencil"></i> Grade
                                 </a>
+                                @endif
                             </td>
                         </tr>
                         @endforeach

@@ -6,10 +6,11 @@ use App\Models\Quiz;
 use App\Models\Student;
 use App\Models\QuizSubmission;
 use App\Models\QuizSubmissionAnswer;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
-use Carbon\Carbon;
 
 class QuizController extends Controller
 {
@@ -23,30 +24,41 @@ class QuizController extends Controller
         }
 
         $subject = \App\Models\Subject::findOrFail($subjectId);
-        $quizzes = $subject->quizzes()->where('is_published', true)->get();
+        $quizzes = $subject->quizzes()->where('is_published', true)->withCount('questions')->get();
 
-        // Finish any attempt whose time ran out (e.g. the browser was closed mid-quiz).
-        $student->quizSubmissions()->where('status', 'in_progress')->get()
-            ->filter(fn ($stale) => now()->greaterThan($this->deadline($stale)))
-            ->each(fn ($stale) => $this->finalize($stale, []));
+        $this->closeExpired($student);
+
+        $mine = $student->quizSubmissions()
+            ->whereIn('quiz_id', $quizzes->pluck('id'))
+            ->get()
+            ->groupBy('quiz_id');
 
         foreach ($quizzes as $quiz) {
-            $quiz->student_attempt = $student->quizSubmissions()
-                ->where('quiz_id', $quiz->id)
-                ->count();
-            $quiz->can_attempt = $quiz->isAvailable() && $quiz->student_attempt < $quiz->max_attempts;
+            $attempts = $mine->get($quiz->id, collect());
+
+            $quiz->student_attempt = $attempts->count();
+            $quiz->resume_id = $attempts->firstWhere('status', 'in_progress')?->id;
+            $quiz->last_result_id = $attempts->where('status', '!=', 'in_progress')->sortByDesc('started_at')->first()?->id;
+            $quiz->can_attempt = !$quiz->resume_id && $quiz->isAvailable() && $quiz->student_attempt < $quiz->max_attempts;
         }
 
         return view('student.quizzes.index', compact('subject', 'quizzes'));
     }
 
-    // Start quiz (create a submission)
+    // Start quiz (create a submission), or carry on with the attempt that is already open
     public function start(Quiz $quiz)
     {
         $student = Student::find(session('student_id'));
 
         if (!$student) {
             return redirect()->route('login')->with('error', 'Please log in again');
+        }
+
+        $this->closeExpired($student);
+
+        $open = $this->openAttempt($student, $quiz);
+        if ($open) {
+            return redirect()->route('student.quiz.attempt', $open->id);
         }
 
         if (!$quiz->isAvailable()) {
@@ -61,13 +73,22 @@ class QuizController extends Controller
             return back()->with('error', 'You have exceeded maximum attempts for this quiz');
         }
 
-        $submission = QuizSubmission::create([
-            'quiz_id' => $quiz->id,
-            'student_id' => $student->id,
-            'started_at' => now(),
-            'attempt_number' => $attempts + 1,
-            'status' => 'in_progress',
-        ]);
+        try {
+            $submission = QuizSubmission::create([
+                'quiz_id' => $quiz->id,
+                'student_id' => $student->id,
+                'started_at' => now(),
+                'attempt_number' => $attempts + 1,
+                'status' => 'in_progress',
+            ]);
+        } catch (UniqueConstraintViolationException $e) {
+            // A double click started the same attempt twice: carry on with the first one.
+            $open = $this->openAttempt($student, $quiz);
+
+            return $open
+                ? redirect()->route('student.quiz.attempt', $open->id)
+                : back()->with('error', 'Could not start the quiz. Please try again.');
+        }
 
         return redirect()->route('student.quiz.attempt', $submission->id);
     }
@@ -90,7 +111,7 @@ class QuizController extends Controller
         }
 
         $quiz = $submission->quiz;
-        $questions = $quiz->questions()->get();
+        $questions = $quiz->questions()->with('answers')->get();
 
         $submittedAnswers = $submission->answers()->pluck('answer_text', 'quiz_question_id')
             ->toArray();
@@ -141,7 +162,13 @@ class QuizController extends Controller
 
         // The server enforces the time limit too (a short grace covers slow connections).
         $tooLate = now()->greaterThan($this->deadline($submission)->addSeconds(60));
-        $this->finalize($submission, $tooLate ? [] : ($validated['answers'] ?? []));
+        $closed = $this->finalize($submission, $tooLate ? [] : ($validated['answers'] ?? []));
+
+        // Another request (a double click) handed the quiz in first.
+        if (!$closed) {
+            return redirect()->route('student.quiz.result', $submission->id)
+                ->with('error', 'This quiz was already submitted.');
+        }
 
         if ($tooLate) {
             return redirect()->route('student.quiz.result', $submission->id)
@@ -152,60 +179,97 @@ class QuizController extends Controller
             ->with('success', 'Quiz submitted successfully');
     }
 
-    /** When this attempt must be handed in. */
+    /** The attempt of this quiz that is still open and has time left, if any. */
+    private function openAttempt(Student $student, Quiz $quiz): ?QuizSubmission
+    {
+        return $student->quizSubmissions()
+            ->where('quiz_id', $quiz->id)
+            ->where('status', 'in_progress')
+            ->latest('started_at')
+            ->first();
+    }
+
+    /** Finish every attempt of this student whose time ran out (e.g. the browser was closed mid-quiz). */
+    private function closeExpired(Student $student): void
+    {
+        $student->quizSubmissions()->where('status', 'in_progress')->get()
+            ->filter(fn ($stale) => now()->greaterThan($this->deadline($stale)))
+            ->each(fn ($stale) => $this->finalize($stale, []));
+    }
+
+    /** When this attempt must be handed in: the duration, but never later than the quiz end date. */
     private function deadline(QuizSubmission $submission)
     {
-        return $submission->started_at->copy()->addMinutes($submission->quiz->duration_minutes);
+        $quiz = $submission->quiz;
+        $deadline = $submission->started_at->copy()->addMinutes($quiz->duration_minutes);
+
+        // An end date that is already behind the start of the attempt (lecturer closed the quiz) does not cut it short.
+        if ($quiz->end_date && $quiz->end_date->gt($submission->started_at) && $quiz->end_date->lt($deadline)) {
+            $deadline = $quiz->end_date->copy();
+        }
+
+        return $deadline;
     }
 
     /**
      * Save the answers, mark what can be marked automatically and close the attempt.
+     * Returns false when the attempt was already closed (so answers are never saved twice).
      *
      * @param  array<int|string, mixed>  $answers  question id => chosen answer id (choice questions) or text (written questions)
      */
-    private function finalize(QuizSubmission $submission, array $answers): void
+    private function finalize(QuizSubmission $submission, array $answers): bool
     {
-        $quiz = $submission->quiz;
-        $questions = $quiz->questions()->with('answers')->get();
-        $score = 0;
+        return DB::transaction(function () use ($submission, $answers) {
+            $locked = QuizSubmission::whereKey($submission->id)->lockForUpdate()->first();
 
-        foreach ($questions as $question) {
-            $given = $answers[$question->id] ?? null;
-
-            if ($given === null || $given === '') {
-                continue;
+            if (!$locked || $locked->status !== 'in_progress') {
+                return false;
             }
 
-            if ($question->type === 'short_answer') {
+            $quiz = $locked->quiz;
+            $questions = $quiz->questions()->with('answers')->get();
+            $score = 0;
+
+            foreach ($questions as $question) {
+                $given = $answers[$question->id] ?? null;
+
+                if ($given === null || $given === '') {
+                    continue;
+                }
+
+                if ($question->type === 'short_answer') {
+                    QuizSubmissionAnswer::create([
+                        'quiz_submission_id' => $locked->id,
+                        'quiz_question_id' => $question->id,
+                        'answer_text' => $given,
+                        'is_correct' => null, // marked by the lecturer
+                    ]);
+                    continue;
+                }
+
+                $correct = $question->answers->firstWhere('is_correct', true);
+                $isCorrect = $correct && (int) $given === (int) $correct->id;
+                $score += $isCorrect ? $question->points : 0;
+
                 QuizSubmissionAnswer::create([
-                    'quiz_submission_id' => $submission->id,
+                    'quiz_submission_id' => $locked->id,
                     'quiz_question_id' => $question->id,
-                    'answer_text' => $given,
-                    'is_correct' => null, // marked by the lecturer
+                    'quiz_answer_id' => $given,
+                    'is_correct' => $isCorrect,
                 ]);
-                continue;
             }
 
-            $correct = $question->answers->firstWhere('is_correct', true);
-            $isCorrect = $correct && (int) $given === (int) $correct->id;
-            $score += $isCorrect ? $question->points : 0;
+            // Written answers (and manual or "both" quizzes) always wait for the lecturer.
+            $needsLecturer = $quiz->grading_type !== 'automatic' || $questions->contains('type', 'short_answer');
 
-            QuizSubmissionAnswer::create([
-                'quiz_submission_id' => $submission->id,
-                'quiz_question_id' => $question->id,
-                'quiz_answer_id' => $given,
-                'is_correct' => $isCorrect,
+            $locked->update([
+                'submitted_at' => now()->min($this->deadline($locked)->addSeconds(60)),
+                'automatic_score' => $quiz->grading_type !== 'manual' ? $score : null,
+                'status' => $needsLecturer ? 'submitted' : 'graded',
             ]);
-        }
 
-        // Written answers always wait for the lecturer, even on an "automatic" quiz.
-        $needsLecturer = $questions->contains('type', 'short_answer');
-
-        $submission->update([
-            'submitted_at' => now()->min($this->deadline($submission)->addSeconds(60)),
-            'automatic_score' => $quiz->grading_type !== 'manual' ? $score : null,
-            'status' => ($quiz->grading_type === 'automatic' && !$needsLecturer) ? 'graded' : 'submitted',
-        ]);
+            return true;
+        });
     }
 
     // Show quiz result
@@ -221,13 +285,17 @@ class QuizController extends Controller
             abort(403);
         }
 
-        $quiz = $submission->quiz;
-        $answers = $submission->answers()->with('question', 'answer')->get();
+        // Nothing to show until the quiz is handed in: go back to the attempt (it closes itself if time ran out).
+        if ($submission->status === 'in_progress') {
+            return redirect()->route('student.quiz.attempt', $submission->id);
+        }
 
-        $answersGrouped = $answers->groupBy('quiz_question_id');
+        $quiz = $submission->quiz;
+        $questions = $quiz->questions()->with('answers')->get();
+        $givenAnswers = $submission->answers()->with('answer')->get()->keyBy('quiz_question_id');
 
         $canShowAnswers = $submission->isGraded() && $quiz->show_correct_answers;
 
-        return view('student.quizzes.result', compact('submission', 'quiz', 'answers', 'answersGrouped', 'canShowAnswers'));
+        return view('student.quizzes.result', compact('submission', 'quiz', 'questions', 'givenAnswers', 'canShowAnswers'));
     }
 }

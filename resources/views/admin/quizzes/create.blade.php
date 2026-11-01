@@ -69,6 +69,7 @@ Create Quiz
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Start Date & Time</label>
                     <input type="datetime-local" name="start_date" class="form-control" value="{{ old('start_date') }}">
+                    <small class="text-muted">Leave blank to open as soon as the quiz is published.</small>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label class="form-label">End Date & Time</label>
@@ -79,9 +80,9 @@ Create Quiz
             <div class="mb-3">
                 <label class="form-label">Grading Type <span class="text-danger">*</span></label>
                 <select name="grading_type" class="form-select" required>
-                    <option value="automatic">Automatic (for MC/True-False)</option>
-                    <option value="manual">Manual (Lecturer)</option>
-                    <option value="both">Both</option>
+                    <option value="automatic">Automatic - system marks choice questions (written answers still wait for the lecturer)</option>
+                    <option value="manual">Manual - lecturer marks the whole quiz</option>
+                    <option value="both">Automatic + lecturer - system marks choices, lecturer adds marks for written answers</option>
                 </select>
             </div>
 
@@ -95,7 +96,7 @@ Create Quiz
             <div class="form-check mb-4">
                 <input class="form-check-input" type="checkbox" name="is_published" value="1" id="publishQuiz">
                 <label class="form-check-label" for="publishQuiz">
-                    <strong>Publish Quiz</strong> (Make available for students)
+                    <strong>Publish Quiz</strong> (a new quiz is saved as a draft; publish it after adding questions)
                 </label>
             </div>
 
