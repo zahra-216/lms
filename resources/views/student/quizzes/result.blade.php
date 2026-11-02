@@ -76,7 +76,7 @@ Quiz Result - {{ $quiz->title }}
                     <div class="big-icon text-success-navy"><i class="bi bi-clipboard-check"></i></div>
                     <div class="fw-bold text-success-navy mb-2" style="font-size:18px;">Graded</div>
                     <p class="mb-0" style="font-size:14px;">
-                        <strong>Score: {{ number_format($submission->getTotalScore(), 2) }} / {{ $quiz->total_points }}</strong>
+                        <strong>Score: {{ number_format($submission->getTotalScore(), 2) }} / {{ number_format($quiz->total_points, 2) }}</strong>
                     </p>
                 @else
                     <div class="big-icon text-warning-navy"><i class="bi bi-clock-history"></i></div>

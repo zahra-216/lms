@@ -92,11 +92,8 @@ Create Quiz
                 </label>
             </div>
 
-            <div class="form-check mb-4">
-                <input class="form-check-input" type="checkbox" name="is_published" value="1" id="publishQuiz">
-                <label class="form-check-label" for="publishQuiz">
-                    <strong>Publish Quiz</strong> (a new quiz is saved as a draft; publish it after adding questions)
-                </label>
+            <div class="alert-note mb-4" style="background:#e6f0ff; color:#0a3d91; border-radius:12px; padding:14px 16px; font-size:13.5px;">
+                <i class="bi bi-info-circle"></i> The quiz is saved as a <strong>draft</strong> first. Add your questions on the next page, then tick <strong>Publish</strong> there to make it visible to students.
             </div>
 
             <div class="d-flex gap-2">

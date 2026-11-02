@@ -353,14 +353,14 @@ class LecturerQuizController extends Controller
             : max(0, $quiz->total_points - (float) ($submission->automatic_score ?? 0));
 
         $validated = $request->validate([
-            'manual_score' => 'required|numeric|min:0|max:'.$max,
+            'manual_score' => 'required|numeric|decimal:0,2|min:0|max:'.$max,
             'lecturer_remarks' => 'nullable|string',
             'answer_corrections' => 'nullable|array',
             'answer_corrections.*' => 'in:0,1',
         ]);
 
         $submission->update([
-            'manual_score' => $validated['manual_score'],
+            'manual_score' => round((float) $validated['manual_score'], 2),
             'lecturer_remarks' => $validated['lecturer_remarks'] ?? null,
             'status' => 'graded',
         ]);

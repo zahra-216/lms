@@ -69,7 +69,7 @@ Grade Submission - {{ $quiz->title }}
                     <span>Duration</span>
                     <span>
                         @if($submission->submitted_at)
-                            {{ $submission->started_at->diffInMinutes($submission->submitted_at) }} min
+                            {{ number_format($submission->started_at->diffInMinutes($submission->submitted_at), 2) }} min
                         @else
                             -
                         @endif
@@ -82,13 +82,17 @@ Grade Submission - {{ $quiz->title }}
                 @if($quiz->grading_type !== 'manual')
                 <div class="score-box score-box-auto">
                     <div class="mb-1" style="font-size:12px; font-weight:600;">Auto Score</div>
-                    <strong>{{ $submission->automatic_score ?? 'N/A' }}</strong> / {{ $quiz->total_points }}
+                    <strong>{{ $submission->automatic_score !== null ? number_format($submission->automatic_score, 2) : 'N/A' }}</strong> / {{ number_format($quiz->total_points, 2) }}
                 </div>
                 @endif
-                @if($quiz->grading_type !== 'automatic')
                 <div class="score-box score-box-manual">
                     <div class="mb-1" style="font-size:12px; font-weight:600;">{{ $quiz->grading_type === 'manual' ? 'Lecturer Score' : 'Lecturer marks (written part)' }}</div>
-                    <strong>{{ $submission->manual_score ?? 'Not graded' }}</strong> / {{ $quiz->total_points }}
+                    <strong>{{ $submission->manual_score !== null ? number_format($submission->manual_score, 2) : 'Not graded' }}</strong> / {{ number_format($quiz->total_points, 2) }}
+                </div>
+                @if($submission->isGraded())
+                <div class="score-box score-box-auto" style="background:#0a2a52; color:#fff;">
+                    <div class="mb-1" style="font-size:12px; font-weight:600;">Final score</div>
+                    <strong>{{ number_format($submission->getTotalScore(), 2) }}</strong> / {{ number_format($quiz->total_points, 2) }}
                 </div>
                 @endif
                 <div class="score-box score-box-status mb-0">
@@ -182,14 +186,14 @@ Grade Submission - {{ $quiz->title }}
                         <label class="form-label">{{ $quiz->grading_type === 'manual' ? 'Score for the whole quiz' : 'Marks for the written answers' }} <span class="text-danger">*</span></label>
                         <div class="input-group">
                             <input type="number" name="manual_score" class="form-control" min="0" max="{{ $manualMax }}"
-                                   value="{{ $submission->manual_score ?? '' }}" step="0.1" required>
-                            <span class="input-group-text">/ {{ $manualMax }}</span>
+                                   value="{{ $submission->manual_score !== null ? number_format($submission->manual_score, 2, '.', '') : '' }}" step="0.01" required>
+                            <span class="input-group-text">/ {{ number_format($manualMax, 2) }}</span>
                         </div>
                         <small class="d-block mt-1 text-muted">
                             @if($quiz->grading_type === 'manual')
                                 Enter the final score for this submission.
                             @else
-                                The final score is the automatic score ({{ $submission->automatic_score ?? 0 }}) plus the marks you enter here. Enter 0 if there are no written answers.
+                                The final score is the automatic score ({{ number_format($submission->automatic_score ?? 0, 2) }}) plus the marks you enter here. Enter 0 if there are no written answers.
                             @endif
                         </small>
                     </div>

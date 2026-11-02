@@ -111,7 +111,7 @@
                 <div class="stat-label">Total Attempts</div>
                 <div class="stat-number">{{ $analytics['unique_students'] }}</div>
                 <div class="stat-label">Unique Students</div>
-                <div class="stat-number">{{ number_format($analytics['average_score'], 1) }}</div>
+                <div class="stat-number">{{ number_format($analytics['average_score'], 2) }}</div>
                 <div class="stat-label">Average Score (marked attempts)</div>
             </div>
         </div>
@@ -226,7 +226,7 @@
                             </td>
                             <td>
                                 @if($submission->isGraded())
-                                    <strong>{{ number_format($submission->getTotalScore(), 2) }} / {{ $quiz->total_points }}</strong>
+                                    <strong>{{ number_format($submission->getTotalScore(), 2) }} / {{ number_format($quiz->total_points, 2) }}</strong>
                                 @else
                                     <span class="text-muted">-</span>
                                 @endif

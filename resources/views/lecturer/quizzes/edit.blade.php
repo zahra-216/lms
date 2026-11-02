@@ -145,8 +145,13 @@ Edit Quiz - {{ $quiz->title }}
 
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" name="is_published" value="1"
-                               id="publishQuiz" {{ $quiz->is_published ? 'checked' : '' }}>
-                        <label class="form-check-label" for="publishQuiz">Publish</label>
+                               id="publishQuiz" {{ $quiz->is_published ? 'checked' : '' }} {{ $questions->isEmpty() ? 'disabled' : '' }}>
+                        <label class="form-check-label" for="publishQuiz">Publish (visible to students)</label>
+                        @if($questions->isEmpty())
+                            <small class="d-block text-muted">Add at least one question first, then you can publish.</small>
+                        @elseif(! $quiz->is_published)
+                            <small class="d-block text-muted">This quiz is a draft. Tick Publish and save when it is ready.</small>
+                        @endif
                     </div>
 
                     <button type="submit" class="btn-navy">
