@@ -67,7 +67,7 @@ table.sub-table tbody tr:hover { background:#eef2f9;
                         {{ $assignment->is_published ? 'Published' : 'Draft' }}
                     </span>
                     <a href="{{ route('admin.subjects.assignments.edit', [$subject->id, $assignment->id]) }}" class="btn btn-sm btn-edit"><i class="bi bi-pencil"></i></a>
-                    <form action="{{ route('admin.subjects.assignments.destroy', [$subject->id, $assignment->id]) }}" method="POST" onsubmit="return confirm('Delete this assignment?')">
+                    <form action="{{ route('admin.subjects.assignments.destroy', [$subject->id, $assignment->id]) }}" method="POST" data-confirm="Delete this assignment?">
                         @csrf @method('DELETE')
                         <button type="submit" class="btn btn-sm btn-delete"><i class="bi bi-trash"></i></button>
                     </form>

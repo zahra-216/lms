@@ -139,14 +139,23 @@
     tick();
 
     // ---- confirm before handing in, and say how many are still blank ----
+    var confirmed = false;
     form.addEventListener('submit', function (e) {
         if (submitting) { e.preventDefault(); return; }
-        var total = form.querySelectorAll('[data-question]').length;
-        var blank = total - Object.keys(collect()).length;
-        var msg = blank > 0
-            ? 'You have ' + blank + ' unanswered question' + (blank > 1 ? 's' : '') + '. Submit anyway? You cannot change your answers afterwards.'
-            : 'Submit your quiz now? You cannot change your answers afterwards.';
-        if (!confirm(msg)) { e.preventDefault(); return; }
+        if (!confirmed) {
+            e.preventDefault();
+            var total = form.querySelectorAll('[data-question]').length;
+            var blank = total - Object.keys(collect()).length;
+            var msg = blank > 0
+                ? 'You have ' + blank + ' unanswered question' + (blank > 1 ? 's' : '') + '. Submit anyway? You cannot change your answers afterwards.'
+                : 'Submit your quiz now? You cannot change your answers afterwards.';
+            var ask = window.lmsConfirm || function (m, ok) { if (window.confirm(m)) ok(); };
+            ask(msg, function () {
+                confirmed = true;
+                if (form.requestSubmit) form.requestSubmit(); else form.submit();
+            }, { title: 'Hand in your quiz?', okText: 'Submit quiz', danger: false });
+            return;
+        }
         submitting = true;
         // Stop a second click from handing the quiz in twice. (The draft on this device is cleared on the result page, so a failed submit loses nothing.)
         setTimeout(function () { document.querySelectorAll('button[form="quizForm"], #quizForm button[type="submit"]').forEach(function (b) { b.disabled = true; }); }, 0);

@@ -136,19 +136,19 @@
                 <a href="{{ route('lecturer.quizzes.edit', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="btn-navy mb-2">
                     <i class="bi bi-pencil"></i> Edit Quiz
                 </a>
-                @if($quiz->canBeEdited())
+                @php $n = $submissions->count(); @endphp
                 <form action="{{ route('lecturer.quizzes.destroy', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" method="POST">
                     @csrf
                     @method('DELETE')
-                    <button type="submit" class="btn-soft-danger" onclick="return confirm('Are you sure?')">
+                    <button type="submit" class="btn-soft-danger" data-confirm="{{ $n > 0 ? 'Delete this quiz? The '.$n.' student attempt(s) and their marks will be deleted too, and students will no longer see this quiz. This cannot be undone.' : 'Delete this quiz? This cannot be undone.' }}">
                         <i class="bi bi-trash"></i> Delete Quiz
                     </button>
                 </form>
-                @else
-                <div class="alert-locked">
-                    <i class="bi bi-exclamation-circle"></i> Students have attempted this quiz, so it cannot be deleted and its questions are locked. You can still unpublish it or change the end date.
+                @unless($quiz->canBeEdited())
+                <div class="alert-locked mt-2">
+                    <i class="bi bi-exclamation-circle"></i> Students have attempted this quiz, so its questions are locked. You can still unpublish it or change the end date. Deleting it removes all attempts and marks.
                 </div>
-                @endif
+                @endunless
             </div>
         </div>
     </div>

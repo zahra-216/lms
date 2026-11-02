@@ -186,7 +186,7 @@ Edit Quiz - {{ $quiz->title }}
                                 <form action="{{ route('admin.subjects.quizzes.questions.destroy', ['subject' => $subject->id, 'quiz' => $quiz->id, 'question' => $question->id]) }}" method="POST">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="icon-btn icon-btn-danger" onclick="return confirm('Delete this question?')">
+                                    <button type="submit" class="icon-btn icon-btn-danger" data-confirm="Delete this question?">
                                         <i class="bi bi-trash"></i>
                                     </button>
                                 </form>

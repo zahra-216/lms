@@ -85,7 +85,7 @@ table.lecturer-table { display:block; overflow-x:auto; white-space:nowrap;
                                 <a href="{{ route('admin.lecturers.edit', $lecturer->id) }}" class="action-btn edit-btn">
                                     <i class="bi bi-pencil"></i> Edit
                                 </a>
-                                <form action="{{ route('admin.lecturers.destroy', $lecturer->id) }}" method="POST" onsubmit="return confirm('Delete this lecturer?');">
+                                <form action="{{ route('admin.lecturers.destroy', $lecturer->id) }}" method="POST" data-confirm="Delete this lecturer?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="action-btn delete-btn">

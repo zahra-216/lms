@@ -32,5 +32,32 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        // A quiz (or an attempt) that was deleted while someone still had its page open:
+        // explain what happened instead of showing a bare "404 not found".
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, \Illuminate\Http\Request $request) {
+            $missing = $e->getPrevious();
+
+            if (! $missing instanceof \Illuminate\Database\Eloquent\ModelNotFoundException
+                || ! in_array($missing->getModel(), [\App\Models\Quiz::class, \App\Models\QuizSubmission::class], true)) {
+                return null;
+            }
+
+            if ($request->routeIs('student.quiz.*')) {
+                return redirect()->route('dashboard')->with('error',
+                    'This quiz was deleted by your lecturer or the administrator, so it and your attempt are no longer available. '
+                    .'If you have any questions, please contact your lecturer or the campus office (info.ttmetro@gmail.com).');
+            }
+
+            $subject = $request->route('subject');
+            if ($subject instanceof \App\Models\Subject) {
+                if ($request->routeIs('lecturer.quizzes.*')) {
+                    return redirect()->route('lecturer.quizzes.index', $subject->id)->with('error', 'That quiz no longer exists. It may have been deleted.');
+                }
+                if ($request->routeIs('admin.subjects.quizzes.*')) {
+                    return redirect()->route('admin.subjects.quizzes.index', $subject->id)->with('error', 'That quiz no longer exists. It may have been deleted.');
+                }
+            }
+
+            return null;
+        });
     })->create();

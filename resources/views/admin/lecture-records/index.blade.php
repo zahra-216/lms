@@ -129,7 +129,7 @@ table.lr-table tbody tr:hover { background:#eef2f9;
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form action="{{ route('admin.lecture-records.destroy', $idsCsv) }}" method="POST"
-                                      onsubmit="return confirm('Delete this record{{ $group->count() > 1 ? ' (all '.$group->count().' modules)' : '' }}?');">
+                                      data-confirm="Delete this record{{ $group->count() > 1 ? ' (all '.$group->count().' modules)' : '' }}?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="icon-btn text-danger" title="Delete">

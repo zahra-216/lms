@@ -82,7 +82,7 @@ table.lr-table tbody tr:hover { background:#eef2f9;
                                     <i class="bi bi-download"></i> Download
                                 </a>
                                 <form action="{{ route('admin.lecture-records.reports.destroy', $report->id) }}" method="POST"
-                                      onsubmit="return confirm('Delete this report? This cannot be undone.');">
+                                      data-confirm="Delete this report? This cannot be undone.">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="action-btn danger">

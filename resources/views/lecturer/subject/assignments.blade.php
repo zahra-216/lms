@@ -135,7 +135,7 @@ table.sub-table tbody tr:hover { background:#fff;
                         <i class="bi bi-pencil-square"></i>
                     </a>
                     <form action="{{ route('lecturer.assignments.destroy', [$subject->id, $assignment->id]) }}"
-                          method="POST" onsubmit="return confirm('Delete this assignment? This cannot be undone.');">
+                          method="POST" data-confirm="Delete this assignment? This cannot be undone.">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="icon-btn danger" title="Delete">

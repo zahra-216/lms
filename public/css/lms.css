@@ -414,3 +414,20 @@ main:not(.lms-main):not(.auth-main) { padding-bottom: 64px; }
     .pub-nav .btn-navy i { display: none; }
     .pub-topbar span:last-child { font-size: 11.5px; }
 }
+
+/* ---- Confirmation window (data-confirm) ---- */
+.lms-confirm .lms-confirm-icon { width: 64px; height: 64px; margin: 0 auto 14px; border-radius: 50%; display: grid; place-items: center; font-size: 28px; background: var(--sky-soft); color: var(--brand-700); }
+.lms-confirm .lms-confirm-title { font-weight: 800; color: var(--navy-900); margin-bottom: 8px; }
+.lms-confirm .lms-confirm-text { color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+.lms-confirm .btn { border-radius: 12px; font-weight: 700; padding: 10px 22px; min-width: 110px; }
+.lms-confirm .lms-confirm-cancel { background: #fff; color: var(--navy-900); border: 1px solid var(--line); }
+.lms-confirm .lms-confirm-cancel:hover { background: var(--surface); }
+.lms-confirm .lms-confirm-ok { background: var(--navy-900); border: 1px solid var(--navy-900); color: #fff; }
+.lms-confirm .lms-confirm-ok:hover { background: var(--brand-700); border-color: var(--brand-700); color: #fff; }
+.lms-confirm.is-danger .lms-confirm-icon { background: #fdeaea; color: #b91c1c; }
+.lms-confirm.is-danger .lms-confirm-ok { background: #b91c1c; border-color: #b91c1c; }
+.lms-confirm.is-danger .lms-confirm-ok:hover { background: #991b1b; border-color: #991b1b; }
+@media (max-width: 420px) {
+    .lms-confirm .modal-footer { flex-direction: column-reverse; }
+    .lms-confirm .modal-footer .btn { width: 100%; margin: 0; }
+}

@@ -176,7 +176,7 @@
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </button>
                                 <form action="{{ route('assignment.submission.destroy', $submission->id) }}" method="POST"
-                                      onsubmit="return confirm('Delete your submission? This cannot be undone.');">
+                                      data-confirm="Delete your submission? This cannot be undone.">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn-ghost danger">

@@ -90,7 +90,7 @@ table.videos-table tbody tr:hover { background:#eef2f9;
                         <a href="{{ route('lecturer.videos.edit', [$subject->id, $video->id]) }}" class="btn btn-sm btn-edit">
                             <i class="bi bi-pencil-square"></i> Edit
                         </a>
-                        <form action="{{ route('lecturer.videos.destroy', [$subject->id, $video->id]) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this video?')">
+                        <form action="{{ route('lecturer.videos.destroy', [$subject->id, $video->id]) }}" method="POST" style="display:inline;" data-confirm="Delete this video?">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-sm btn-delete">

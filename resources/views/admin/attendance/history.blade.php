@@ -40,7 +40,7 @@
                     <a href="{{ route('admin.attendance.monthly.pdf', ['id' => $subject->id, 'month' => $month]) }}?download=1" title="Download">
                         <i class="bi bi-download"></i>
                     </a>
-                    <form action="{{ route('admin.attendance.monthly.destroy', ['id' => $subject->id, 'month' => $month]) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete all attendance records for {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('F Y') }}? This cannot be undone.')">
+                    <form action="{{ route('admin.attendance.monthly.destroy', ['id' => $subject->id, 'month' => $month]) }}" method="POST" style="display:inline;" data-confirm="Delete all attendance records for {{ \Carbon\Carbon::createFromFormat('Y-m', $month)->format('F Y') }}? This cannot be undone.">
                         @csrf
                         @method('DELETE')
                         <button type="submit" title="Delete"><i class="bi bi-trash"></i></button>

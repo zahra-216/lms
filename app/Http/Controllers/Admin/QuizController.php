@@ -16,7 +16,7 @@ class QuizController extends Controller
     // Show all quizzes for a subject
     public function index(Subject $subject)
     {
-        $quizzes = $subject->quizzes()->orderBy('created_at', 'desc')->get();
+        $quizzes = $subject->quizzes()->withCount('submissions')->orderBy('created_at', 'desc')->get();
         return view('admin.quizzes.index', compact('subject', 'quizzes'));
     }
 
@@ -161,11 +161,7 @@ class QuizController extends Controller
             abort(403);
         }
 
-        // Deleting would also delete the students' attempts and marks
-        if (!$quiz->canBeEdited()) {
-            return back()->with('error', 'Students have already attempted this quiz, so it cannot be deleted. Untick Publish to hide it from students.');
-        }
-
+        // The students' attempts and marks are deleted with the quiz (database cascade)
         $quiz->delete();
 
         return $this->returnTo(route('admin.subjects.quizzes.index', $subject->id))

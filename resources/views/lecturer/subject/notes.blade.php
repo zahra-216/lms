@@ -90,7 +90,7 @@ table.notes-table tbody tr:hover { background:#eef2f9;
                         <a href="{{ route('lecturer.notes.edit', [$subject->id, $note->id]) }}" class="btn btn-sm btn-edit">
                             <i class="bi bi-pencil-square"></i> Edit
                         </a>
-                        <form action="{{ route('lecturer.notes.destroy', [$subject->id, $note->id]) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this note?')">
+                        <form action="{{ route('lecturer.notes.destroy', [$subject->id, $note->id]) }}" method="POST" style="display:inline;" data-confirm="Delete this note?">
                             @csrf
                             @method('DELETE')
                             <button class="btn btn-sm btn-delete">

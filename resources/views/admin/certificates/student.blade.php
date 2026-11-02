@@ -70,7 +70,7 @@
                 <a href="{{ route('admin.certificates.edit', $cert->id) }}" class="btn-sm-action edit-btn">
                     <i class="bi bi-pencil"></i> Edit
                 </a>
-                <form action="{{ route('admin.certificates.destroy', $cert->id) }}" method="POST" style="display:inline;" onsubmit="return confirm('Delete this certificate?')">
+                <form action="{{ route('admin.certificates.destroy', $cert->id) }}" method="POST" style="display:inline;" data-confirm="Delete this certificate?">
                     @csrf @method('DELETE')
                     <button type="submit" class="btn-sm-action delete-btn"><i class="bi bi-trash"></i> Delete</button>
                 </form>

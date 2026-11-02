@@ -106,15 +106,14 @@ Quizzes - {{ $subject->name }}
                         <a href="{{ route('lecturer.quizzes.edit', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" class="btn-soft">
                             <i class="bi bi-pencil"></i> Edit
                         </a>
-                        @if($quiz->canBeEdited())
+                        @php $n = $quiz->submissions_count; @endphp
                         <form action="{{ route('lecturer.quizzes.destroy', ['subject' => $subject->id, 'quiz' => $quiz->id]) }}" method="POST">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn-soft btn-soft-danger" onclick="return confirm('Are you sure?')">
+                            <button type="submit" class="btn-soft btn-soft-danger" data-confirm="{{ $n > 0 ? 'Delete this quiz? The '.$n.' student attempt(s) and their marks will be deleted too, and students will no longer see this quiz. This cannot be undone.' : 'Delete this quiz? This cannot be undone.' }}">
                                 <i class="bi bi-trash"></i> Delete
                             </button>
                         </form>
-                        @endif
                     </div>
                 </div>
             </div>

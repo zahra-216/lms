@@ -88,7 +88,7 @@ table.gl-table tbody tr:nth-child(even) { background:#f8fafc;
                         </td>
                         <td>
                             <form action="{{ route('admin.gate-log.destroy', [$row->user_type, $row->user_id]) }}?date={{ $date }}"
-                                  method="POST" onsubmit="return confirm('Delete this record for {{ $row->name }} on {{ $date }}?');">
+                                  method="POST" data-confirm="Delete this record for {{ $row->name }} on {{ $date }}?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="icon-btn" title="Delete"><i class="bi bi-trash"></i></button>

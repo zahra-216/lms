@@ -190,7 +190,7 @@ table.history { display:block; overflow-x:auto; white-space:nowrap;
                                 <a href="{{ route('admin.lecturer-payments.edit', $payment->id) }}" class="action-btn btn-edit">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                <form method="POST" action="{{ route('admin.lecturer-payments.destroy', $payment->id) }}" style="display:inline;" onsubmit="return confirm('Delete this record?')">
+                                <form method="POST" action="{{ route('admin.lecturer-payments.destroy', $payment->id) }}" style="display:inline;" data-confirm="Delete this record?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="action-btn btn-delete">

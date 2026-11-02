@@ -93,7 +93,7 @@
              onclick="openCourseStructure('course-{{ $course->id }}')">
             <div class="course-card-actions">
                 <a href="{{ route('admin.courses.edit', $course->id) }}" class="icon-edit" onclick="event.stopPropagation()"><i class="bi bi-pencil"></i></a>
-                <form action="{{ route('admin.courses.destroy', $course->id) }}" method="POST" onsubmit="return confirm('Delete this course?')" onclick="event.stopPropagation()">
+                <form action="{{ route('admin.courses.destroy', $course->id) }}" method="POST" data-confirm="Delete this course?" onclick="event.stopPropagation()">
                     @csrf @method('DELETE')
                     <button type="submit" class="icon-delete"><i class="bi bi-trash"></i></button>
                 </form>
@@ -138,7 +138,7 @@
                     <div class="level-block mb-3">
                         <h6>
                             {{ $level->name }}
-                            <form action="{{ route('admin.levels.destroy', $level->id) }}" method="POST" onsubmit="return confirm('Delete this level?')" style="display:inline; margin-left:auto;">
+                            <form action="{{ route('admin.levels.destroy', $level->id) }}" method="POST" data-confirm="Delete this level?" style="display:inline; margin-left:auto;">
                                 @csrf @method('DELETE')
                                 <button type="submit" class="btn btn-sm" style="color:#ef4444; border:none; background:none; padding:0 4px;"><i class="bi bi-trash"></i></button>
                             </form>
@@ -189,7 +189,7 @@
                                                     </a>
                                                     <div class="d-flex gap-2">
                                                         <a href="{{ route('admin.subjects.edit', $subject->id) }}" style="color:#012147;"><i class="bi bi-pencil"></i></a>
-                                                        <form action="{{ route('admin.subjects.destroy', $subject->id) }}" method="POST" onsubmit="return confirm('Delete this subject?')">
+                                                        <form action="{{ route('admin.subjects.destroy', $subject->id) }}" method="POST" data-confirm="Delete this subject?">
                                                             @csrf @method('DELETE')
                                                             <button type="submit" style="border:none;background:none;color:#ef4444;"><i class="bi bi-trash"></i></button>
                                                         </form>

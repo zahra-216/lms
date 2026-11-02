@@ -142,7 +142,7 @@ table.pay-table { display:block; overflow-x:auto; white-space:nowrap;
                                 <a href="{{ route('admin.payments.payment.edit', $payment->id) }}" class="action-btn edit-btn">
                                     <i class="bi bi-pencil"></i> Edit
                                 </a>
-                                <form method="POST" action="{{ route('admin.payments.payment.destroy', $payment->id) }}" onsubmit="return confirm('Delete this payment?')">
+                                <form method="POST" action="{{ route('admin.payments.payment.destroy', $payment->id) }}" data-confirm="Delete this payment?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="action-btn delete-btn">

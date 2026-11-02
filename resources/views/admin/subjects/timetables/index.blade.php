@@ -61,7 +61,7 @@ tbody tr:nth-child(even) { background:#f8fafc;
                     </div>
                     <div class="actions">
                         <a href="{{ route('admin.subjects.timetables.edit', [$subject->id, $groupId]) }}" class="edit"><i class="bi bi-pencil-square"></i></a>
-                        <form action="{{ route('admin.subjects.timetables.destroy', [$subject->id, $groupId]) }}" method="POST" style="display:inline" onsubmit="return confirm('Delete this timetable entry?')">
+                        <form action="{{ route('admin.subjects.timetables.destroy', [$subject->id, $groupId]) }}" method="POST" style="display:inline" data-confirm="Delete this timetable entry?">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="delete"><i class="bi bi-trash"></i></button>

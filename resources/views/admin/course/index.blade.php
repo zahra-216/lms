@@ -80,7 +80,7 @@ table.course-table { display:block; overflow-x:auto; white-space:nowrap;
                             <a href="{{ route('admin.courses.edit',$course->id) }}" class="action-btn edit-btn">
                                 <i class="bi bi-pencil"></i> Edit
                             </a>
-                            <form method="POST" action="{{ route('admin.courses.destroy',$course->id) }}" onsubmit="return confirm('Delete this course?')">
+                            <form method="POST" action="{{ route('admin.courses.destroy',$course->id) }}" data-confirm="Delete this course?">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="action-btn delete-btn">

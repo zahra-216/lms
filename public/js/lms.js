@@ -71,6 +71,60 @@
         });
     }
 
+    // ---- Confirmation window (replaces the browser's plain "this site says" popup) ----
+    // Use data-confirm="Message" on a <form> (or on its submit button). Optional: data-confirm-ok="Button text",
+    // data-confirm-title="Title". Messages that start with "Delete" get a red button.
+    var confirmEl = null;
+    var confirmCallback = null;
+    function buildConfirm() {
+        var wrap = document.createElement('div');
+        wrap.innerHTML =
+            '<div class="modal fade lms-confirm" tabindex="-1" aria-labelledby="lmsConfirmTitle" aria-hidden="true">' +
+            '<div class="modal-dialog modal-dialog-centered"><div class="modal-content">' +
+            '<div class="modal-body text-center p-4 pb-3">' +
+            '<div class="lms-confirm-icon"><i class="bi bi-exclamation-triangle-fill"></i></div>' +
+            '<h5 class="lms-confirm-title" id="lmsConfirmTitle">Please confirm</h5>' +
+            '<p class="lms-confirm-text mb-0"></p></div>' +
+            '<div class="modal-footer border-0 justify-content-center gap-2 pt-0 pb-4">' +
+            '<button type="button" class="btn lms-confirm-cancel" data-bs-dismiss="modal">Cancel</button>' +
+            '<button type="button" class="btn lms-confirm-ok">Confirm</button></div>' +
+            '</div></div></div>';
+        confirmEl = wrap.firstChild;
+        document.body.appendChild(confirmEl);
+        confirmEl.querySelector('.lms-confirm-ok').addEventListener('click', function () {
+            var run = confirmCallback;
+            confirmCallback = null;
+            bootstrap.Modal.getInstance(confirmEl).hide();
+            if (run) run();
+        });
+        confirmEl.addEventListener('hidden.bs.modal', function () { confirmCallback = null; });
+    }
+    window.lmsConfirm = function (message, onOk, options) {
+        options = options || {};
+        if (!(window.bootstrap && bootstrap.Modal)) { if (window.confirm(message)) onOk(); return; }
+        if (!confirmEl) buildConfirm();
+        var danger = options.danger !== undefined ? options.danger : /^\s*delete/i.test(message);
+        confirmEl.classList.toggle('is-danger', danger);
+        confirmEl.querySelector('.lms-confirm-title').textContent = options.title || (danger ? 'Delete this item?' : 'Please confirm');
+        confirmEl.querySelector('.lms-confirm-text').textContent = message;
+        confirmEl.querySelector('.lms-confirm-ok').textContent = options.okText || (danger ? 'Delete' : 'Confirm');
+        confirmCallback = onOk;
+        bootstrap.Modal.getOrCreateInstance(confirmEl).show();
+    };
+    document.addEventListener('submit', function (e) {
+        var form = e.target;
+        if (!(form instanceof HTMLFormElement)) return;
+        if (form.dataset.lmsConfirmed) { delete form.dataset.lmsConfirmed; return; }
+        var src = (e.submitter && e.submitter.hasAttribute('data-confirm')) ? e.submitter : (form.hasAttribute('data-confirm') ? form : null);
+        if (!src) return;
+        e.preventDefault();
+        var submitter = e.submitter;
+        window.lmsConfirm(src.getAttribute('data-confirm'), function () {
+            form.dataset.lmsConfirmed = '1';
+            if (form.requestSubmit) form.requestSubmit(submitter || undefined); else form.submit();
+        }, { okText: src.getAttribute('data-confirm-ok') || undefined, title: src.getAttribute('data-confirm-title') || undefined });
+    }, true);
+
     // ---- Double-submit guard: stop a form being sent twice by an impatient click ----
     document.addEventListener('submit', function (e) {
         var form = e.target;

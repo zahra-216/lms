@@ -158,7 +158,7 @@ tbody tr:nth-child(even) { background:#f8fafc;
                                                     </a>
                                                     <form action="{{ route('admin.students.destroy', $student->id) }}"
                                                           method="POST" style="display:inline;"
-                                                          onsubmit="return confirm('Delete this student?')">
+                                                          data-confirm="Delete this student?">
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit" class="btn-sm-action delete-btn">

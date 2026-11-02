@@ -56,7 +56,7 @@ Faculties
 
                 <div class="card-actions">
                     <a href="{{ route('admin.faculties.edit', $faculty->id) }}" class="icon-edit"><i class="bi bi-pencil"></i></a>
-                    <form action="{{ route('admin.faculties.destroy', $faculty->id) }}" method="POST" onsubmit="return confirm('Delete this faculty?')">
+                    <form action="{{ route('admin.faculties.destroy', $faculty->id) }}" method="POST" data-confirm="Delete this faculty?">
                         @csrf @method('DELETE')
                         <button type="submit" class="icon-delete"><i class="bi bi-trash"></i></button>
                     </form>

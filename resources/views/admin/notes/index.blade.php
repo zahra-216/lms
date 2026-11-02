@@ -104,7 +104,7 @@ table.notes-table { display:block; overflow-x:auto; white-space:nowrap;
                         <td>
                             <div class="d-flex gap-2">
                                 <a href="{{ route('admin.subjects.notes.edit', [$subject->id,$note->id]) }}" class="btn-icon edit"><i class="bi bi-pencil"></i></a>
-                                <form action="{{ route('admin.subjects.notes.destroy', [$subject->id,$note->id]) }}" method="POST" onsubmit="return confirm('Delete this note?')">
+                                <form action="{{ route('admin.subjects.notes.destroy', [$subject->id,$note->id]) }}" method="POST" data-confirm="Delete this note?">
                                     @csrf
                                     @method('DELETE')
                                     <button type="submit" class="btn-icon delete" style="border:none;"><i class="bi bi-trash"></i></button>
