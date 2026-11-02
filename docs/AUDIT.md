@@ -6,7 +6,7 @@ Branch: `redesign-and-fixes`. This page records what was found in the review, wh
 
 | Step | What happens |
 |---|---|
-| Lecturer / admin creates a quiz | Title, duration (minutes), total points, max attempts, grading type (`automatic`, `manual`, `both`), start and end date, "show correct answers" switch. Questions are added on the edit page. A quiz **cannot be edited or deleted once its start date has passed**. |
+| Lecturer / admin creates a quiz | Title, duration (minutes), total points, max attempts, grading type (`automatic` or `manual`), start and end date, "show correct answers" switch. Questions are added on the edit page. Once a student has attempted a quiz its questions, points, duration and grading type are locked and it cannot be deleted (title, end date, attempts and publishing can still change). |
 | Question types | `multiple_choice` (one correct option), `true_false`, `short_answer` (written: short or long answers). |
 | Student starts | Allowed while the quiz is published, started and not ended, and attempts used < max attempts. The attempt records `started_at`; the deadline is `started_at + duration`. |
 | Student answers | Choice questions: pick an option. Written questions: a large text box. **Long answers are accepted**: the database column is `TEXT` (about 65,000 characters) and validation allows up to 50,000 characters. |

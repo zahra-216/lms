@@ -36,7 +36,7 @@ class LecturerQuizController extends Controller
             'duration_minutes' => 'required|integer|min:1',
             'total_points' => 'required|integer|min:1',
             'max_attempts' => 'required|integer|min:1',
-            'grading_type' => 'required|in:automatic,manual,both',
+            'grading_type' => 'required|in:automatic,manual',
             'show_correct_answers' => 'nullable|boolean',
             'is_published' => 'nullable|boolean',
         ]);
@@ -109,7 +109,7 @@ class LecturerQuizController extends Controller
                 'end_date' => $this->endDateRule($request),
                 'duration_minutes' => 'required|integer|min:1',
                 'total_points' => 'required|integer|min:'.max(1, $quiz->questionPoints()),
-                'grading_type' => 'required|in:automatic,manual,both',
+                'grading_type' => 'required|in:automatic,manual',
             ];
         }
 

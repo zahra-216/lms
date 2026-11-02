@@ -82,7 +82,6 @@ Create Quiz
                 <select name="grading_type" class="form-select" required>
                     <option value="automatic">Automatic - system marks choice questions (written answers still wait for the lecturer)</option>
                     <option value="manual">Manual - lecturer marks the whole quiz</option>
-                    <option value="both">Automatic + lecturer - system marks choices, lecturer adds marks for written answers</option>
                 </select>
             </div>
 

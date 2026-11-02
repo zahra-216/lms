@@ -259,8 +259,8 @@ class QuizController extends Controller
                 ]);
             }
 
-            // Written answers (and manual or "both" quizzes) always wait for the lecturer.
-            $needsLecturer = $quiz->grading_type !== 'automatic' || $questions->contains('type', 'short_answer');
+            // Manual quizzes and written answers always wait for the lecturer.
+            $needsLecturer = $quiz->grading_type === 'manual' || $questions->contains('type', 'short_answer');
 
             $locked->update([
                 'submitted_at' => now()->min($this->deadline($locked)->addSeconds(60)),

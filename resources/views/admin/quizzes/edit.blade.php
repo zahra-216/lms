@@ -120,9 +120,8 @@ Edit Quiz - {{ $quiz->title }}
                     <div class="mb-3">
                         <label class="form-label">Grading Type</label>
                         <select name="grading_type" class="form-select" required {{ $locked ? 'disabled' : '' }}>
-                            <option value="automatic" {{ $quiz->grading_type === 'automatic' ? 'selected' : '' }}>Automatic - system marks choice questions (written answers wait for the lecturer)</option>
+                            <option value="automatic" {{ $quiz->grading_type !== 'manual' ? 'selected' : '' }}>Automatic - system marks choice questions (written answers wait for the lecturer)</option>
                             <option value="manual" {{ $quiz->grading_type === 'manual' ? 'selected' : '' }}>Manual - lecturer marks the whole quiz</option>
-                            <option value="both" {{ $quiz->grading_type === 'both' ? 'selected' : '' }}>Automatic + lecturer - system marks choices, lecturer adds marks for written answers</option>
                         </select>
                     </div>
 

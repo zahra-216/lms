@@ -45,7 +45,7 @@ class QuizSubmission extends Model
     /**
      * Final score.
      * Manual quiz: the lecturer's score for the whole quiz.
-     * Automatic / both: the system's score for choice questions plus the lecturer's marks for the
+     * Automatic: the system's score for choice questions plus the lecturer's marks for the
      * written part (if any), never more than the quiz total.
      */
     public function getTotalScore()
