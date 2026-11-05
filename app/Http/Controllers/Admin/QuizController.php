@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Quiz;
 use App\Models\Subject;
 use App\Models\QuizQuestion;
+use App\Models\QuizSubmission;
 use App\Models\QuizAnswer;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -315,6 +316,21 @@ class QuizController extends Controller
         return back()->with('success', 'Question deleted successfully');
     }
 
+    /**
+     * Most marks the lecturer can give: the whole quiz for a manual quiz, otherwise only the written
+     * questions (their points together), and never more than what is left of the quiz total.
+     */
+    private function manualMax(Quiz $quiz, QuizSubmission $submission): float
+    {
+        if ($quiz->grading_type === 'manual') {
+            return (float) $quiz->total_points;
+        }
+
+        $written = (float) $quiz->questions()->where('type', 'short_answer')->sum('points');
+
+        return max(0, min($written, (float) $quiz->total_points - (float) ($submission->automatic_score ?? 0)));
+    }
+
     // Show grading interface for a submission
     public function gradeSubmission(Subject $subject, Quiz $quiz, $submissionId)
     {
@@ -332,7 +348,9 @@ class QuizController extends Controller
         $submission->load('student', 'answers.answer');
         $quiz->load('questions.answers');
 
-        return view('admin.quizzes.grade', compact('subject', 'quiz', 'submission'));
+        $manualMax = $this->manualMax($quiz, $submission);
+
+        return view('admin.quizzes.grade', compact('subject', 'quiz', 'submission', 'manualMax'));
     }
 
     // Save grades for a submission
@@ -348,10 +366,7 @@ class QuizController extends Controller
             return back()->with('error', 'The student is still taking this quiz. Grade it after it is handed in.');
         }
 
-        // Manual quiz: marks for the whole quiz. Otherwise: marks for the written part, added to the automatic score.
-        $max = $quiz->grading_type === 'manual'
-            ? $quiz->total_points
-            : max(0, $quiz->total_points - (float) ($submission->automatic_score ?? 0));
+        $max = $this->manualMax($quiz, $submission);
 
         $validated = $request->validate([
             'manual_score' => 'required|numeric|decimal:0,2|min:0|max:'.$max,

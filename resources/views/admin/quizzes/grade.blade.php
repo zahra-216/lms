@@ -181,7 +181,6 @@ Grade Submission - {{ $quiz->title }}
 
                 <div class="section-card">
                     <h6><i class="bi bi-pencil-square"></i> Grading</h6>
-                    @php $manualMax = $quiz->grading_type === 'manual' ? $quiz->total_points : max(0, $quiz->total_points - ($submission->automatic_score ?? 0)); @endphp
                     <div class="mb-4">
                         <label class="form-label">{{ $quiz->grading_type === 'manual' ? 'Score for the whole quiz' : 'Marks for the written answers' }} <span class="text-danger">*</span></label>
                         <div class="input-group">
@@ -193,7 +192,7 @@ Grade Submission - {{ $quiz->title }}
                             @if($quiz->grading_type === 'manual')
                                 Enter the final score for this submission.
                             @else
-                                The final score is the automatic score ({{ number_format($submission->automatic_score ?? 0, 2) }}) plus the marks you enter here. Enter 0 if there are no written answers.
+                                The written questions are worth {{ number_format($manualMax, 2) }} marks. The final score is the automatic score ({{ number_format($submission->automatic_score ?? 0, 2) }}) plus the marks you enter here. Enter 0 if there are no written answers.
                             @endif
                         </small>
                     </div>

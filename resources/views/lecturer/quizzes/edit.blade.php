@@ -109,7 +109,10 @@ Edit Quiz - {{ $quiz->title }}
                     <div class="mb-3">
                         <label class="form-label">Total Points</label>
                         <input type="number" name="total_points" class="form-control" min="1" value="{{ $quiz->total_points }}" required {{ $locked ? 'readonly' : '' }}>
-                        <small class="text-muted">The questions use {{ $questionPoints }} points.</small>
+                        <small class="text-muted d-block">The questions use {{ $questionPoints }} points.</small>
+                        @if($questionPoints > 0 && $questionPoints < $quiz->total_points)
+                            <small class="d-block" style="color:#8a5b00;">Total Points is higher than the questions add up to, so students can never score the full {{ $quiz->total_points }}. Raise a question's points or lower Total Points.</small>
+                        @endif
                     </div>
 
                     <div class="mb-3">
