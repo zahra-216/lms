@@ -25,6 +25,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->appendToGroup('web', \App\Http\Middleware\RememberPreviousPage::class);
 
+        // Zoom calls this address itself (no browser, no CSRF token); it is protected by Zoom's signature instead.
+        $middleware->validateCsrfTokens(except: ['zoom/webhook']);
+
         $middleware->alias([
             'student.auth' => \App\Http\Middleware\EnsureStudentLoggedIn::class,
             'student.subject' => \App\Http\Middleware\EnsureStudentCanAccessSubject::class,

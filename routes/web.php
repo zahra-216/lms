@@ -43,6 +43,10 @@ use App\Http\Controllers\Admin\MarkController;
 
 Route::get('/', [FrontendController::class, 'home'])->name('home');
 
+// Zoom tells us when a class has ended (signature checked inside).
+Route::post('/zoom/webhook', [App\Http\Controllers\ZoomWebhookController::class, 'handle'])
+    ->middleware('throttle:60,1')->name('zoom.webhook');
+
 // Lecturers browse faculty -> course -> subject here (it links into lecturer-only pages).
 Route::get('/faculty/{facultyId}/courses', [FrontendController::class, 'facultyCourses'])
     ->middleware('auth:lecturer')
@@ -561,6 +565,15 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('attendance.monthly.pdf');
     Route::delete('/attendance/{id}/history/{month}', [App\Http\Controllers\Admin\AttendanceController::class, 'deleteMonth'])
         ->name('attendance.monthly.destroy');
+
+    // Zoom classes (attendance comes back from Zoom by itself)
+    Route::get('/zoom-classes', [App\Http\Controllers\Admin\ZoomClassController::class, 'index'])->name('zoom.index');
+    Route::get('/zoom-classes/create', [App\Http\Controllers\Admin\ZoomClassController::class, 'create'])->name('zoom.create');
+    Route::post('/zoom-classes', [App\Http\Controllers\Admin\ZoomClassController::class, 'store'])->name('zoom.store');
+    Route::get('/zoom-classes/{id}', [App\Http\Controllers\Admin\ZoomClassController::class, 'show'])->name('zoom.show');
+    Route::post('/zoom-classes/{id}/fetch', [App\Http\Controllers\Admin\ZoomClassController::class, 'fetch'])->name('zoom.fetch');
+    Route::post('/zoom-classes/{id}/participants/{participantId}/assign', [App\Http\Controllers\Admin\ZoomClassController::class, 'assign'])->name('zoom.assign');
+    Route::delete('/zoom-classes/{id}', [App\Http\Controllers\Admin\ZoomClassController::class, 'destroy'])->name('zoom.destroy');
 
     // Gate Log
     Route::get('/gate-log', [App\Http\Controllers\Admin\GateLogController::class, 'index'])

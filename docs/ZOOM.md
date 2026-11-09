@@ -1,0 +1,52 @@
+# Zoom classes and automatic attendance
+
+Admins create a Zoom class in the LMS (**Zoom Classes** in the sidebar), tick the modules it covers, and share the join link.
+When the class ends, the LMS reads who joined from Zoom and saves attendance by itself.
+
+## What the LMS does
+
+1. **Create.** The LMS asks Zoom to make a meeting in the campus Zoom account and stores the meeting ID, join link and passcode with the ticked modules.
+2. **After the class.** Zoom calls `POST /zoom/webhook` (event `meeting.ended`). The request is checked against the app's secret token (HMAC signature, 5 minute window). The LMS then asks Zoom for the participant list. If Zoom has not prepared it yet, `php artisan zoom:sync` (scheduled every 5 minutes) tries again, up to 12 times, then marks the class "Needs attention". It also picks up classes whose webhook never arrived.
+3. **Match.** A Zoom name counts as a student when it contains a registration number that exists in the LMS. Capitals, spaces, dashes and slashes are ignored, so `ttmc ml dip hrm-o 24 02 Kamal` matches `TTMC/ML/DIP/HRM-O/24/02`. A longer number is never mistaken for a shorter one (`...02` vs `...021`).
+4. **Mark.** For each ticked module the students are those of the module's course, level and current semester (the same list the Attendance page shows). Joined = present, everyone else = absent. The date is the class's start date.
+5. **Hand marks win.** A mark made on the Attendance page is never overwritten (`attendances.source = 'manual'`). Marks made by Zoom (`source = 'zoom'`) are refreshed when the list is fetched again.
+6. **Names that did not match** (lecturers, guests, typos) are listed on the class page. Typing the right registration number there matches the student and marks them present.
+
+## One-time setup (needs the campus Zoom admin)
+
+In the Zoom App Marketplace create a **Server-to-Server OAuth** app for the campus account:
+
+- Scopes: create and delete meetings, and read the participants of past meetings (the report scope, which needs a Pro or higher plan). Exact scope names are shown in the Marketplace screen.
+- Event subscription: **Meeting - End Meeting**, address `https://lms.ttmetrocampus.com/zoom/webhook`. Copy its **Secret Token**.
+- Activate the app.
+
+Put the values in the server's `.env` (never in GitHub, never in chat), then `php artisan config:clear`:
+
+```
+ZOOM_ACCOUNT_ID=
+ZOOM_CLIENT_ID=
+ZOOM_CLIENT_SECRET=
+ZOOM_WEBHOOK_SECRET=      # the event subscription's Secret Token
+ZOOM_HOST_EMAIL=          # Zoom login (email) that owns the meetings
+```
+
+Leave `ZOOM_FAKE` off on the live server.
+
+Hostinger cron job (hPanel, Advanced, Cron Jobs), every minute, so the retry command runs (check the folder path with `pwd` inside the LMS folder on the server and adjust it):
+
+```
+cd /home/u422071295/domains/ttmetrocampus.com/public_html/lms.ttmetrocampus.com && /opt/alt/php84/usr/bin/php artisan schedule:run >> /dev/null 2>&1
+```
+
+Update routine: `git pull`, `php artisan migrate --force` (new tables `zoom_meetings`, `zoom_meeting_subject`, `zoom_participants`, column `attendances.source`), `php artisan optimize:clear`.
+
+## Local testing
+
+`ZOOM_FAKE=true` pretends to be Zoom: meetings get made-up numbers and the participants are read from `storage/app/zoom-fake/<meeting id>.json`. Test scripts (outside the repo, in `lms-tools`): `zoom_seed.php`, `test_zoom.py`, `zoom_service_test.php`.
+
+## Limits
+
+- The real Zoom was not called during development. The first live class is the real test.
+- The attendance date is the class's scheduled start date.
+- A Zoom class cannot be edited; delete it and create it again.
+- Two classes at the same time need two different Zoom hosts (a Zoom plan limit).

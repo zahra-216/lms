@@ -35,4 +35,17 @@ return [
         ],
     ],
 
+    // Zoom classes: the campus Zoom account (Server-to-Server OAuth app). Values live in .env only.
+    'zoom' => [
+        'account_id' => env('ZOOM_ACCOUNT_ID'),
+        'client_id' => env('ZOOM_CLIENT_ID'),
+        'client_secret' => env('ZOOM_CLIENT_SECRET'),
+        'webhook_secret' => env('ZOOM_WEBHOOK_SECRET'),   // "Secret Token" of the app's event subscription
+        'host' => env('ZOOM_HOST_EMAIL'),                 // Zoom login (email) that owns the meetings
+        'timezone' => env('ZOOM_TIMEZONE', 'Asia/Colombo'),
+        'fake' => (bool) env('ZOOM_FAKE', false),         // local testing only: pretend Zoom, no internet needed
+        'retry_minutes' => 5,                             // wait between tries while Zoom prepares the list
+        'max_attempts' => 12,
+    ],
+
 ];

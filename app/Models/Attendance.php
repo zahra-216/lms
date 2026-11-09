@@ -14,6 +14,7 @@ class Attendance extends Model
         'subject_id',
         'date',
         'status',
+        'source',
         'marked_by',
     ];
 

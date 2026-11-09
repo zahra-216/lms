@@ -68,6 +68,7 @@ class AttendanceController extends Controller
                     ],
                     [
                         'status' => $status ?: null,
+                        'source' => 'manual',   // a mark made by hand is never replaced by Zoom
                         'marked_by' => auth()->guard('admin')->id(),
                     ]
                 );

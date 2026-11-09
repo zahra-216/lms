@@ -18,6 +18,7 @@
                 ['Marks', 'admin.marks.index', 'award', ['admin.marks.*']],
                 ['Lecture Records', 'admin.lecture-records.index', 'journal-plus', ['admin.lecture-records.*']],
                 ['Attendance', 'admin.attendance.index', 'calendar-check', ['admin.attendance.*']],
+                ['Zoom Classes', 'admin.zoom.index', 'camera-video', ['admin.zoom.*']],
                 ['Scan Attendance', 'admin.scan.index', 'qr-code-scan', ['admin.scan.*']],
                 ['Gate Log', 'admin.gate-log.index', 'door-open', ['admin.gate-log.*']],
             ],
