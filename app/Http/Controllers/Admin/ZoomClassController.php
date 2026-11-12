@@ -10,6 +10,7 @@ use App\Services\ZoomAttendance;
 use App\Services\ZoomService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 use RuntimeException;
 use Throwable;
@@ -39,23 +40,81 @@ class ZoomClassController extends Controller
 
     public function create()
     {
-        $subjects = Subject::with(['course.faculty', 'level', 'semester'])
-            ->orderBy('code')
-            ->get()
-            ->sortBy(fn ($s) => sprintf('%s|%s|%s|%s|%s',
-                $s->course?->faculty?->name, $s->course?->name, $s->level?->name, $s->semester?->name, $s->code))
-            ->values();
-
         return view('admin.zoom.create', [
-            'subjects' => $subjects,
+            'meeting' => null,
+            'subjects' => $this->pickerSubjects(),
             'connected' => $this->zoom->isConfigured(),
             'fake' => $this->zoom->isFake(),
         ]);
     }
 
-    public function store(Request $request)
+    /** The same form, filled in. Only until the class starts. */
+    public function edit($id)
     {
-        $data = $request->validate([
+        $meeting = ZoomMeeting::with('subjects:id')->findOrFail($id);
+
+        if (! $meeting->canBeEdited()) {
+            return redirect()->route('admin.zoom.show', $meeting->id)
+                ->with('error', 'This class can only be edited before it starts.');
+        }
+
+        return view('admin.zoom.create', [
+            'meeting' => $meeting,
+            'subjects' => $this->pickerSubjects(),
+            'connected' => $this->zoom->isConfigured(),
+            'fake' => $this->zoom->isFake(),
+        ]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $meeting = ZoomMeeting::findOrFail($id);
+
+        if (! $meeting->canBeEdited()) {
+            return redirect()->route('admin.zoom.show', $meeting->id)
+                ->with('error', 'This class can only be edited before it starts.');
+        }
+
+        $data = $this->validated($request);
+        $start = $this->startFrom($data);
+
+        if ($start->lt(now()->subMinutes(15))) {
+            return back()->withInput()->withErrors(['date' => 'The start time is in the past. Pick a time from now onwards.']);
+        }
+
+        // Zoom first: if Zoom refuses, nothing changes in the LMS and the two never disagree.
+        try {
+            $this->zoom->updateMeeting($meeting->zoom_meeting_id, $data['topic'], $start, (int) $data['duration']);
+        } catch (RuntimeException $e) {
+            return back()->withInput()->with('error', $e->getMessage());
+        }
+
+        DB::transaction(function () use ($meeting, $data, $start) {
+            $meeting->update([
+                'topic' => $data['topic'],
+                'start_time' => $start,
+                'duration_minutes' => (int) $data['duration'],
+            ]);
+            $meeting->subjects()->sync(array_unique($data['subject_ids']));
+        });
+
+        return redirect()->route('admin.zoom.show', $meeting->id)
+            ->with('success', 'Zoom class updated. The join link stays the same.');
+    }
+
+    private function pickerSubjects()
+    {
+        return Subject::with(['course.faculty', 'level', 'semester'])
+            ->orderBy('code')
+            ->get()
+            ->sortBy(fn ($s) => sprintf('%s|%s|%s|%s|%s',
+                $s->course?->faculty?->name, $s->course?->name, $s->level?->name, $s->semester?->name, $s->code))
+            ->values();
+    }
+
+    private function validated(Request $request): array
+    {
+        return $request->validate([
             'topic' => 'required|string|max:200',
             'date' => 'required|date',
             'time' => 'required|date_format:H:i',
@@ -66,8 +125,17 @@ class ZoomClassController extends Controller
             'subject_ids.required' => 'Add at least one module for this class.',
             'subject_ids.min' => 'Add at least one module for this class.',
         ]);
+    }
 
-        $start = Carbon::parse($data['date'].' '.$data['time'], config('app.timezone'));
+    private function startFrom(array $data): Carbon
+    {
+        return Carbon::parse($data['date'].' '.$data['time'], config('app.timezone'));
+    }
+
+    public function store(Request $request)
+    {
+        $data = $this->validated($request);
+        $start = $this->startFrom($data);
 
         // a few minutes in the past is fine (starting a class right now)
         if ($start->lt(now()->subMinutes(15))) {

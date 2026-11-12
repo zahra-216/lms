@@ -1,8 +1,8 @@
 @extends('layouts.admin')
 @section('title')
-New Zoom Class
+{{ isset($meeting) ? 'Edit Zoom Class' : 'New Zoom Class' }}
 @endsection
-@section('back', route('admin.zoom.index'))
+@section('back', isset($meeting) ? route('admin.zoom.show', $meeting->id) : route('admin.zoom.index'))
 @push('styles')
 <style>
 .pick-results { margin-top:6px; border:1px solid #e2e8f0; border-radius:12px; background:#fff; max-height:300px; overflow:auto; }
@@ -23,19 +23,21 @@ New Zoom Class
 @endpush
 @section('content')
 @php
+    $meeting = $meeting ?? null;          // set when editing a class that has not started
+    $editing = (bool) $meeting;
     $moduleData = $subjects->map(fn ($s) => [
         'id' => $s->id,
         'code' => $s->code,
         'name' => $s->name,
         'where' => collect([$s->course->name ?? null, $s->level->name ?? null, $s->semester->name ?? null])->filter()->implode(' / '),
     ])->values();
-    $preselected = collect(old('subject_ids', []))->map(fn ($v) => (int) $v)->values();
+    $preselected = collect(old('subject_ids', $meeting ? $meeting->subjects->pluck('id')->all() : []))->map(fn ($v) => (int) $v)->values();
 @endphp
 <div class="container">
     <div class="page-header">
         <div>
-            <h2><i class="bi bi-camera-video"></i> New Zoom Class</h2>
-            <small>The meeting is created in the campus Zoom account</small>
+            <h2><i class="bi bi-camera-video"></i> {{ $editing ? 'Edit Zoom Class' : 'New Zoom Class' }}</h2>
+            <small>{{ $editing ? 'The meeting is updated in Zoom too. The join link stays the same.' : 'The meeting is created in the campus Zoom account' }}</small>
         </div>
     </div>
 
@@ -44,28 +46,29 @@ New Zoom Class
     @endif
 
     <div class="card-box">
-        <form method="POST" action="{{ route('admin.zoom.store') }}" id="zoomForm">
+        <form method="POST" action="{{ $editing ? route('admin.zoom.update', $meeting->id) : route('admin.zoom.store') }}" id="zoomForm">
             @csrf
+            @if($editing) @method('PUT') @endif
 
             <div class="row g-3">
                 <div class="col-12">
                     <label class="form-label fw-semibold">Class title</label>
-                    <input type="text" name="topic" value="{{ old('topic') }}" maxlength="200" class="form-control @error('topic') is-invalid @enderror" placeholder="e.g. Human Resource Management - Lecture 5" required>
+                    <input type="text" name="topic" value="{{ old('topic', $meeting?->topic) }}" maxlength="200" class="form-control @error('topic') is-invalid @enderror" placeholder="e.g. Human Resource Management - Lecture 5" required>
                     @error('topic')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Date</label>
-                    <input type="date" name="date" value="{{ old('date') }}" min="{{ now()->toDateString() }}" class="form-control @error('date') is-invalid @enderror" required>
+                    <input type="date" name="date" value="{{ old('date', $meeting?->start_time->toDateString()) }}" min="{{ now()->toDateString() }}" class="form-control @error('date') is-invalid @enderror" required>
                     @error('date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Start time</label>
-                    <input type="time" name="time" value="{{ old('time') }}" class="form-control @error('time') is-invalid @enderror" required>
+                    <input type="time" name="time" value="{{ old('time', $meeting?->start_time->format('H:i')) }}" class="form-control @error('time') is-invalid @enderror" required>
                     @error('time')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Length (minutes)</label>
-                    <input type="number" name="duration" value="{{ old('duration', 120) }}" min="10" max="480" class="form-control @error('duration') is-invalid @enderror" required>
+                    <input type="number" name="duration" value="{{ old('duration', $meeting?->duration_minutes ?? 120) }}" min="10" max="480" class="form-control @error('duration') is-invalid @enderror" required>
                     @error('duration')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
@@ -82,8 +85,8 @@ New Zoom Class
             </div>
 
             <div class="mt-4 d-flex gap-2 flex-wrap">
-                <button type="submit" class="btn btn-primary" @disabled(! $connected && ! $fake)><i class="bi bi-camera-video"></i> Create Zoom Class</button>
-                <a href="{{ route('admin.zoom.index') }}" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary" @disabled(! $connected && ! $fake)><i class="bi bi-camera-video"></i> {{ $editing ? 'Save changes' : 'Create Zoom Class' }}</button>
+                <a href="{{ $editing ? route('admin.zoom.show', $meeting->id) : route('admin.zoom.index') }}" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </form>
     </div>

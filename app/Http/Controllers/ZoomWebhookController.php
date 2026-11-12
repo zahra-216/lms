@@ -53,6 +53,7 @@ class ZoomWebhookController extends Controller
             if ($meeting && $meeting->status !== 'processed') {
                 $meeting->update([
                     'zoom_uuid' => $object['uuid'] ?? $meeting->zoom_uuid,
+                    'held_at' => $this->startedAt($object['start_time'] ?? null) ?? $meeting->held_at,
                     'status' => 'ended',
                     'ended_at' => now(),
                     'attempts' => 0,
@@ -73,6 +74,16 @@ class ZoomWebhookController extends Controller
         }
 
         return response()->json(['ok' => true]);
+    }
+
+    /** When the class really started, in campus time (Zoom sends UTC). Null if Zoom sent nothing usable. */
+    private function startedAt(?string $zoomTime): ?\Carbon\Carbon
+    {
+        try {
+            return $zoomTime ? \Carbon\Carbon::parse($zoomTime)->setTimezone(config('app.timezone')) : null;
+        } catch (Throwable) {
+            return null;
+        }
     }
 
     /** Zoom signs "v0:<timestamp>:<body>" with the secret token (HMAC SHA-256). */

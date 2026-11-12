@@ -69,6 +69,26 @@ class ZoomService
         ];
     }
 
+    /** Change the title, time or length of a meeting that has not started. The join link stays the same. */
+    public function updateMeeting(string $meetingId, string $topic, Carbon $start, int $durationMinutes): void
+    {
+        if ($this->isFake()) {
+            return;
+        }
+
+        $timezone = config('services.zoom.timezone');
+
+        $response = $this->api()->patch(self::API.'/meetings/'.rawurlencode($meetingId), [
+            'topic' => $topic,
+            'type' => 2,
+            'start_time' => $start->copy()->setTimezone($timezone)->format('Y-m-d\TH:i:s'),
+            'timezone' => $timezone,
+            'duration' => $durationMinutes,
+        ]);
+
+        $this->check($response, 'update the meeting');
+    }
+
     public function deleteMeeting(string $meetingId): void
     {
         if ($this->isFake()) {

@@ -57,6 +57,15 @@ class ZoomAttendance
         }
 
         DB::transaction(function () use ($meeting, $rows) {
+            // The day Zoom says the class really started. If Zoom did not tell us, the first person to join
+            // marks the start. Kept once set, so fetching again never moves the attendance to another day.
+            if (! $meeting->held_at) {
+                $first = collect($rows)->pluck('join_time')->filter()->min();
+                if ($first) {
+                    $meeting->update(['held_at' => $first]);
+                }
+            }
+
             $this->storeParticipants($meeting, $rows);
             $this->applyAttendance($meeting);
 

@@ -16,7 +16,7 @@ When the class ends, the LMS reads who joined from Zoom and saves attendance by 
 
 In the Zoom App Marketplace create a **Server-to-Server OAuth** app for the campus account:
 
-- Scopes: create and delete meetings, and read the participants of past meetings (the report scope, which needs a Pro or higher plan). Exact scope names are shown in the Marketplace screen.
+- Scopes: `meeting:write:meeting:admin` (create), `meeting:update:meeting:admin` (edit a class that has not started), `meeting:delete:meeting:admin` (cancel) and `report:read:list_meeting_participants:admin` (read who joined; needs a Pro or higher plan). Exact scope names are shown in the Marketplace screen.
 - Event subscription: **Meeting - End Meeting**, address `https://lms.ttmetrocampus.com/zoom/webhook`. Copy its **Secret Token**.
 - Activate the app.
 
@@ -47,6 +47,7 @@ Update routine: `git pull`, `php artisan migrate --force` (new tables `zoom_meet
 ## Limits
 
 - The real Zoom was not called during development. The first live class is the real test.
-- The attendance date is the class's scheduled start date.
-- A Zoom class cannot be edited; delete it and create it again.
+- The attendance date is the day the class really started (from Zoom's "meeting ended" signal; if that is missing, the day of the first person to join; if there is no list, the planned day).
+- A class can be edited (title, date, time, length, modules) only until it starts. The meeting is updated in Zoom too and the join link stays the same. After it starts, it is locked.
+- Only classes created on the Zoom Classes page are known to the LMS. A meeting created or rescheduled directly in the Zoom app is not tracked (a meeting made in Zoom is ignored, so no attendance is saved).
 - Two classes at the same time need two different Zoom hosts (a Zoom plan limit).

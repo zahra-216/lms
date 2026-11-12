@@ -8,11 +8,12 @@ class ZoomMeeting extends Model
 {
     protected $fillable = [
         'zoom_meeting_id', 'zoom_uuid', 'topic', 'start_time', 'duration_minutes', 'join_url', 'passcode',
-        'status', 'attempts', 'ended_at', 'next_try_at', 'processed_at', 'last_error', 'created_by',
+        'status', 'attempts', 'held_at', 'ended_at', 'next_try_at', 'processed_at', 'last_error', 'created_by',
     ];
 
     protected $casts = [
         'start_time' => 'datetime',
+        'held_at' => 'datetime',
         'ended_at' => 'datetime',
         'next_try_at' => 'datetime',
         'processed_at' => 'datetime',
@@ -28,10 +29,16 @@ class ZoomMeeting extends Model
         return $this->hasMany(ZoomParticipant::class);
     }
 
-    /** The day the attendance is saved under: the day the class started. */
+    /** A class can be edited until it starts (the modules and date drive the attendance). */
+    public function canBeEdited(): bool
+    {
+        return $this->status === 'scheduled' && $this->start_time->isFuture();
+    }
+
+    /** The day the attendance is saved under: the day the class really started, else the day it was planned for. */
     public function attendanceDate(): string
     {
-        return $this->start_time->toDateString();
+        return ($this->held_at ?? $this->start_time)->toDateString();
     }
 
     public function statusLabel(): string

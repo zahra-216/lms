@@ -40,7 +40,7 @@ details > summary { cursor:pointer; font-weight:600; color:#012147; }
             <div class="fact"><span>Meeting ID</span><strong>{{ $meeting->zoom_meeting_id }}</strong></div>
             <div class="fact"><span>Passcode</span><strong>{{ $meeting->passcode ?: '-' }}</strong></div>
             <div class="fact"><span>Length</span><strong>{{ $meeting->duration_minutes }} minutes</strong></div>
-            <div class="fact"><span>Attendance date</span><strong>{{ $meeting->start_time->format('d M Y') }}</strong></div>
+            <div class="fact"><span>Attendance date</span><strong>{{ ($meeting->held_at ?? $meeting->start_time)->format('d M Y') }}</strong></div>
         </div>
 
         <label class="form-label fw-semibold">Join link (share with students and lecturers)</label>
@@ -54,6 +54,9 @@ details > summary { cursor:pointer; font-weight:600; color:#012147; }
         </div>
 
         <div class="mt-3 d-flex gap-2 flex-wrap">
+            @if($meeting->canBeEdited())
+                <a href="{{ route('admin.zoom.edit', $meeting->id) }}" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit</a>
+            @endif
             @if($started)
                 <form method="POST" action="{{ route('admin.zoom.fetch', $meeting->id) }}">
                     @csrf
@@ -123,7 +126,7 @@ details > summary { cursor:pointer; font-weight:600; color:#012147; }
                             </table>
                         </div>
                     </details>
-                    <div class="mt-2"><a href="{{ route('admin.attendance.mark', ['id' => $m['subject']->id, 'date' => $meeting->start_time->toDateString()]) }}" class="small">Open this day in the Attendance page</a></div>
+                    <div class="mt-2"><a href="{{ route('admin.attendance.mark', ['id' => $m['subject']->id, 'date' => $meeting->attendanceDate()]) }}" class="small">Open this day in the Attendance page</a></div>
                 </div>
             @endforeach
         </div>

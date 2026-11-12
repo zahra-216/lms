@@ -571,6 +571,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/zoom-classes/create', [App\Http\Controllers\Admin\ZoomClassController::class, 'create'])->name('zoom.create');
     Route::post('/zoom-classes', [App\Http\Controllers\Admin\ZoomClassController::class, 'store'])->name('zoom.store');
     Route::get('/zoom-classes/{id}', [App\Http\Controllers\Admin\ZoomClassController::class, 'show'])->name('zoom.show');
+    Route::get('/zoom-classes/{id}/edit', [App\Http\Controllers\Admin\ZoomClassController::class, 'edit'])->name('zoom.edit');
+    Route::put('/zoom-classes/{id}', [App\Http\Controllers\Admin\ZoomClassController::class, 'update'])->name('zoom.update');
     Route::post('/zoom-classes/{id}/fetch', [App\Http\Controllers\Admin\ZoomClassController::class, 'fetch'])->name('zoom.fetch');
     Route::post('/zoom-classes/{id}/participants/{participantId}/assign', [App\Http\Controllers\Admin\ZoomClassController::class, 'assign'])->name('zoom.assign');
     Route::delete('/zoom-classes/{id}', [App\Http\Controllers\Admin\ZoomClassController::class, 'destroy'])->name('zoom.destroy');
