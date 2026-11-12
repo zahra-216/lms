@@ -48,6 +48,71 @@ class ZoomClassController extends Controller
         ]);
     }
 
+    /** A meeting that was made directly in Zoom: tell the LMS which modules it covers. */
+    public function linkForm()
+    {
+        return view('admin.zoom.create', [
+            'meeting' => null,
+            'linking' => true,
+            'subjects' => $this->pickerSubjects(),
+            'connected' => $this->zoom->isConfigured(),
+            'fake' => $this->zoom->isFake(),
+        ]);
+    }
+
+    public function link(Request $request)
+    {
+        $data = $this->validated($request, ['zoom_ref' => 'required|string|max:500']);
+        $id = ZoomService::meetingIdFrom($data['zoom_ref']);
+
+        if (! $id) {
+            return back()->withInput()->withErrors(['zoom_ref' => 'That does not look like a Zoom meeting link or ID. Paste the link from the invitation, or the 9 to 11 digit meeting ID.']);
+        }
+
+        if ($existing = ZoomMeeting::where('zoom_meeting_id', $id)->first()) {
+            return back()->withInput()->withErrors(['zoom_ref' => 'This meeting is already in the LMS ("'.$existing->topic.'"). Open it from the Zoom Classes list.']);
+        }
+
+        $start = $this->startFrom($data);
+        $past = $start->copy()->addMinutes((int) $data['duration'])->isPast();
+        $isLink = str_contains($data['zoom_ref'], '/');
+
+        $meeting = DB::transaction(function () use ($data, $id, $start, $past, $isLink) {
+            $meeting = ZoomMeeting::create([
+                'zoom_meeting_id' => $id,
+                'topic' => $data['topic'],
+                'start_time' => $start,
+                'duration_minutes' => (int) $data['duration'],
+                'join_url' => $isLink ? trim($data['zoom_ref']) : 'https://zoom.us/j/'.$id,
+                'passcode' => null,
+                'linked' => true,   // made in Zoom: the LMS never edits or cancels it there
+                // a class that is already over goes straight to "fetching attendance"
+                'status' => $past ? 'ended' : 'scheduled',
+                'ended_at' => $past ? $start->copy()->addMinutes((int) $data['duration']) : null,
+                'created_by' => auth('admin')->id(),
+            ]);
+            $meeting->subjects()->sync(array_unique($data['subject_ids']));
+
+            return $meeting;
+        });
+
+        if (! $past) {
+            return redirect()->route('admin.zoom.show', $meeting->id)
+                ->with('success', 'Meeting linked. When it ends, Zoom tells the LMS and the attendance is saved on its own.');
+        }
+
+        $result = $this->attendance->run($meeting->fresh());
+
+        return redirect()->route('admin.zoom.show', $meeting->id)->with(
+            $result === 'saved' ? 'success' : 'error',
+            match ($result) {
+                'saved' => 'Meeting linked and its attendance was fetched from Zoom and saved.',
+                'waiting' => 'Meeting linked, but Zoom does not have a participant list for it yet. The LMS will keep trying every few minutes. If the meeting ID was wrong, delete it and link it again.',
+                default => 'Meeting linked, but Zoom has no participant list for it: '.($meeting->fresh()->last_error ?? 'unknown reason'),
+            }
+        );
+    }
+
     /** The same form, filled in. Only until the class starts. */
     public function edit($id)
     {
@@ -83,10 +148,13 @@ class ZoomClassController extends Controller
         }
 
         // Zoom first: if Zoom refuses, nothing changes in the LMS and the two never disagree.
-        try {
-            $this->zoom->updateMeeting($meeting->zoom_meeting_id, $data['topic'], $start, (int) $data['duration']);
-        } catch (RuntimeException $e) {
-            return back()->withInput()->with('error', $e->getMessage());
+        // A meeting that was made in Zoom is only linked here, so the LMS never changes it in Zoom.
+        if (! $meeting->linked) {
+            try {
+                $this->zoom->updateMeeting($meeting->zoom_meeting_id, $data['topic'], $start, (int) $data['duration']);
+            } catch (RuntimeException $e) {
+                return back()->withInput()->with('error', $e->getMessage());
+            }
         }
 
         DB::transaction(function () use ($meeting, $data, $start) {
@@ -112,7 +180,7 @@ class ZoomClassController extends Controller
             ->values();
     }
 
-    private function validated(Request $request): array
+    private function validated(Request $request, array $extra = []): array
     {
         return $request->validate([
             'topic' => 'required|string|max:200',
@@ -121,7 +189,7 @@ class ZoomClassController extends Controller
             'duration' => 'required|integer|min:10|max:480',
             'subject_ids' => 'required|array|min:1',
             'subject_ids.*' => 'integer|exists:subjects,id',
-        ], [
+        ] + $extra, [
             'subject_ids.required' => 'Add at least one module for this class.',
             'subject_ids.min' => 'Add at least one module for this class.',
         ]);
@@ -238,8 +306,9 @@ class ZoomClassController extends Controller
         $meeting = ZoomMeeting::findOrFail($id);
         $note = '';
 
-        // Cancel it in Zoom too, but only while the class has not been held.
-        if ($meeting->status === 'scheduled') {
+        // Cancel it in Zoom too, but only while the class has not been held, and never a meeting that was
+        // made in the Zoom app (it is only linked here).
+        if ($meeting->status === 'scheduled' && ! $meeting->linked) {
             try {
                 $this->zoom->deleteMeeting($meeting->zoom_meeting_id);
             } catch (Throwable $e) {
@@ -249,6 +318,6 @@ class ZoomClassController extends Controller
 
         $meeting->delete();   // attendance already saved stays in the Attendance pages
 
-        return redirect()->route('admin.zoom.index')->with('success', 'Zoom class deleted.'.$note);
+        return redirect()->route('admin.zoom.index')->with('success', 'Zoom class deleted.'.($meeting->linked ? ' The meeting itself was not touched in Zoom.' : '').$note);
     }
 }

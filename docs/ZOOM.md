@@ -49,5 +49,7 @@ Update routine: `git pull`, `php artisan migrate --force` (new tables `zoom_meet
 - The real Zoom was not called during development. The first live class is the real test.
 - The attendance date is the day the class really started (from Zoom's "meeting ended" signal; if that is missing, the day of the first person to join; if there is no list, the planned day).
 - A class can be edited (title, date, time, length, modules) only until it starts. The meeting is updated in Zoom too and the join link stays the same. After it starts, it is locked.
-- Only classes created on the Zoom Classes page are known to the LMS. A meeting created or rescheduled directly in the Zoom app is not tracked (a meeting made in Zoom is ignored, so no attendance is saved).
+- Only meetings the LMS knows are tracked: classes created on the Zoom Classes page, or meetings made in the Zoom app and linked with **Link a Zoom meeting** (paste the meeting link or ID, enter the title, date, time and length, add the modules). A meeting that is neither is ignored when it ends, so no attendance is saved.
+- A linked meeting is never changed or cancelled in Zoom by the LMS: editing it only changes the LMS record, and deleting it only removes the LMS record. If it already took place, its attendance is fetched as soon as it is linked. One Zoom meeting ID can be linked once, so a recurring meeting that reuses one ID cannot be linked again for each class.
+- If a meeting is rescheduled in the Zoom app, the attendance still lands on the day it really started.
 - Two classes at the same time need two different Zoom hosts (a Zoom plan limit).

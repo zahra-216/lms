@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class ZoomMeeting extends Model
 {
     protected $fillable = [
-        'zoom_meeting_id', 'zoom_uuid', 'topic', 'start_time', 'duration_minutes', 'join_url', 'passcode',
+        'zoom_meeting_id', 'zoom_uuid', 'topic', 'start_time', 'duration_minutes', 'join_url', 'passcode', 'linked',
         'status', 'attempts', 'held_at', 'ended_at', 'next_try_at', 'processed_at', 'last_error', 'created_by',
     ];
 
     protected $casts = [
+        'linked' => 'boolean',
         'start_time' => 'datetime',
         'held_at' => 'datetime',
         'ended_at' => 'datetime',

@@ -53,6 +53,10 @@ details > summary { cursor:pointer; font-weight:600; color:#012147; }
             @foreach($meeting->subjects as $s)<span class="chip">{{ $s->code }} - {{ $s->name }}</span>@endforeach
         </div>
 
+        @if($meeting->linked)
+            <div class="small text-muted mt-2"><i class="bi bi-link-45deg"></i> This meeting was made in the Zoom app and is only linked here. Changing or deleting it here never changes it in Zoom.</div>
+        @endif
+
         <div class="mt-3 d-flex gap-2 flex-wrap">
             @if($meeting->canBeEdited())
                 <a href="{{ route('admin.zoom.edit', $meeting->id) }}" class="btn btn-primary"><i class="bi bi-pencil"></i> Edit</a>
@@ -64,7 +68,7 @@ details > summary { cursor:pointer; font-weight:600; color:#012147; }
                 </form>
             @endif
             <form method="POST" action="{{ route('admin.zoom.destroy', $meeting->id) }}"
-                  data-confirm="Delete this Zoom class?{{ $meeting->status === 'scheduled' ? ' It will also be cancelled in Zoom.' : ' Attendance already saved stays in the Attendance pages.' }}">
+                  data-confirm="Delete this Zoom class?{{ $meeting->linked ? ' The meeting itself stays in Zoom. Attendance already saved stays in the Attendance pages.' : ($meeting->status === 'scheduled' ? ' It will also be cancelled in Zoom.' : ' Attendance already saved stays in the Attendance pages.') }}">
                 @csrf
                 @method('DELETE')
                 <button type="submit" class="btn btn-outline-danger"><i class="bi bi-trash"></i> Delete</button>

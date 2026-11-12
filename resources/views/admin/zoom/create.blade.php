@@ -1,6 +1,6 @@
 @extends('layouts.admin')
 @section('title')
-{{ isset($meeting) ? 'Edit Zoom Class' : 'New Zoom Class' }}
+{{ isset($meeting) ? 'Edit Zoom Class' : (($linking ?? false) ? 'Link a Zoom Meeting' : 'New Zoom Class') }}
 @endsection
 @section('back', isset($meeting) ? route('admin.zoom.show', $meeting->id) : route('admin.zoom.index'))
 @push('styles')
@@ -24,6 +24,7 @@
 @section('content')
 @php
     $meeting = $meeting ?? null;          // set when editing a class that has not started
+    $linking = $linking ?? false;         // true when linking a meeting that was made directly in Zoom
     $editing = (bool) $meeting;
     $moduleData = $subjects->map(fn ($s) => [
         'id' => $s->id,
@@ -36,8 +37,8 @@
 <div class="container">
     <div class="page-header">
         <div>
-            <h2><i class="bi bi-camera-video"></i> {{ $editing ? 'Edit Zoom Class' : 'New Zoom Class' }}</h2>
-            <small>{{ $editing ? 'The meeting is updated in Zoom too. The join link stays the same.' : 'The meeting is created in the campus Zoom account' }}</small>
+            <h2><i class="bi bi-camera-video"></i> {{ $editing ? 'Edit Zoom Class' : ($linking ? 'Link a Zoom Meeting' : 'New Zoom Class') }}</h2>
+            <small>{{ $editing ? 'The meeting is updated in Zoom too. The join link stays the same.' : ($linking ? 'For a meeting that was made in the Zoom app, not here' : 'The meeting is created in the campus Zoom account') }}</small>
         </div>
     </div>
 
@@ -46,11 +47,29 @@
     @endif
 
     <div class="card-box">
-        <form method="POST" action="{{ $editing ? route('admin.zoom.update', $meeting->id) : route('admin.zoom.store') }}" id="zoomForm">
+        @if($editing && $meeting->linked)
+            <div class="alert alert-info rounded-3"><div>This meeting was made in the Zoom app, so changes here only change the LMS record (title, date and modules). The meeting in Zoom is not changed.</div></div>
+        @endif
+        @if($linking)
+            <div class="alert alert-info rounded-3">
+                <div>
+                    Use this for a meeting you made in the Zoom app. Paste its link or ID, add the modules it covers, and the LMS takes the attendance from Zoom when it ends.
+                    If the class has <strong>already taken place</strong>, enter its real date, time and length, and the attendance is fetched straight away.
+                </div>
+            </div>
+        @endif
+        <form method="POST" action="{{ $editing ? route('admin.zoom.update', $meeting->id) : ($linking ? route('admin.zoom.link.store') : route('admin.zoom.store')) }}" id="zoomForm">
             @csrf
             @if($editing) @method('PUT') @endif
 
             <div class="row g-3">
+                @if($linking)
+                    <div class="col-12">
+                        <label class="form-label fw-semibold">Zoom meeting link or ID</label>
+                        <input type="text" name="zoom_ref" value="{{ old('zoom_ref') }}" maxlength="500" class="form-control @error('zoom_ref') is-invalid @enderror" placeholder="e.g. https://us02web.zoom.us/j/81234567890 or 812 3456 7890" required>
+                        @error('zoom_ref')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    </div>
+                @endif
                 <div class="col-12">
                     <label class="form-label fw-semibold">Class title</label>
                     <input type="text" name="topic" value="{{ old('topic', $meeting?->topic) }}" maxlength="200" class="form-control @error('topic') is-invalid @enderror" placeholder="e.g. Human Resource Management - Lecture 5" required>
@@ -58,7 +77,7 @@
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Date</label>
-                    <input type="date" name="date" value="{{ old('date', $meeting?->start_time->toDateString()) }}" min="{{ now()->toDateString() }}" class="form-control @error('date') is-invalid @enderror" required>
+                    <input type="date" name="date" value="{{ old('date', $meeting?->start_time->toDateString()) }}" @unless($linking) min="{{ now()->toDateString() }}" @endunless class="form-control @error('date') is-invalid @enderror" required>
                     @error('date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
@@ -85,7 +104,7 @@
             </div>
 
             <div class="mt-4 d-flex gap-2 flex-wrap">
-                <button type="submit" class="btn btn-primary" @disabled(! $connected && ! $fake)><i class="bi bi-camera-video"></i> {{ $editing ? 'Save changes' : 'Create Zoom Class' }}</button>
+                <button type="submit" class="btn btn-primary" @disabled(! $connected && ! $fake)><i class="bi bi-camera-video"></i> {{ $editing ? 'Save changes' : ($linking ? 'Link this meeting' : 'Create Zoom Class') }}</button>
                 <a href="{{ $editing ? route('admin.zoom.show', $meeting->id) : route('admin.zoom.index') }}" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </form>

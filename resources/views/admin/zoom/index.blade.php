@@ -9,8 +9,9 @@ Zoom Classes
             <h2><i class="bi bi-camera-video"></i> Zoom Classes</h2>
             <small>Create a class here and its attendance comes back from Zoom by itself when the class ends</small>
         </div>
-        <div>
+        <div class="d-flex gap-2 flex-wrap">
             <a href="{{ route('admin.zoom.create') }}" class="btn btn-light fw-semibold"><i class="bi bi-plus-circle"></i> New Zoom Class</a>
+            <a href="{{ route('admin.zoom.link') }}" class="btn btn-outline-light fw-semibold"><i class="bi bi-link-45deg"></i> Link a Zoom meeting</a>
         </div>
     </div>
 

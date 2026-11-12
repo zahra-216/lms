@@ -18,6 +18,27 @@ class ZoomService
 {
     private const API = 'https://api.zoom.us/v2';
 
+    /**
+     * The meeting number from what an admin pastes: a Zoom link (https://us02web.zoom.us/j/81234567890?pwd=...)
+     * or the number itself, with or without spaces ("812 3456 7890"). Null when it is neither.
+     */
+    public static function meetingIdFrom(string $text): ?string
+    {
+        $text = trim($text);
+
+        if (preg_match('~/(?:j|wc/join|wc|s|w)/(\d{9,11})(?:\D|$)~', $text, $m)) {
+            return $m[1];
+        }
+
+        if (preg_match('/^[\d\s\-]+$/', $text)) {
+            $digits = preg_replace('/\D/', '', $text);
+
+            return strlen($digits) >= 9 && strlen($digits) <= 11 ? $digits : null;
+        }
+
+        return null;
+    }
+
     public function isFake(): bool
     {
         return (bool) config('services.zoom.fake');
