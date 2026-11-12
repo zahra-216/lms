@@ -16,7 +16,7 @@ When the class ends, the LMS reads who joined from Zoom and saves attendance by 
 
 In the Zoom App Marketplace create a **Server-to-Server OAuth** app for the campus account:
 
-- Scopes: `meeting:write:meeting:admin` (create), `meeting:update:meeting:admin` (edit a class that has not started), `meeting:delete:meeting:admin` (cancel) and `report:read:list_meeting_participants:admin` (read who joined; needs a Pro or higher plan). Exact scope names are shown in the Marketplace screen.
+- Scopes: `meeting:write:meeting:admin` (create), `meeting:update:meeting:admin` (edit a class that has not started), `meeting:delete:meeting:admin` (cancel), `report:read:list_meeting_participants:admin` (read who joined; needs a Pro or higher plan), and, for **Link a Zoom meeting**, `meeting:read:meeting:admin` ("View a meeting") and `meeting:read:past_meeting:admin` ("View past meeting details") so the LMS can read a meeting's title, date, time and length. Exact scope names are shown in the Marketplace screen.
 - Event subscription: **Meeting - End Meeting**, address `https://lms.ttmetrocampus.com/zoom/webhook`. Copy its **Secret Token**.
 - Activate the app.
 
@@ -49,7 +49,7 @@ Update routine: `git pull`, `php artisan migrate --force` (new tables `zoom_meet
 - The real Zoom was not called during development. The first live class is the real test.
 - The attendance date is the day the class really started (from Zoom's "meeting ended" signal; if that is missing, the day of the first person to join; if there is no list, the planned day).
 - A class can be edited (title, date, time, length, modules) only until it starts. The meeting is updated in Zoom too and the join link stays the same. After it starts, it is locked.
-- Only meetings the LMS knows are tracked: classes created on the Zoom Classes page, or meetings made in the Zoom app and linked with **Link a Zoom meeting** (paste the meeting link or ID, enter the title, date, time and length, add the modules). A meeting that is neither is ignored when it ends, so no attendance is saved.
+- Only meetings the LMS knows are tracked: classes created on the Zoom Classes page, or meetings made in the Zoom app and linked with **Link a Zoom meeting** (paste the meeting link or ID and add the modules; the LMS reads the title, date, time and length from Zoom, and the four details can be typed in only as a fallback when Zoom cannot give them, for example when the two read permissions are missing). A meeting that is neither is ignored when it ends, so no attendance is saved.
 - A linked meeting is never changed or cancelled in Zoom by the LMS: editing it only changes the LMS record, and deleting it only removes the LMS record. If it already took place, its attendance is fetched as soon as it is linked. One Zoom meeting ID can be linked once, so a recurring meeting that reuses one ID cannot be linked again for each class.
 - If a meeting is rescheduled in the Zoom app, the attendance still lands on the day it really started.
 - Two classes at the same time need two different Zoom hosts (a Zoom plan limit).

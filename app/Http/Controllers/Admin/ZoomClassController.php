@@ -62,7 +62,15 @@ class ZoomClassController extends Controller
 
     public function link(Request $request)
     {
-        $data = $this->validated($request, ['zoom_ref' => 'required|string|max:500']);
+        // Only the link or ID and the modules are needed: the LMS reads title, date, time and length from Zoom.
+        // The four details can be typed as a fallback (all four or none).
+        $data = $this->validated($request, [
+            'zoom_ref' => 'required|string|max:500',
+            'topic' => 'nullable|string|max:200|required_with:date,time,duration',
+            'date' => 'nullable|date|required_with:topic,time,duration',
+            'time' => 'nullable|date_format:H:i|required_with:topic,date,duration',
+            'duration' => 'nullable|integer|min:10|max:480|required_with:topic,date,time',
+        ]);
         $id = ZoomService::meetingIdFrom($data['zoom_ref']);
 
         if (! $id) {
@@ -73,22 +81,42 @@ class ZoomClassController extends Controller
             return back()->withInput()->withErrors(['zoom_ref' => 'This meeting is already in the LMS ("'.$existing->topic.'"). Open it from the Zoom Classes list.']);
         }
 
-        $start = $this->startFrom($data);
-        $past = $start->copy()->addMinutes((int) $data['duration'])->isPast();
+        if (filled($data['topic'] ?? null)) {
+            // typed by hand
+            $topic = $data['topic'];
+            $start = $this->startFrom($data);
+            $duration = (int) $data['duration'];
+        } else {
+            try {
+                $details = $this->zoom->meetingDetails($id);
+            } catch (RuntimeException $e) {
+                return back()->withInput()->with('show_manual', true)->with('error',
+                    'The LMS could not read this meeting from Zoom ('.$e->getMessage().'). You can type the title, date, time and length below instead.');
+            }
+
+            if (! $details) {
+                return back()->withInput()->with('show_manual', true)->withErrors(['zoom_ref' =>
+                    'Zoom has no meeting with this ID in the campus account, or it has no fixed start time. Check the ID, or type the title, date, time and length below.']);
+            }
+
+            [$topic, $start, $duration] = [$details['topic'], $details['start'], $details['duration']];
+        }
+
+        $past = $start->copy()->addMinutes($duration)->isPast();
         $isLink = str_contains($data['zoom_ref'], '/');
 
-        $meeting = DB::transaction(function () use ($data, $id, $start, $past, $isLink) {
+        $meeting = DB::transaction(function () use ($data, $id, $topic, $start, $duration, $past, $isLink) {
             $meeting = ZoomMeeting::create([
                 'zoom_meeting_id' => $id,
-                'topic' => $data['topic'],
+                'topic' => $topic,
                 'start_time' => $start,
-                'duration_minutes' => (int) $data['duration'],
+                'duration_minutes' => $duration,
                 'join_url' => $isLink ? trim($data['zoom_ref']) : 'https://zoom.us/j/'.$id,
                 'passcode' => null,
                 'linked' => true,   // made in Zoom: the LMS never edits or cancels it there
                 // a class that is already over goes straight to "fetching attendance"
                 'status' => $past ? 'ended' : 'scheduled',
-                'ended_at' => $past ? $start->copy()->addMinutes((int) $data['duration']) : null,
+                'ended_at' => $past ? $start->copy()->addMinutes($duration) : null,
                 'created_by' => auth('admin')->id(),
             ]);
             $meeting->subjects()->sync(array_unique($data['subject_ids']));
@@ -180,16 +208,16 @@ class ZoomClassController extends Controller
             ->values();
     }
 
-    private function validated(Request $request, array $extra = []): array
+    private function validated(Request $request, array $override = []): array
     {
-        return $request->validate([
+        return $request->validate(array_merge([
             'topic' => 'required|string|max:200',
             'date' => 'required|date',
             'time' => 'required|date_format:H:i',
             'duration' => 'required|integer|min:10|max:480',
             'subject_ids' => 'required|array|min:1',
             'subject_ids.*' => 'integer|exists:subjects,id',
-        ] + $extra, [
+        ], $override), [
             'subject_ids.required' => 'Add at least one module for this class.',
             'subject_ids.min' => 'Add at least one module for this class.',
         ]);

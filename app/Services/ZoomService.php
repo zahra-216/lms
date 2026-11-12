@@ -90,6 +90,52 @@ class ZoomService
         ];
     }
 
+    /**
+     * Title, start time and length of a meeting that already exists in Zoom (used to link a meeting made in the
+     * Zoom app). Null when Zoom has no such meeting, or it has no fixed start time (e.g. an instant meeting).
+     *
+     * @return array{topic: string, start: Carbon, duration: int}|null
+     */
+    public function meetingDetails(string $meetingId): ?array
+    {
+        if ($this->isFake()) {
+            $file = storage_path("app/zoom-fake/{$meetingId}.meeting.json");
+            $d = File::exists($file) ? json_decode(File::get($file), true) : null;
+
+            return $d ? $this->details($d, $meetingId) : null;
+        }
+
+        $id = rawurlencode($meetingId);
+
+        // A meeting that has not happened yet, then one that already has.
+        foreach (["/meetings/{$id}", "/past_meetings/{$id}"] as $path) {
+            $response = $this->api()->get(self::API.$path);
+
+            if ($response->status() === 404) {
+                continue;
+            }
+
+            $this->check($response, 'read the meeting');
+
+            return $this->details($response->json(), $meetingId);
+        }
+
+        return null;
+    }
+
+    private function details(array $d, string $meetingId): ?array
+    {
+        if (empty($d['start_time'])) {
+            return null;   // no fixed start time: nothing to hang attendance on
+        }
+
+        return [
+            'topic' => trim((string) ($d['topic'] ?? '')) ?: "Zoom meeting {$meetingId}",
+            'start' => Carbon::parse($d['start_time'])->setTimezone(config('app.timezone')),
+            'duration' => max(1, (int) ($d['duration'] ?? 60)),
+        ];
+    }
+
     /** Change the title, time or length of a meeting that has not started. The join link stays the same. */
     public function updateMeeting(string $meetingId, string $topic, Carbon $start, int $durationMinutes): void
     {

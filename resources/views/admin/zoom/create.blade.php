@@ -19,6 +19,7 @@
 .pick-chip button:hover { background:#b91c1c; color:#fff; }
 .pick-empty { color:#64748b; font-size:13.5px; padding:10px 0 0; }
 .pick-error { color:#b91c1c; font-size:13.5px; margin-top:8px; }
+details.manual-box summary { cursor:pointer; color:#0a3d91; font-size:13.5px; font-weight:600; }
 </style>
 @endpush
 @section('content')
@@ -53,8 +54,8 @@
         @if($linking)
             <div class="alert alert-info rounded-3">
                 <div>
-                    Use this for a meeting you made in the Zoom app. Paste its link or ID, add the modules it covers, and the LMS takes the attendance from Zoom when it ends.
-                    If the class has <strong>already taken place</strong>, enter its real date, time and length, and the attendance is fetched straight away.
+                    Use this for a meeting you made in the Zoom app. Paste its link or ID and add the modules it covers. The LMS reads the title, date and time from Zoom, and takes the attendance from Zoom when the class ends.
+                    If the class has <strong>already taken place</strong>, the attendance is fetched straight away.
                 </div>
             </div>
         @endif
@@ -70,26 +71,37 @@
                         @error('zoom_ref')<div class="invalid-feedback">{{ $message }}</div>@enderror
                     </div>
                 @endif
+                @if($linking)
+                    <div class="col-12">
+                        <details class="manual-box" @if(session('show_manual') || old('topic') || $errors->hasAny(['topic', 'date', 'time', 'duration'])) open @endif>
+                            <summary>Title, date, time and length are read from Zoom. Open this only if you need to type them yourself.</summary>
+                            <div class="row g-3 mt-1">
+                @endif
                 <div class="col-12">
                     <label class="form-label fw-semibold">Class title</label>
-                    <input type="text" name="topic" value="{{ old('topic', $meeting?->topic) }}" maxlength="200" class="form-control @error('topic') is-invalid @enderror" placeholder="e.g. Human Resource Management - Lecture 5" required>
+                    <input type="text" name="topic" value="{{ old('topic', $meeting?->topic) }}" maxlength="200" class="form-control @error('topic') is-invalid @enderror" placeholder="e.g. Human Resource Management - Lecture 5" {{ $linking ? '' : 'required' }}>
                     @error('topic')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Date</label>
-                    <input type="date" name="date" value="{{ old('date', $meeting?->start_time->toDateString()) }}" @unless($linking) min="{{ now()->toDateString() }}" @endunless class="form-control @error('date') is-invalid @enderror" required>
+                    <input type="date" name="date" value="{{ old('date', $meeting?->start_time->toDateString()) }}" @unless($linking) min="{{ now()->toDateString() }}" @endunless class="form-control @error('date') is-invalid @enderror" {{ $linking ? '' : 'required' }}>
                     @error('date')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Start time</label>
-                    <input type="time" name="time" value="{{ old('time', $meeting?->start_time->format('H:i')) }}" class="form-control @error('time') is-invalid @enderror" required>
+                    <input type="time" name="time" value="{{ old('time', $meeting?->start_time->format('H:i')) }}" class="form-control @error('time') is-invalid @enderror" {{ $linking ? '' : 'required' }}>
                     @error('time')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
                 <div class="col-md-4">
                     <label class="form-label fw-semibold">Length (minutes)</label>
-                    <input type="number" name="duration" value="{{ old('duration', $meeting?->duration_minutes ?? 120) }}" min="10" max="480" class="form-control @error('duration') is-invalid @enderror" required>
+                    <input type="number" name="duration" value="{{ old('duration', $meeting?->duration_minutes ?? ($linking ? '' : 120)) }}" min="10" max="480" class="form-control @error('duration') is-invalid @enderror" {{ $linking ? '' : 'required' }}>
                     @error('duration')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+                @if($linking)
+                            </div>
+                        </details>
+                    </div>
+                @endif
 
                 <div class="col-12">
                     <label class="form-label fw-semibold" for="moduleSearch">Modules this class covers</label>
