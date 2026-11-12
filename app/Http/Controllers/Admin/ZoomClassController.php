@@ -63,8 +63,8 @@ class ZoomClassController extends Controller
             'subject_ids' => 'required|array|min:1',
             'subject_ids.*' => 'integer|exists:subjects,id',
         ], [
-            'subject_ids.required' => 'Tick at least one module for this class.',
-            'subject_ids.min' => 'Tick at least one module for this class.',
+            'subject_ids.required' => 'Add at least one module for this class.',
+            'subject_ids.min' => 'Add at least one module for this class.',
         ]);
 
         $start = Carbon::parse($data['date'].' '.$data['time'], config('app.timezone'));
