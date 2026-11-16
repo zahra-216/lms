@@ -135,16 +135,30 @@ class TimetableReader
             ],
         ];
 
-        // Google retires models now and then (a retired model answers 404): try the chosen model, then the "latest" alias.
+        // A busy service (503, 500, 502, 504), a used-up quota of one model (429) or a retired model (404): try the next model.
         $response = null;
-        foreach (array_unique([config('services.gemini.model'), 'gemini-flash-latest']) as $model) {
-            $response = Http::withHeaders(['x-goog-api-key' => (string) config('services.gemini.key')])
-                ->timeout(120)->acceptJson()
-                ->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent", $payload);
-            if ($response->status() !== 404) {
+        $started = time();
+        foreach (array_unique([config('services.gemini.model'), 'gemini-flash-latest', 'gemini-3.5-flash-lite', 'gemini-3.8-flash']) as $model) {
+            if ($response && time() - $started > 70) {
                 break;
             }
-            Log::warning("Timetable reader: Gemini model {$model} answered 404");
+            try {
+                $response = Http::withHeaders(['x-goog-api-key' => (string) config('services.gemini.key')])
+                    ->timeout(45)->acceptJson()
+                    ->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent", $payload);
+            } catch (\Illuminate\Http\Client\ConnectionException $e) {
+                Log::warning("Timetable reader: Gemini model {$model} did not answer in time");
+                continue;
+            }
+            if (! in_array($response->status(), [404, 429, 500, 502, 503, 504], true)) {
+                break;
+            }
+            Log::warning("Timetable reader: Gemini model {$model} answered ".$response->status());
+            sleep(1);
+        }
+
+        if (! $response) {
+            throw new RuntimeException('Google did not answer in time. Try again in a minute, or fill the classes by hand.');
         }
 
         if ($response->failed()) {
@@ -153,6 +167,7 @@ class TimetableReader
             $why = match (true) {
                 $response->status() === 429 || str_contains($body, 'RESOURCE_EXHAUSTED') => 'The free reading limit is used up for now. Try again later, or fill the classes by hand.',
                 str_contains($body, 'API_KEY_INVALID') || in_array($response->status(), [401, 403]) => 'The Google key was refused. Check GEMINI_API_KEY on the server.',
+                in_array($response->status(), [500, 502, 503, 504], true) => 'Google is too busy right now (it happens on the free service). Wait a minute and try again, or fill the classes by hand.',
                 $response->status() === 404 => 'The reading model is not available any more. Set GEMINI_MODEL in the server .env to a current Gemini model.',
                 default => 'The reading service did not answer ('.$response->status().'). Try again, or fill the classes by hand.',
             };
