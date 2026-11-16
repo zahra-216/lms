@@ -10,6 +10,7 @@ use App\Models\Semester;
 use App\Models\Subject;
 use App\Models\Timetable;
 use App\Notifications\TimetableAssigned;
+use App\Services\TimetableReader;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -144,6 +145,42 @@ class TimetableController extends Controller
 
         return redirect()->route('admin.timetables.index')
             ->with('success', $isNew ? 'Timetable saved.' : 'Timetable updated.');
+    }
+
+    /** Reads a timetable picture and returns rows for the form (JSON). Nothing is saved or stored. */
+    public function readImage(Request $request, TimetableReader $reader)
+    {
+        $request->validate([
+            'course_id' => ['required', Rule::exists('courses', 'id')->where('status', 'active')],
+            'level_id' => ['required', Rule::exists('levels', 'id')->where('course_id', $request->input('course_id'))],
+            'semester_id' => ['required', Rule::exists('semesters', 'id')
+                ->where('course_id', $request->input('course_id'))->where('level_id', $request->input('level_id'))],
+            'image' => ['required', 'file', 'mimes:jpg,jpeg,png,webp', 'max:4096'],
+        ], [
+            'image.required' => 'Choose a picture of the timetable.',
+            'image.mimes' => 'The picture must be a JPG, PNG or WEBP file.',
+            'image.max' => 'The picture is too big (4 MB at most). Use a smaller picture.',
+            'image.uploaded' => 'The picture could not be uploaded. Try a smaller one.',
+        ]);
+
+        $modules = Subject::where('course_id', $request->course_id)->where('level_id', $request->level_id)
+            ->where('semester_id', $request->semester_id)->orderBy('name')->get(['id', 'code', 'name'])
+            ->map(fn ($m) => ['id' => $m->id, 'code' => (string) $m->code, 'name' => (string) $m->name])->all();
+        $lecturers = Lecturer::orderBy('name')->get(['id', 'name'])->map(fn ($l) => ['id' => $l->id, 'name' => (string) $l->name])->all();
+
+        if (! $modules) {
+            return response()->json(['message' => 'This semester has no modules yet. Add them first on the Faculties page.'], 422);
+        }
+
+        try {
+            return response()->json($reader->read($request->file('image'), $modules, $lecturers));
+        } catch (\RuntimeException $e) {
+            return response()->json(['message' => $e->getMessage()], 422);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return response()->json(['message' => 'Something went wrong while reading the picture. Try again, or fill the classes by hand.'], 500);
+        }
     }
 
     public function destroy(Timetable $timetable)

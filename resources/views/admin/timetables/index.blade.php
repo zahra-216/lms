@@ -30,6 +30,9 @@ Timetable
 @media (max-width: 1499.98px) { .tt-rowbox { grid-template-columns:repeat(3, minmax(0,1fr)); } .tt-rowbox .tt-del { grid-column:1 / -1; justify-self:end; padding:0 22px; } }
 @media (max-width: 575.98px) { .tt-rowbox { grid-template-columns:minmax(0,1fr) minmax(0,1fr); } .tt-rowbox > div:nth-child(1), .tt-rowbox > div:nth-child(4), .tt-rowbox > div:nth-child(5), .tt-rowbox > div:nth-child(6) { grid-column:1 / -1; } }
 .tt-list td, .tt-list th { white-space:normal; }
+.tt-reader { border:1px dashed #94a3b8; border-radius:14px; padding:14px; margin-bottom:14px; background:#f8fafc; }
+.tt-rowbox .needs-check { border-color:#dc2626 !important; background:#fef2f2; }
+.tt-rowbox .read-hint { grid-column:1 / -1; font-size:12.5px; color:#b91c1c; margin:-4px 0 0; }
 </style>
 @endpush
 @section('content')
@@ -78,6 +81,16 @@ Timetable
                     <div class="col-md-8">
                         <label class="form-label fw-semibold" for="modeNote">Line under the title <span class="text-muted fw-normal">(optional)</span></label>
                         <input type="text" name="mode_note" id="modeNote" maxlength="150" class="form-control" placeholder="e.g. Online via Zoom - 1-hour sessions">
+                    </div>
+                </div>
+
+                <div class="tt-reader" id="readerBox">
+                    <div class="fw-bold mb-1"><i class="bi bi-image"></i> Fill from a timetable picture <span class="text-muted fw-normal">(optional)</span></div>
+                    <div class="small text-muted mb-2">Choose a picture of the timetable and the classes below are filled in for you. You can change anything before saving. The picture is sent to Claude (Anthropic) to be read and is not stored.</div>
+                    <div class="d-flex gap-2 flex-wrap align-items-center">
+                        <input type="file" id="ttImage" accept="image/jpeg,image/png,image/webp" class="d-none">
+                        <button type="button" class="btn btn-outline-primary" id="ttImageBtn"><i class="bi bi-upload"></i> Choose picture</button>
+                        <span class="small" id="readerStatus" role="status"></span>
                     </div>
                 </div>
 
@@ -302,6 +315,79 @@ Timetable
     }
 
     $('addRow').addEventListener('click', function () { addRow({}); });
+
+    // ---- fill from a picture ----
+    var imgInput = $('ttImage'), imgBtn = $('ttImageBtn'), status = $('readerStatus');
+    var READ_URL = @json(route('admin.timetables.read'));
+    var TOKEN = document.querySelector('#ttForm input[name=_token]').value;
+    var FIELD_NAMES = { subject_id: 'module', lecturer_id: 'lecturer', start_time: 'time', end_time: 'time' };
+
+    function say(text, bad) { status.textContent = text; status.className = 'small ' + (bad ? 'text-danger fw-semibold' : 'text-muted'); }
+
+    imgBtn.addEventListener('click', function () { imgInput.click(); });
+
+    imgInput.addEventListener('change', function () {
+        var file = imgInput.files[0];
+        if (!file) return;
+        if (!course || !level || !semester) { say('Choose the course, level and semester first.', true); imgInput.value = ''; return; }
+        if (rowsBox.children.length && !confirm('The picture will replace the classes shown below. Continue?')) { imgInput.value = ''; return; }
+
+        var data = new FormData();
+        data.append('_token', TOKEN);
+        data.append('course_id', course.id); data.append('level_id', level.id); data.append('semester_id', semester.id);
+        data.append('image', file);
+
+        imgBtn.disabled = true;
+        say('Reading the picture... this can take up to a minute.');
+
+        fetch(READ_URL, { method: 'POST', body: data, headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' }, credentials: 'same-origin' })
+            .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { ok: r.ok, status: r.status, json: j }; }); })
+            .then(function (res) {
+                if (!res.ok) {
+                    var m = res.json.message;
+                    if (res.json.errors) m = Object.keys(res.json.errors).map(function (k) { return res.json.errors[k][0]; })[0];
+                    if (res.status === 419) m = 'Your session ended. Reload the page and try again.';
+                    if (res.status === 429) m = 'Too many tries. Wait a minute and try again.';
+                    say(m || 'The picture could not be read. Try again, or fill the classes by hand.', true);
+                    return;
+                }
+                fillFromPicture(res.json);
+            })
+            .catch(function () { say('The picture could not be sent. Check your connection and try again.', true); })
+            .then(function () { imgBtn.disabled = false; imgInput.value = ''; });
+    });
+
+    function fillFromPicture(j) {
+        rowsBox.innerHTML = '';
+        if (j.batch) $('batch').value = j.batch;
+        if (j.mode_note) $('modeNote').value = j.mode_note;
+        j.rows.forEach(function (r) { addRow(r); markChecks(rowsBox.lastChild, r); });
+        renumber();
+        if (j.unmatched > 0) {
+            say(j.rows.length + ' classes filled in. ' + j.unmatched + ' field(s) could not be matched and are marked in red - please choose them. Check every row before saving.', true);
+        } else {
+            say(j.rows.length + ' classes filled in. Please check every row, then press Save.');
+        }
+        rowsBox.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+
+    function markChecks(box, r) {
+        var bad = r.check || [];
+        if (!bad.length) return;
+        var what = [];
+        bad.forEach(function (n) {
+            var f = box.querySelector('[data-name="' + n + '"]');
+            if (!f) return;
+            f.classList.add('needs-check');
+            f.addEventListener('change', function () { f.classList.remove('needs-check'); });
+            if (what.indexOf(FIELD_NAMES[n]) === -1) what.push(FIELD_NAMES[n]);
+        });
+        var read = [];
+        if (bad.indexOf('subject_id') !== -1 && r.read_module) read.push('module "' + r.read_module + '"');
+        if (bad.indexOf('lecturer_id') !== -1 && r.read_lecturer) read.push('lecturer "' + r.read_lecturer + '"');
+        var hint = el('div', 'read-hint', 'Please check the ' + what.join(', ') + (read.length ? ' - the picture says ' + read.join(' and ') : '') + '.');
+        box.appendChild(hint);
+    }
 
     search.addEventListener('input', showResults);
     search.addEventListener('keydown', function (e) {

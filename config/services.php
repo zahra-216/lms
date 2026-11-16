@@ -35,6 +35,13 @@ return [
         ],
     ],
 
+    // Reading a timetable picture (admin Timetable page). Key lives in .env only.
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('ANTHROPIC_MODEL', 'claude-sonnet-5-5'),
+        'fake' => (bool) env('ANTHROPIC_FAKE', false),   // local testing only: made-up rows, no internet
+    ],
+
     // Zoom classes: the campus Zoom account (Server-to-Server OAuth app). Values live in .env only.
     'zoom' => [
         'account_id' => env('ZOOM_ACCOUNT_ID'),

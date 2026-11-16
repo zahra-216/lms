@@ -526,6 +526,7 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     // Timetables (one per course, level and semester)
     Route::get('timetables', [App\Http\Controllers\Admin\TimetableController::class, 'index'])->name('timetables.index');
     Route::post('timetables', [App\Http\Controllers\Admin\TimetableController::class, 'store'])->name('timetables.store');
+    Route::post('timetables/read-image', [App\Http\Controllers\Admin\TimetableController::class, 'readImage'])->middleware('throttle:10,1')->name('timetables.read');
     Route::delete('timetables/{timetable}', [App\Http\Controllers\Admin\TimetableController::class, 'destroy'])->name('timetables.destroy');
 
     Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'show'])
