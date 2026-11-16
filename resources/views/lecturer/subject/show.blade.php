@@ -41,8 +41,6 @@
 }
 .icon-attendance { background:#ef4444;
 }
-.icon-timetable { background:#06b6d4;
-}
 .icon-recordings { background:#06b6d4;
 }
 </style>
@@ -91,12 +89,6 @@
             <a href="{{ route('lecturer.subject.recordings', $subject->id) }}" class="module-card">
                 <i class="bi bi-collection-play icon-recordings"></i>
                 <span>Recordings</span>
-            </a>
-        </div>
-        <div class="col-md-3 col-6">
-            <a href="{{ route('lecturer.subject.timetable', $subject->id) }}" class="module-card">
-                <i class="bi bi-calendar-week icon-timetable"></i>
-                <span>Timetable</span>
             </a>
         </div>
     </div>

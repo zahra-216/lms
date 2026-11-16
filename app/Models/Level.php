@@ -9,7 +9,15 @@ class Level extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['course_id', 'name'];
+    protected $fillable = ['course_id', 'name', 'is_active'];
+
+    protected $casts = ['is_active' => 'boolean'];
+
+    /** Levels the campus offers (a level with students is never switched off). */
+    public function scopeActive($query)
+    {
+        return $query->where('is_active', true);
+    }
 
     // Relationship: Level belongs to Course
     public function course()

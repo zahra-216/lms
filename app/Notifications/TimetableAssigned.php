@@ -4,20 +4,13 @@ namespace App\Notifications;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Notification;
-use Illuminate\Notifications\Messages\MailMessage;
 
 class TimetableAssigned extends Notification
 {
     use Queueable;
 
-    protected $subject;
-    protected $action; // 'assigned' or 'updated'
-
-    public function __construct($subject, string $action = 'assigned')
-    {
-        $this->subject = $subject;
-        $this->action = $action;
-    }
+    /** @param string $label e.g. "Business Management / Degree / Semester 4"; $action 'assigned' or 'updated' */
+    public function __construct(protected string $label, protected string $action = 'assigned') {}
 
     public function via($notifiable)
     {
@@ -27,11 +20,9 @@ class TimetableAssigned extends Notification
     public function toArray($notifiable)
     {
         return [
+            'type' => 'timetable',
             'title' => $this->action === 'updated' ? 'Timetable Updated' : 'New Timetable Set',
-            'message' => ($this->action === 'updated'
-                ? 'The timetable for '
-                : 'A new timetable has been set for ') . $this->subject->code . ' - ' . $this->subject->name,
-            'subject_id' => $this->subject->id,
+            'message' => ($this->action === 'updated' ? 'The timetable for ' : 'You have classes in the new timetable for ').$this->label.($this->action === 'updated' ? ' was changed.' : '.'),
         ];
     }
 }

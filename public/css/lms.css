@@ -431,3 +431,35 @@ main:not(.lms-main):not(.auth-main) { padding-bottom: 64px; }
     .lms-confirm .modal-footer { flex-direction: column-reverse; }
     .lms-confirm .modal-footer .btn { width: 100%; margin: 0; }
 }
+
+/* ---- Timetable (admin form, student dashboard, lecturer page) ---- */
+.tt-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: var(--shadow-card); margin-bottom: 24px; }
+.tt-head { background: var(--navy-900); color: #fff; padding: 18px 20px; }
+.tt-brand { color: #f4b942; font-weight: 800; letter-spacing: .18em; font-size: 11.5px; text-transform: uppercase; }
+.tt-head .tt-title { color: #fff; font-size: 19px; font-weight: 800; margin: 6px 0 2px; overflow-wrap: anywhere; }
+.tt-sub { color: rgba(255,255,255,.82); font-size: 13.5px; }
+.tt-pill { display: inline-block; margin-top: 10px; border: 1px solid #f4b942; color: #f7e6b8; border-radius: 999px; padding: 4px 12px; font-size: 12px; }
+.tt-table { width: 100%; border-collapse: collapse; margin: 0; }
+.lms-main .tt-table thead th { border-radius: 0; text-align: left; }
+.lms-main .tt-table td { padding: 12px 14px; border-top: 1px solid var(--line); vertical-align: top; font-size: 14px; text-align: left; white-space: normal; }
+.lms-main .tt-card table { border: 0; border-radius: 0; }
+.lms-main .tt-card table thead tr:first-child th:first-child, .lms-main .tt-card table thead tr:first-child th:last-child,
+.lms-main .tt-card table tbody tr:last-child td:first-child, .lms-main .tt-card table tbody tr:last-child td:last-child { border-radius: 0; }
+.lms-main .tt-table tbody tr:last-child td { border-bottom: 0; }
+.tt-table tbody tr:first-child td { border-top: 0; }
+.tt-day { display: block; font-weight: 800; color: var(--navy-900); }
+.tt-time { display: block; font-weight: 700; color: var(--brand-700); white-space: nowrap; }
+.tt-day + .tt-time { margin-top: 2px; font-size: 13px; }
+.tt-module { display: block; font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.tt-note { display: inline-block; margin-top: 5px; background: #fdf1d3; color: #7a5200; border-radius: 999px; padding: 2px 10px; font-size: 12px; font-weight: 600; }
+.tt-lect { display: block; margin-top: 3px; color: var(--muted); font-size: 13px; }
+.tt-foot { padding: 12px 20px; background: var(--surface); color: var(--muted); font-size: 12.5px; }
+.tt-compact .tt-head { padding: 14px 16px; }
+.tt-compact .tt-head .tt-title { font-size: 17px; }
+.tt-compact .tt-table td, .lms-main .tt-compact .tt-table td { padding: 10px 12px; font-size: 13.5px; }
+.tt-compact .tt-foot { padding: 10px 16px; }
+.tt-narrow { display: none; }
+@media (max-width: 767.98px) {
+    .lms-main .tt-card table.tt-wide { display: none; }
+    .lms-main .tt-card table.tt-narrow { display: table; }
+}

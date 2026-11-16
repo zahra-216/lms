@@ -51,8 +51,8 @@ class LevelController extends Controller
     // ==========================
     public function getByCourse($courseId)
     {
-        // Return all levels of selected course
-        return Level::where('course_id', $courseId)
+        // Return the levels the campus offers for the selected course
+        return Level::active()->where('course_id', $courseId)
             ->select('id','name')
             ->get();
     }

@@ -74,14 +74,14 @@ class AcademicTree
                 ])->all();
             $heading = 'Choose a semester';
         } elseif ($course) {
-            $cards = Level::where('course_id', $course->id)->withCount('semesters')->get()
+            $cards = Level::active()->where('course_id', $course->id)->withCount('semesters')->get()
                 ->map(fn ($l) => [
                     'title' => $l->name, 'sub' => $l->semesters_count.' '.str('semester')->plural($l->semesters_count), 'icon' => 'layers', 'img' => null,
                     'url' => $url(['faculty' => $faculty->id, 'course' => $course->id, 'level' => $l->id]),
                 ])->all();
             $heading = 'Choose a level';
         } elseif ($faculty) {
-            $cards = Course::with('faculty')->where('faculty_id', $faculty->id)->withCount('levels')->orderBy('name')->get()
+            $cards = Course::active()->with('faculty')->where('faculty_id', $faculty->id)->withCount(['levels' => fn ($q) => $q->where('is_active', true)])->orderBy('name')->get()
                 ->map(fn ($c) => [
                     'title' => $c->name, 'sub' => trim($c->code.' · '.$c->levels_count.' '.str('level')->plural($c->levels_count), ' ·'), 'icon' => 'mortarboard',
                     'img' => StockImages::forCourse($c), 'url' => $url(['faculty' => $faculty->id, 'course' => $c->id]),

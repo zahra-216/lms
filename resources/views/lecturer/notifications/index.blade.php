@@ -69,8 +69,8 @@ Notifications
                 <span class="time">
                     <i class="bi bi-clock"></i> {{ $note->created_at->diffForHumans() }}
                 </span>
-                @if(isset($note->data['subject_id']))
-                    <a href="{{ route('lecturer.subject.timetable', $note->data['subject_id']) }}" class="notif-link">
+                @if(isset($note->data['subject_id']) || ($note->data['type'] ?? '') === 'timetable')
+                    <a href="{{ route('lecturer.timetable') }}" class="notif-link">
                         View timetable <i class="bi bi-arrow-right"></i>
                     </a>
                 @endif

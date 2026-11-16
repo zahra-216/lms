@@ -20,8 +20,6 @@
 }
 .icon-attendance { background:#ef4444;
 }
-.icon-timetable { background:#8b5cf6;
-}
 .icon-recordings { background:#06b6d4;
 }
 </style>
@@ -64,11 +62,6 @@
         <div class="col-md-4 col-6">
             <a href="{{ route('admin.attendance.show', $subject->id) }}" class="module-card">
                 <i class="bi bi-calendar-check icon-attendance"></i><span>Attendance</span>
-            </a>
-        </div>
-        <div class="col-md-4 col-6">
-            <a href="{{ route('admin.subjects.timetables.index', $subject->id) }}" class="module-card">
-                <i class="bi bi-calendar-week icon-timetable"></i><span>Timetable</span>
             </a>
         </div>
     </div>

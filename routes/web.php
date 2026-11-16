@@ -109,8 +109,8 @@ Route::prefix('lecturer')->group(function () {
             Route::get('/subject/{id}/grades', [App\Http\Controllers\LecturerSubjectController::class, 'grades'])
                 ->name('subject.grades');
 
-            Route::get('/subject/{id}/timetable', [App\Http\Controllers\LecturerSubjectController::class, 'timetable'])
-                ->name('subject.timetable');
+            Route::get('/timetable', [App\Http\Controllers\LecturerTimetableController::class, 'index'])
+                ->name('timetable');
 
             Route::get('/subject/{subject}/recordings', [App\Http\Controllers\LecturerRecordingController::class, 'index'])
                 ->name('subject.recordings');
@@ -521,14 +521,12 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         Route::get('grades', [SubjectController::class, 'grades'])->name('grades');
         Route::post('grades/update', [SubjectController::class, 'updateMarks'])->name('grades.update');
 
-        // Timetable
-        Route::get('timetables', [App\Http\Controllers\Admin\TimetableController::class, 'index'])->name('timetables.index');
-        Route::get('timetables/create', [App\Http\Controllers\Admin\TimetableController::class, 'create'])->name('timetables.create');
-        Route::post('timetables', [App\Http\Controllers\Admin\TimetableController::class, 'store'])->name('timetables.store');
-        Route::get('timetables/{groupId}/edit', [App\Http\Controllers\Admin\TimetableController::class, 'edit'])->name('timetables.edit');
-        Route::put('timetables/{groupId}', [App\Http\Controllers\Admin\TimetableController::class, 'update'])->name('timetables.update');
-        Route::delete('timetables/{groupId}', [App\Http\Controllers\Admin\TimetableController::class, 'destroy'])->name('timetables.destroy');
     });
+
+    // Timetables (one per course, level and semester)
+    Route::get('timetables', [App\Http\Controllers\Admin\TimetableController::class, 'index'])->name('timetables.index');
+    Route::post('timetables', [App\Http\Controllers\Admin\TimetableController::class, 'store'])->name('timetables.store');
+    Route::delete('timetables/{timetable}', [App\Http\Controllers\Admin\TimetableController::class, 'destroy'])->name('timetables.destroy');
 
     Route::get('/profile', [App\Http\Controllers\Admin\ProfileController::class, 'show'])
         ->name('profile');

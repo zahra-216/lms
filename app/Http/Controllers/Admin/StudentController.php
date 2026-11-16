@@ -57,7 +57,7 @@ class StudentController extends Controller
 
     public function create()
     {
-        $courses = Course::all();
+        $courses = Course::active()->orderBy('name')->get();
         return view('admin.students.create', compact('courses'));
     }
 
@@ -105,8 +105,10 @@ class StudentController extends Controller
     public function edit($id)
     {
         $student = Student::findOrFail($id);
-        $courses = Course::all();
-        $levels = Level::where('course_id', $student->course_id)->get();
+        // offered courses, plus the student's own course if it is not offered any more
+        $courses = Course::active()->orWhere('id', $student->course_id)->orderBy('name')->get();
+        $levels = Level::where('course_id', $student->course_id)
+            ->where(fn ($q) => $q->where('is_active', true)->orWhere('id', $student->level_id))->get();
         $semesters = Semester::where('level_id', $student->level_id)->get();
         return view('admin.students.edit', compact('student', 'courses', 'levels', 'semesters'));
     }

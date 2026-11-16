@@ -19,6 +19,7 @@
                 ['Lecture Records', 'admin.lecture-records.index', 'journal-plus', ['admin.lecture-records.*']],
                 ['Attendance', 'admin.attendance.index', 'calendar-check', ['admin.attendance.*']],
                 ['Zoom Classes', 'admin.zoom.index', 'camera-video', ['admin.zoom.*']],
+                ['Timetable', 'admin.timetables.index', 'calendar-week', ['admin.timetables.*']],
                 ['Scan Attendance', 'admin.scan.index', 'qr-code-scan', ['admin.scan.*']],
                 ['Gate Log', 'admin.gate-log.index', 'door-open', ['admin.gate-log.*']],
             ],
@@ -36,6 +37,7 @@
             'My Teaching' => [
                 ['Dashboard', 'lecturer.dashboard', 'speedometer2', ['lecturer.dashboard', 'lecturer.subject.*', 'lecturer.notes.*', 'lecturer.videos.*', 'lecturer.assignments.*', 'lecturer.quizzes.*', 'lecturer.marks.*']],
                 ['Lecture Records', 'lecturer.lecture-records.index', 'journal-plus', ['lecturer.lecture-records.*']],
+                ['Timetable', 'lecturer.timetable', 'calendar-week', ['lecturer.timetable']],
             ],
             'Account' => [
                 ['My Payments', 'lecturer.my.payments', 'cash-coin', ['lecturer.my.payments']],

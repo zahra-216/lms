@@ -14,9 +14,6 @@ Dashboard
     .subject-row:hover { background:var(--sky-soft); }
     .accordion-button:not(.collapsed) { background:var(--sky-soft); color:var(--navy-900); box-shadow:none; }
     .accordion-item { border:1px solid var(--line); border-radius:14px !important; overflow:hidden; }
-    .upcoming-item { display:flex; align-items:center; gap:14px; padding:12px 14px; border:1px solid var(--line); border-radius:14px; background:var(--surface); }
-    .upcoming-icon { width:42px; height:42px; border-radius:12px; background:var(--sky-soft); color:var(--brand-700); display:grid; place-items:center; font-size:18px; flex-shrink:0; }
-    .upcoming-day { background:var(--brand-700); color:#fff; border-radius:999px; padding:4px 12px; font-size:12px; font-weight:700; }
     #calendar table { width:100%; text-align:center; border-collapse:separate; border-spacing:4px; }
     #calendar th { font-size:11px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted); background:transparent !important; padding:4px 0; border:0; }
     #calendar td { padding:8px 0; border-radius:10px; font-size:14px; }
@@ -68,26 +65,6 @@ Dashboard
             </div>
 
             <div class="card-box">
-                <h3 class="section-title"><i class="bi bi-calendar-week text-primary"></i> Upcoming classes</h3>
-                @if ($upcomingClasses->count() > 0)
-                    <div class="d-flex flex-column gap-2">
-                        @foreach ($upcomingClasses as $class)
-                            <div class="upcoming-item">
-                                <div class="upcoming-icon"><i class="bi bi-book"></i></div>
-                                <div class="flex-grow-1">
-                                    <div class="fw-bold">{{ $class->subject->name ?? 'N/A' }}</div>
-                                    <div class="small text-muted"><i class="bi bi-clock"></i> {{ \Carbon\Carbon::parse($class->start_time)->format('h:i A') }} - {{ \Carbon\Carbon::parse($class->end_time)->format('h:i A') }}</div>
-                                </div>
-                                <span class="upcoming-day">{{ $class->day }}</span>
-                            </div>
-                        @endforeach
-                    </div>
-                @else
-                    <div class="text-muted">No upcoming classes.</div>
-                @endif
-            </div>
-
-            <div class="card-box">
                 <h3 class="section-title"><i class="bi bi-clipboard-check text-primary"></i> Pending assignments</h3>
                 @if ($pendingAssignments->count() > 0)
                     <div class="list-group">
@@ -116,6 +93,10 @@ Dashboard
                 <h3 class="section-title"><i class="bi bi-calendar3 text-primary"></i> Calendar</h3>
                 <div id="calendar"></div>
             </div>
+
+            @if ($timetable && $timetable->rows->isNotEmpty())
+                @include('partials.timetable', ['timetable' => $timetable, 'compact' => true])
+            @endif
         </div>
     </div>
 </div>

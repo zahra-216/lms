@@ -14,8 +14,15 @@ class Course extends Model
         'name',
         'faculty_id',
         'description',
-        'image'
+        'image',
+        'status',
     ];
+
+    /** Courses the campus offers now (status "active"); the others stay in the data but are not offered. */
+    public function scopeActive($query)
+    {
+        return $query->where('status', 'active');
+    }
 
     public function faculty()
     {

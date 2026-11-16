@@ -2,35 +2,49 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+/** The weekly timetable of one course + level + semester. */
 class Timetable extends Model
 {
-    use HasFactory;
+    protected $fillable = ['course_id', 'level_id', 'semester_id', 'batch', 'mode_note'];
 
-    protected $fillable = [
-        'group_id',
-        'subject_id',
-        'lecturer_id',
-        'day',
-        'start_time',
-        'end_time',
-        'content_covered',
-    ];
+    const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-    const DAY_ORDER = [
-        'Monday' => 1, 'Tuesday' => 2, 'Wednesday' => 3, 'Thursday' => 4,
-        'Friday' => 5, 'Saturday' => 6, 'Sunday' => 7,
-    ];
-
-    public function subject()
+    public function course()
     {
-        return $this->belongsTo(Subject::class);
+        return $this->belongsTo(Course::class);
     }
 
-    public function lecturer()
+    public function level()
     {
-        return $this->belongsTo(Lecturer::class);
+        return $this->belongsTo(Level::class);
+    }
+
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class);
+    }
+
+    public function rows()
+    {
+        return $this->hasMany(TimetableRow::class);
+    }
+
+    /** Rows in week order: Monday first, earlier classes first. */
+    public function sortedRows()
+    {
+        return $this->rows->sortBy(fn ($r) => [array_search($r->day, self::DAYS), $r->start_time])->values();
+    }
+
+    /** "9.00 - 10.00 pm", or "11.00 am - 12.00 pm" when the class crosses noon. */
+    public static function timeRange(string $start, string $end): string
+    {
+        $a = \Carbon\Carbon::createFromFormat('H:i:s', strlen($start) === 5 ? $start.':00' : $start);
+        $b = \Carbon\Carbon::createFromFormat('H:i:s', strlen($end) === 5 ? $end.':00' : $end);
+
+        return $a->format('a') === $b->format('a')
+            ? $a->format('g.i').' - '.$b->format('g.i a')
+            : $a->format('g.i a').' - '.$b->format('g.i a');
     }
 }
