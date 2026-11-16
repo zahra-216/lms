@@ -86,7 +86,7 @@ Timetable
 
                 <div class="tt-reader" id="readerBox">
                     <div class="fw-bold mb-1"><i class="bi bi-image"></i> Fill from a timetable picture <span class="text-muted fw-normal">(optional)</span></div>
-                    <div class="small text-muted mb-2">Choose a picture of the timetable and the classes below are filled in for you. You can change anything before saving. The picture is sent to Claude (Anthropic) to be read and is not stored.</div>
+                    <div class="small text-muted mb-2">Choose a picture of the timetable and the classes below are filled in for you. You can change anything before saving. The picture is sent to {{ config('services.timetable_reader') === 'anthropic' ? 'Claude (Anthropic)' : 'Google Gemini' }} to be read and is not stored by the campus.</div>
                     <div class="d-flex gap-2 flex-wrap align-items-center">
                         <input type="file" id="ttImage" accept="image/jpeg,image/png,image/webp" class="d-none">
                         <button type="button" class="btn btn-outline-primary" id="ttImageBtn"><i class="bi bi-upload"></i> Choose picture</button>

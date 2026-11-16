@@ -35,7 +35,13 @@ return [
         ],
     ],
 
-    // Reading a timetable picture (admin Timetable page). Key lives in .env only.
+    // Reading a timetable picture (admin Timetable page). Keys live in .env only.
+    // TIMETABLE_READER: "gemini" (Google free tier, default) or "anthropic" (Claude, paid).
+    'timetable_reader' => env('TIMETABLE_READER', 'gemini'),
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+    ],
     'anthropic' => [
         'key' => env('ANTHROPIC_API_KEY'),
         'model' => env('ANTHROPIC_MODEL', 'claude-sonnet-5-5'),
