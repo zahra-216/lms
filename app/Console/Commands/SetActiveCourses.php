@@ -41,6 +41,7 @@ class SetActiveCourses extends Command
         'data science' => ['HND', 'Degree'],
         'computer science' => ['HND', 'Degree'],
         'human resources management' => ['Degree'],
+        'information technology' => ['Diploma', 'HND', 'Degree'],
     ];
 
     /** Offered programmes that have no course yet if none of these words appear in a course name. */
@@ -113,11 +114,17 @@ class SetActiveCourses extends Command
         $changes = 0;
 
         foreach (Course::orderBy('name')->get() as $course) {
-            $want = $this->offered($course->name) ? 'active' : 'inactive';
             $students = Student::where('course_id', $course->id)->count();
+            $offered = $this->offered($course->name);
+            // a course that has students is never switched off, even if it is not on the list
+            $want = ($offered || $students > 0) ? 'active' : 'inactive';
             $change = $course->status !== $want && ! ($course->status === 'archived' && $want === 'inactive');
 
-            $rows[] = [$course->id, $course->name, $course->status, $change ? $want : '(same)', $students];
+            $becomes = $change ? $want : '(same)';
+            if (! $offered && $students > 0) {
+                $becomes .= ' - not on the list, kept for its student(s)';
+            }
+            $rows[] = [$course->id, $course->name, $course->status, $becomes, $students];
 
             if ($change) {
                 $changes++;
