@@ -120,23 +120,32 @@ class TimetableReader
             'required' => ['classes'],
         ];
 
-        $model = config('services.gemini.model');
-        $response = Http::withHeaders(['x-goog-api-key' => (string) config('services.gemini.key')])
-            ->timeout(120)->acceptJson()
-            ->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent", [
-                'contents' => [[
-                    'role' => 'user',
-                    'parts' => [
-                        ['inline_data' => ['mime_type' => $this->mime($image), 'data' => base64_encode(file_get_contents($image->getRealPath()))]],
-                        ['text' => $this->prompt($modules, $lecturers, 'Return the answer as JSON with the fields batch, mode_note and classes.')],
-                    ],
-                ]],
-                'generationConfig' => [
-                    'temperature' => 0,
-                    'responseMimeType' => 'application/json',
-                    'responseSchema' => $schema,
+        $payload = [
+            'contents' => [[
+                'role' => 'user',
+                'parts' => [
+                    ['inline_data' => ['mime_type' => $this->mime($image), 'data' => base64_encode(file_get_contents($image->getRealPath()))]],
+                    ['text' => $this->prompt($modules, $lecturers, 'Return the answer as JSON with the fields batch, mode_note and classes.')],
                 ],
-            ]);
+            ]],
+            'generationConfig' => [
+                'temperature' => 0,
+                'responseMimeType' => 'application/json',
+                'responseSchema' => $schema,
+            ],
+        ];
+
+        // Google retires models now and then (a retired model answers 404): try the chosen model, then the "latest" alias.
+        $response = null;
+        foreach (array_unique([config('services.gemini.model'), 'gemini-flash-latest']) as $model) {
+            $response = Http::withHeaders(['x-goog-api-key' => (string) config('services.gemini.key')])
+                ->timeout(120)->acceptJson()
+                ->post("https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent", $payload);
+            if ($response->status() !== 404) {
+                break;
+            }
+            Log::warning("Timetable reader: Gemini model {$model} answered 404");
+        }
 
         if ($response->failed()) {
             Log::warning('Timetable reader: Gemini answered '.$response->status());
@@ -144,6 +153,7 @@ class TimetableReader
             $why = match (true) {
                 $response->status() === 429 || str_contains($body, 'RESOURCE_EXHAUSTED') => 'The free reading limit is used up for now. Try again later, or fill the classes by hand.',
                 str_contains($body, 'API_KEY_INVALID') || in_array($response->status(), [401, 403]) => 'The Google key was refused. Check GEMINI_API_KEY on the server.',
+                $response->status() === 404 => 'The reading model is not available any more. Set GEMINI_MODEL in the server .env to a current Gemini model.',
                 default => 'The reading service did not answer ('.$response->status().'). Try again, or fill the classes by hand.',
             };
             throw new RuntimeException($why);

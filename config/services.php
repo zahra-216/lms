@@ -40,7 +40,7 @@ return [
     'timetable_reader' => env('TIMETABLE_READER', 'gemini'),
     'gemini' => [
         'key' => env('GEMINI_API_KEY'),
-        'model' => env('GEMINI_MODEL', 'gemini-2.5-flash'),
+        'model' => env('GEMINI_MODEL', 'gemini-3.5-flash-lite'),
     ],
     'anthropic' => [
         'key' => env('ANTHROPIC_API_KEY'),
