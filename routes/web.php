@@ -566,6 +566,9 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
         ->name('attendance.monthly.destroy');
 
     // Zoom classes (attendance comes back from Zoom by itself)
+    Route::get('/zoom-connection', [App\Http\Controllers\Admin\ZoomConnectionController::class, 'show'])->name('zoom-connection.show');
+    Route::post('/zoom-connection', [App\Http\Controllers\Admin\ZoomConnectionController::class, 'save'])->middleware('throttle:20,1')->name('zoom-connection.save');
+    Route::post('/zoom-connection/test', [App\Http\Controllers\Admin\ZoomConnectionController::class, 'test'])->middleware('throttle:10,1')->name('zoom-connection.test');
     Route::get('/zoom-classes', [App\Http\Controllers\Admin\ZoomClassController::class, 'index'])->name('zoom.index');
     Route::get('/zoom-classes/create', [App\Http\Controllers\Admin\ZoomClassController::class, 'create'])->name('zoom.create');
     Route::post('/zoom-classes', [App\Http\Controllers\Admin\ZoomClassController::class, 'store'])->name('zoom.store');

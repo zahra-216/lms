@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Support\ZoomSettings;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
@@ -47,7 +48,54 @@ class ZoomService
     public function isConfigured(): bool
     {
         return $this->isFake()
-            || (config('services.zoom.account_id') && config('services.zoom.client_id') && config('services.zoom.client_secret'));
+            || (ZoomSettings::get('account_id') && ZoomSettings::get('client_id') && ZoomSettings::get('client_secret'));
+    }
+
+    /**
+     * Check the saved Zoom connection: sign in with the keys, then look for the host email in that Zoom account.
+     * Used by the "Test connection" button. Never throws.
+     *
+     * @return array{ok: bool, message: string, notes: array<int, string>}
+     */
+    public function testConnection(): array
+    {
+        if ($this->isFake()) {
+            return ['ok' => true, 'message' => 'Testing mode: Zoom is pretended, nothing was checked with the real Zoom.', 'notes' => []];
+        }
+
+        if (! (ZoomSettings::get('account_id') && ZoomSettings::get('client_id') && ZoomSettings::get('client_secret'))) {
+            return ['ok' => false, 'message' => 'Fill in and save the Account ID, Client ID and Client Secret first.', 'notes' => []];
+        }
+
+        Cache::forget(ZoomSettings::tokenCacheKey());
+
+        try {
+            $this->token();
+        } catch (\Throwable $e) {
+            Cache::forget(ZoomSettings::tokenCacheKey());
+
+            return ['ok' => false, 'message' => 'Zoom did not accept these keys. Check the Account ID, Client ID and Client Secret, and that the app is activated in Zoom. ('.$e->getMessage().')', 'notes' => []];
+        }
+
+        $notes = [];
+        $host = ZoomSettings::get('host');
+
+        if (! $host) {
+            $notes[] = 'The Zoom host email is not set yet. Classes cannot be created without it.';
+        } else {
+            $response = $this->api()->get(self::API.'/users/'.rawurlencode($host));
+
+            if ($response->successful()) {
+                $name = trim(($response->json('first_name') ?? '').' '.($response->json('last_name') ?? ''));
+                $notes[] = 'Host found in this Zoom account: '.$host.($name !== '' ? " ({$name})" : '').'.';
+            } elseif ($response->status() === 404) {
+                return ['ok' => false, 'message' => "The keys work, but {$host} is not a user of this Zoom account. Use the email you sign in to Zoom with.", 'notes' => []];
+            } else {
+                $notes[] = 'The host email could not be checked (the Zoom permission "View a user" is not added to the app). This is fine; the first class will show if it works.';
+            }
+        }
+
+        return ['ok' => true, 'message' => 'Connected to Zoom. The keys are accepted.', 'notes' => $notes];
     }
 
     /**
@@ -66,11 +114,11 @@ class ZoomService
         $timezone = config('services.zoom.timezone');
 
         // A Server-to-Server app has no "current user", so the Zoom login (email) that owns the meetings must be given.
-        if (! config('services.zoom.host')) {
-            throw new RuntimeException('The Zoom host email is missing from the server settings (ZOOM_HOST_EMAIL).');
+        if (! ZoomSettings::get('host')) {
+            throw new RuntimeException('The Zoom host email is missing. Add it on the Zoom Connection page.');
         }
 
-        $host = rawurlencode(config('services.zoom.host'));
+        $host = rawurlencode(ZoomSettings::get('host'));
 
         $response = $this->api()->post(self::API."/users/{$host}/meetings", [
             'topic' => $topic,
@@ -239,17 +287,17 @@ class ZoomService
     private function token(): string
     {
         if (! $this->isConfigured()) {
-            throw new RuntimeException('Zoom is not connected yet. The Zoom keys are missing from the server settings.');
+            throw new RuntimeException('Zoom is not connected yet. Add the Zoom keys on the Zoom Connection page.');
         }
 
-        return Cache::remember('zoom.access_token', now()->addMinutes(55), function () {
+        return Cache::remember(ZoomSettings::tokenCacheKey(), now()->addMinutes(55), function () {
             // Exactly as Zoom documents it: the two values go in the address, the keys in Basic auth.
             $url = 'https://zoom.us/oauth/token?'.http_build_query([
                 'grant_type' => 'account_credentials',
-                'account_id' => config('services.zoom.account_id'),
+                'account_id' => ZoomSettings::get('account_id'),
             ]);
 
-            $response = Http::withBasicAuth(config('services.zoom.client_id'), config('services.zoom.client_secret'))
+            $response = Http::withBasicAuth(ZoomSettings::get('client_id'), ZoomSettings::get('client_secret'))
                 ->timeout(30)
                 ->send('POST', $url);
 
@@ -267,7 +315,7 @@ class ZoomService
 
         // A key Zoom no longer accepts: forget it so the next call signs in again.
         if ($response->status() === 401) {
-            Cache::forget('zoom.access_token');
+            Cache::forget(ZoomSettings::tokenCacheKey());
         }
 
         $message = $response->json('message') ?: $response->body();

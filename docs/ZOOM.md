@@ -20,7 +20,9 @@ In the Zoom App Marketplace create a **Server-to-Server OAuth** app for the camp
 - Event subscription: **Meeting - End Meeting**, address `https://lms.ttmetrocampus.com/zoom/webhook`. Copy its **Secret Token**.
 - Activate the app.
 
-Put the values in the server's `.env` (never in GitHub, never in chat), then `php artisan config:clear`:
+**Easiest: the admin page.** Sidebar **Zoom Connection** (`/admin/zoom-connection`) takes the five values below, saves them encrypted in the database (table `app_settings`, keys `zoom.*`), and has a **Test connection** button and the click-by-click steps for a new Zoom account. Values saved there win over the `.env` ones; boxes left empty fall back to `.env`. Changing the Zoom account therefore needs no developer. Classes made under an old account cannot be read after the switch (Zoom shows a class only to the account that made it), so let them finish first. The cached Zoom access token is keyed by account and client ID, so a new account never reuses the old token.
+
+Or put the values in the server's `.env` (never in GitHub, never in chat), then `php artisan config:clear`:
 
 ```
 ZOOM_ACCOUNT_ID=

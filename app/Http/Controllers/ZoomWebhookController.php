@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\ZoomMeeting;
 use App\Services\ZoomAttendance;
+use App\Support\ZoomSettings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Throwable;
@@ -18,7 +19,7 @@ class ZoomWebhookController extends Controller
 {
     public function handle(Request $request, ZoomAttendance $attendance)
     {
-        $secret = (string) config('services.zoom.webhook_secret');
+        $secret = (string) ZoomSettings::get('webhook_secret');
 
         if ($secret === '') {
             return response()->json(['message' => 'Zoom webhook is not set up.'], 503);

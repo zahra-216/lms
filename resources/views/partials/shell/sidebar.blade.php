@@ -19,6 +19,7 @@
                 ['Lecture Records', 'admin.lecture-records.index', 'journal-plus', ['admin.lecture-records.*']],
                 ['Attendance', 'admin.attendance.index', 'calendar-check', ['admin.attendance.*']],
                 ['Zoom Classes', 'admin.zoom.index', 'camera-video', ['admin.zoom.*']],
+                ['Zoom Connection', 'admin.zoom-connection.show', 'plug', ['admin.zoom-connection.*']],
                 ['Timetable', 'admin.timetables.index', 'calendar-week', ['admin.timetables.*']],
                 ['Scan Attendance', 'admin.scan.index', 'qr-code-scan', ['admin.scan.*']],
                 ['Gate Log', 'admin.gate-log.index', 'door-open', ['admin.gate-log.*']],

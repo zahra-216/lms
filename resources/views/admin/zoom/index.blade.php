@@ -12,6 +12,7 @@ Zoom Classes
         <div class="d-flex gap-2 flex-wrap">
             <a href="{{ route('admin.zoom.create') }}" class="btn btn-light fw-semibold"><i class="bi bi-plus-circle"></i> New Zoom Class</a>
             <a href="{{ route('admin.zoom.link') }}" class="btn btn-outline-light fw-semibold"><i class="bi bi-link-45deg"></i> Link a Zoom meeting</a>
+            <a href="{{ route('admin.zoom-connection.show') }}" class="btn btn-outline-light fw-semibold"><i class="bi bi-plug"></i> Zoom Connection</a>
         </div>
     </div>
 
@@ -19,7 +20,7 @@ Zoom Classes
         <div class="alert alert-info rounded-3">Testing mode: Zoom is pretended. Nothing is sent to the real Zoom.</div>
     @elseif(! $connected)
         <div class="alert alert-warning rounded-3">
-            <i class="bi bi-exclamation-triangle"></i> Zoom is not connected yet, so classes cannot be created. The Zoom keys have to be added to the server settings first.
+            <i class="bi bi-exclamation-triangle"></i> Zoom is not connected yet, so classes cannot be created. Add the Zoom keys on the <a href="{{ route('admin.zoom-connection.show') }}" class="alert-link">Zoom Connection</a> page first.
         </div>
     @endif
 
