@@ -569,6 +569,12 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/zoom-connection', [App\Http\Controllers\Admin\ZoomConnectionController::class, 'show'])->name('zoom-connection.show');
     Route::post('/zoom-connection', [App\Http\Controllers\Admin\ZoomConnectionController::class, 'save'])->middleware('throttle:20,1')->name('zoom-connection.save');
     Route::post('/zoom-connection/test', [App\Http\Controllers\Admin\ZoomConnectionController::class, 'test'])->middleware('throttle:10,1')->name('zoom-connection.test');
+    Route::get('/youtube-connection', [App\Http\Controllers\Admin\YoutubeConnectionController::class, 'show'])->name('youtube.show');
+    Route::post('/youtube-connection', [App\Http\Controllers\Admin\YoutubeConnectionController::class, 'save'])->middleware('throttle:20,1')->name('youtube.save');
+    Route::get('/youtube-connection/connect', [App\Http\Controllers\Admin\YoutubeConnectionController::class, 'connect'])->middleware('throttle:20,1')->name('youtube.connect');
+    Route::get('/youtube-connection/callback', [App\Http\Controllers\Admin\YoutubeConnectionController::class, 'callback'])->name('youtube.callback');
+    Route::post('/youtube-connection/disconnect', [App\Http\Controllers\Admin\YoutubeConnectionController::class, 'disconnect'])->name('youtube.disconnect');
+    Route::post('/youtube-connection/test', [App\Http\Controllers\Admin\YoutubeConnectionController::class, 'test'])->middleware('throttle:10,1')->name('youtube.test');
     Route::get('/zoom-classes', [App\Http\Controllers\Admin\ZoomClassController::class, 'index'])->name('zoom.index');
     Route::get('/zoom-classes/create', [App\Http\Controllers\Admin\ZoomClassController::class, 'create'])->name('zoom.create');
     Route::post('/zoom-classes', [App\Http\Controllers\Admin\ZoomClassController::class, 'store'])->name('zoom.store');
