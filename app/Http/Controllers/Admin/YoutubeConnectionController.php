@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Level;
+use App\Services\YoutubePlaylistResolver;
 use App\Services\YoutubeService;
 use App\Support\YoutubeSettings;
 use Illuminate\Http\Request;
@@ -28,6 +30,8 @@ class YoutubeConnectionController extends Controller
             'connected' => YoutubeSettings::isConnected(),
             'channel' => YoutubeSettings::get('channel_title'),
             'redirectUri' => $this->redirectUri(),
+            'canManage' => YoutubeSettings::canManagePlaylists(),
+            'programmes' => YoutubeSettings::isConnected() ? YoutubePlaylistController::programmes() : collect(),
             'test' => session('youtube_test'),
         ]);
     }
@@ -110,10 +114,11 @@ class YoutubeConnectionController extends Controller
     }
 
     /** Upload a small video the admin chooses, to prove the connection works. It goes up as Unlisted. */
-    public function test(Request $request, YoutubeService $youtube)
+    public function test(Request $request, YoutubeService $youtube, YoutubePlaylistResolver $playlists)
     {
         $request->validate([
             'video' => ['required', 'file', 'mimes:mp4,mov,webm,avi,mkv', 'max:51200'],
+            'playlist_level' => ['nullable', 'integer'],
         ], [
             'video.required' => 'Choose a short video file first.',
             'video.mimes' => 'Choose a video file (MP4, MOV, WEBM, AVI or MKV).',
@@ -126,16 +131,53 @@ class YoutubeConnectionController extends Controller
         $mime = $file->getMimeType() ?: 'video/mp4';
 
         try {
-            $session = $youtube->startUpload($file->getRealPath(), 'TT Metro LMS test - you can delete this', 'Test upload from the LMS. Safe to delete.', 'unlisted', $mime);
+            $session = $youtube->startUpload($file->getRealPath(), 'TTMC LMS test - you can delete this', 'Test upload from the LMS. Safe to delete.', 'unlisted', $mime);
             $id = $youtube->sendFile($session, $file->getRealPath(), $mime);
         } catch (\Throwable $e) {
             return redirect()->route('admin.youtube.show')->with('youtube_test', ['ok' => false, 'message' => $e->getMessage()]);
         }
 
+        $message = 'The test video is on YouTube (Unlisted). YouTube may need a few minutes to process it.';
+
+        // Optionally try the playlist step too, exactly as a real recording would use it.
+        if ($request->filled('playlist_level')) {
+            $level = Level::active()->with('course')->find((int) $request->input('playlist_level'));
+
+            if ($level && $level->course) {
+                try {
+                    $playlist = $playlists->addVideo($level->course, $level, $id);
+                    $message .= ' It was added to the playlist "'.$playlist['title'].'"'.($playlist['created'] ? ' (the playlist did not exist, so it was created).' : '.');
+                } catch (\Throwable $e) {
+                    $message .= ' But it could not be added to the playlist: '.$e->getMessage();
+                }
+            }
+        }
+
+        $request->session()->put('youtube_test_video', $id);
+
         return redirect()->route('admin.youtube.show')->with('youtube_test', [
             'ok' => true,
-            'message' => 'The test video is on YouTube (Unlisted). YouTube may need a few minutes to process it.',
+            'message' => $message,
             'url' => 'https://youtu.be/'.$id,
+            'video_id' => $id,
         ]);
+    }
+
+    /** Remove the test video again (only the one that was just uploaded here). */
+    public function deleteTest(Request $request, YoutubeService $youtube)
+    {
+        $id = (string) $request->session()->pull('youtube_test_video');
+
+        if ($id === '' || ! hash_equals($id, (string) $request->input('video_id'))) {
+            return redirect()->route('admin.youtube.show')->with('error', 'That test video can no longer be deleted here. Delete it in YouTube Studio.');
+        }
+
+        try {
+            $youtube->deleteVideo($id);
+        } catch (\Throwable $e) {
+            return redirect()->route('admin.youtube.show')->with('youtube_test', ['ok' => false, 'message' => 'The test video could not be deleted: '.$e->getMessage()]);
+        }
+
+        return redirect()->route('admin.youtube.show')->with('success', 'The test video was deleted from YouTube.');
     }
 }

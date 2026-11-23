@@ -18,7 +18,8 @@ class YoutubeService
     private const TOKEN = 'https://oauth2.googleapis.com/token';
     private const API = 'https://www.googleapis.com/youtube/v3';
     private const UPLOAD = 'https://www.googleapis.com/upload/youtube/v3/videos';
-    private const SCOPES = 'https://www.googleapis.com/auth/youtube.upload https://www.googleapis.com/auth/youtube.readonly';
+    // One permission that covers uploading, reading the channel and managing its playlists.
+    private const SCOPES = 'https://www.googleapis.com/auth/youtube';
 
     /** Pieces of 8 MB (YouTube wants a multiple of 256 KB). */
     public const CHUNK = 8 * 1024 * 1024;
@@ -63,6 +64,7 @@ class YoutubeService
         }
 
         YoutubeSettings::put('refresh_token', $refresh);
+        YoutubeSettings::put('scopes', (string) $response->json('scope'));
         Cache::put('youtube.access_token', $response->json('access_token'), now()->addSeconds(max(60, (int) $response->json('expires_in', 3600) - 300)));
 
         $channel = $this->api()->get(self::API.'/channels', ['part' => 'snippet', 'mine' => 'true']);
@@ -235,6 +237,73 @@ class YoutubeService
         return $range && preg_match('/bytes=\d+-(\d+)/', $range, $m) ? ((int) $m[1]) + 1 : $fallback;
     }
 
+    /**
+     * Every playlist on the connected channel, as [['id' => ..., 'title' => ...], ...].
+     */
+    public function playlists(): array
+    {
+        $out = [];
+        $page = null;
+
+        do {
+            $query = ['part' => 'snippet', 'mine' => 'true', 'maxResults' => 50];
+            if ($page) {
+                $query['pageToken'] = $page;
+            }
+
+            $response = $this->api()->get(self::API.'/playlists', $query);
+
+            if (! $response->successful()) {
+                throw new RuntimeException($this->explain($response, 'read the playlists'));
+            }
+
+            foreach ($response->json('items', []) as $item) {
+                $out[] = ['id' => $item['id'], 'title' => (string) ($item['snippet']['title'] ?? '')];
+            }
+
+            $page = $response->json('nextPageToken');
+        } while ($page && count($out) < 500);
+
+        return $out;
+    }
+
+    /** Make a new playlist on the channel and return its ID. */
+    public function createPlaylist(string $title, string $description = '', string $privacy = 'unlisted'): string
+    {
+        $response = $this->api()->post(self::API.'/playlists?part=snippet,status', [
+            'snippet' => ['title' => self::cleanTitle($title), 'description' => mb_substr(str_replace(['<', '>'], '', $description), 0, 4900)],
+            'status' => ['privacyStatus' => in_array($privacy, ['unlisted', 'private', 'public'], true) ? $privacy : 'unlisted'],
+        ]);
+
+        if (! $response->successful() || ! $response->json('id')) {
+            throw new RuntimeException($this->explain($response, 'create the playlist'));
+        }
+
+        return (string) $response->json('id');
+    }
+
+    /** Put a video into a playlist. */
+    public function addToPlaylist(string $playlistId, string $videoId): void
+    {
+        $response = $this->api()->post(self::API.'/playlistItems?part=snippet', [
+            'snippet' => ['playlistId' => $playlistId, 'resourceId' => ['kind' => 'youtube#video', 'videoId' => $videoId]],
+        ]);
+
+        if (! $response->successful()) {
+            throw new RuntimeException($this->explain($response, 'add the video to the playlist'), $response->status());
+        }
+    }
+
+    /** Delete one of our own videos (used to clean up the test video). */
+    public function deleteVideo(string $videoId): void
+    {
+        $response = $this->api()->delete(self::API.'/videos?id='.rawurlencode($videoId));
+
+        if (! in_array($response->status(), [200, 204], true)) {
+            throw new RuntimeException($this->explain($response, 'delete the video'));
+        }
+    }
+
     /** Title YouTube accepts: no < or >, at most 100 characters, never empty. */
     public static function cleanTitle(string $title): string
     {
@@ -249,6 +318,7 @@ class YoutubeService
 
         return match (true) {
             $reason === 'quotaExceeded' || $reason === 'uploadLimitExceeded' => 'YouTube upload limit reached for today. It will work again tomorrow.',
+            $reason === 'insufficientPermissions' || $reason === 'ACCESS_TOKEN_SCOPE_INSUFFICIENT' => 'YouTube needs a new permission (to manage playlists). On the YouTube Connection page click "Connect again" and allow it.',
             $reason === 'youtubeSignupRequired' || $reason === 'forbidden' && $response->status() === 403 => 'This Google account cannot upload to YouTube. Check that the channel exists and is verified.',
             in_array($response->status(), [401], true) => 'The YouTube sign-in was refused. Connect YouTube again.',
             default => "YouTube could not {$what} (error {$response->status()}".($reason ? ", {$reason}" : '').').',

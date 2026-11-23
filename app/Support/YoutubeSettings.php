@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Schema;
  */
 class YoutubeSettings
 {
-    public const KEYS = ['client_id', 'client_secret', 'refresh_token', 'channel_title', 'channel_id'];
+    public const KEYS = ['client_id', 'client_secret', 'refresh_token', 'channel_title', 'channel_id', 'scopes'];
 
     private static ?array $saved = null;
 
@@ -58,7 +58,7 @@ class YoutubeSettings
     /** Forget the connected channel (keeps the Google keys so the admin can connect again). */
     public static function disconnect(): void
     {
-        foreach (['refresh_token', 'channel_title', 'channel_id'] as $key) {
+        foreach (['refresh_token', 'channel_title', 'channel_id', 'scopes'] as $key) {
             AppSetting::where('key', self::dbKey($key))->delete();
         }
         self::$saved = null;
@@ -68,6 +68,12 @@ class YoutubeSettings
     public static function hasKeys(): bool
     {
         return (bool) (self::get('client_id') && self::get('client_secret'));
+    }
+
+    /** Was the permission to manage playlists given when the channel was connected? (The first version only asked for uploads.) */
+    public static function canManagePlaylists(): bool
+    {
+        return in_array('https://www.googleapis.com/auth/youtube', preg_split('/\s+/', (string) self::get('scopes')), true);
     }
 
     public static function isConnected(): bool

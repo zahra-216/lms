@@ -34,11 +34,24 @@ YouTube Connection
         <div class="alert alert-warning rounded-3"><i class="bi bi-exclamation-triangle"></i> <div>YouTube is not connected yet. Follow the steps at the bottom of this page, then enter the two keys here.</div></div>
     @endif
 
+    @if($connected && ! $canManage)
+        <div class="alert alert-warning rounded-3"><i class="bi bi-exclamation-triangle"></i> <div>One permission is missing, so playlists cannot be managed. Click <strong>Connect again</strong> below and allow it.</div></div>
+    @endif
+
     @if($test)
         <div class="alert {{ $test['ok'] ? 'alert-success' : 'alert-danger' }} rounded-3">
             <div>
                 <strong>{{ $test['ok'] ? 'Test passed.' : 'Test failed.' }}</strong> {{ $test['message'] }}
-                @if(! empty($test['url']))<div class="mt-1"><a href="{{ $test['url'] }}" target="_blank" rel="noopener" class="alert-link">{{ $test['url'] }}</a> - delete it afterwards in YouTube Studio.</div>@endif
+                @if(! empty($test['url']))
+                    <div class="mt-1"><a href="{{ $test['url'] }}" target="_blank" rel="noopener" class="alert-link">{{ $test['url'] }}</a></div>
+                    @if(! empty($test['video_id']))
+                        <form method="POST" action="{{ route('admin.youtube.test.delete') }}" class="mt-2" data-confirm="Delete the test video from YouTube?">
+                            @csrf
+                            <input type="hidden" name="video_id" value="{{ $test['video_id'] }}">
+                            <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i> Delete this test video</button>
+                        </form>
+                    @endif
+                @endif
             </div>
         </div>
     @endif
@@ -70,6 +83,7 @@ YouTube Connection
                 <a href="{{ route('admin.youtube.connect') }}" class="btn btn-outline-primary"><i class="bi bi-youtube"></i> {{ $connected ? 'Connect again' : 'Connect YouTube' }}</a>
             @endif
             @if($connected)
+                <a href="{{ route('admin.youtube.playlists') }}" class="btn btn-outline-primary"><i class="bi bi-collection-play"></i> Playlists</a>
                 <form method="POST" action="{{ route('admin.youtube.disconnect') }}" data-confirm="Disconnect YouTube? Recordings will not be uploaded until you connect it again.">
                     @csrf
                     <button type="submit" class="btn btn-outline-danger"><i class="bi bi-x-circle"></i> Disconnect</button>
@@ -86,6 +100,13 @@ YouTube Connection
             @csrf
             <input type="file" name="video" accept="video/mp4,video/quicktime,video/webm,.mp4,.mov,.webm,.avi,.mkv" class="form-control mb-2 @error('video') is-invalid @enderror" required>
             @error('video')<div class="text-danger small mb-2">{{ $message }}</div>@enderror
+            <label class="form-label small fw-semibold mb-1" for="ycPlaylist">Also try the playlist step <span class="text-muted fw-normal">(optional)</span></label>
+            <select name="playlist_level" id="ycPlaylist" class="form-select mb-2">
+                <option value="">No playlist</option>
+                @foreach($programmes as $l)
+                    <option value="{{ $l->id }}">Add to the playlist of: {{ \App\Services\YoutubePlaylistResolver::titleFor($l->course->name, $l->name) }}</option>
+                @endforeach
+            </select>
             <button type="submit" class="btn btn-outline-primary" id="ycTestBtn"><i class="bi bi-upload"></i> Send test video</button>
             <span class="text-muted small ms-2" id="ycWait" hidden>Uploading... please wait.</span>
         </form>
@@ -105,12 +126,12 @@ YouTube Connection
         <h3 class="section-title"><i class="bi bi-list-check text-primary"></i> How to get the two keys from Google</h3>
         <p class="text-muted">Use the campus Google account that owns the campus YouTube channel. Google's screens change names now and then, so the wording may differ a little.</p>
         <ol class="yc-steps">
-            <li>Open <strong>console.cloud.google.com</strong> and sign in. If it asks, accept the terms. Click the project name at the top, then <strong>New project</strong>. Name it "TT Metro LMS" and click <strong>Create</strong>, then make sure it is the selected project.</li>
+            <li>Open <strong>console.cloud.google.com</strong> and sign in. If it asks, accept the terms. Click the project name at the top, then <strong>New project</strong>. Name it "TTMC LMS" and click <strong>Create</strong>, then make sure it is the selected project.</li>
             <li>Open the menu, then <strong>APIs &amp; Services</strong>, then <strong>Library</strong>. Search for <strong>YouTube Data API v3</strong>, open it and click <strong>Enable</strong>.</li>
-            <li>Go to <strong>OAuth consent screen</strong> (or <strong>Google Auth Platform</strong>). Click <strong>Get started</strong>. App name: "TT Metro LMS". Support email: the campus Gmail. Audience: <strong>External</strong>. Contact email: the campus Gmail. Accept and click <strong>Create</strong>.</li>
+            <li>Go to <strong>OAuth consent screen</strong> (or <strong>Google Auth Platform</strong>). Click <strong>Get started</strong>. App name: "TTMC LMS". Support email: the campus Gmail. Audience: <strong>External</strong>. Contact email: the campus Gmail. Accept and click <strong>Create</strong>.</li>
             <li>Go to <strong>Clients</strong> (or <strong>Credentials</strong>), click <strong>Create client</strong> (or <strong>Create credentials</strong>, then <strong>OAuth client ID</strong>). Application type: <strong>Web application</strong>. Under <strong>Authorized redirect URIs</strong> click <strong>Add URI</strong> and paste the address from the box above. Click <strong>Create</strong>. Copy the <strong>Client ID</strong> and the <strong>Client secret</strong> into the boxes at the top of this page and press <strong>Save</strong>.</li>
             <li><strong>Important:</strong> go to <strong>Audience</strong> and click <strong>Publish app</strong> (status "In production"). If you leave it on "Testing", Google ends the YouTube sign-in after 7 days and uploads stop.</li>
-            <li>Come back here and click <strong>Connect YouTube</strong>. Sign in with the account that owns the channel. Google may say "Google hasn't verified this app": click <strong>Advanced</strong>, then <strong>Go to TT Metro LMS (unsafe)</strong>. It is your own app. Tick the boxes that let it upload and see the channel, and click <strong>Continue</strong>.</li>
+            <li>Come back here and click <strong>Connect YouTube</strong>. Sign in with the account that owns the channel. Google may say "Google hasn't verified this app": click <strong>Advanced</strong>, then <strong>Go to TTMC LMS (unsafe)</strong>. It is your own app. Tick the boxes that let it upload and see the channel, and click <strong>Continue</strong>.</li>
             <li>When you are back here and it shows the channel name, send a test video.</li>
         </ol>
         <div class="alert alert-warning rounded-3 mb-0">

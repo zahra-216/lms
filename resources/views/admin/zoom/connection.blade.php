@@ -101,7 +101,7 @@ Zoom Connection
         <h3 class="section-title"><i class="bi bi-list-check text-primary"></i> How to connect a new Zoom account</h3>
         <ol class="zc-steps">
             <li>Sign in at <strong>marketplace.zoom.us</strong> with the Zoom account that will hold the classes (an owner or admin of that account).</li>
-            <li>Click <strong>Develop</strong>, then <strong>Build App</strong>, choose <strong>Server-to-Server OAuth App</strong> and click <strong>Create</strong>. Name it "TT Metro LMS".</li>
+            <li>Click <strong>Develop</strong>, then <strong>Build App</strong>, choose <strong>Server-to-Server OAuth App</strong> and click <strong>Create</strong>. Name it "TTMC LMS".</li>
             <li>On the <strong>App Credentials</strong> page copy the <strong>Account ID</strong>, <strong>Client ID</strong> and <strong>Client Secret</strong> into the boxes above.</li>
             <li>On the <strong>Feature</strong> page copy the <strong>Secret Token</strong> into the box above. Type the Zoom host email, then press <strong>Save</strong> here first.</li>
             <li>Still on the <strong>Feature</strong> page, turn on <strong>Event Subscriptions</strong>, click <strong>Add new event subscription</strong>, paste the address from the box above, and add the event <strong>Meeting - End Meeting</strong>. Click <strong>Validate</strong>, then <strong>Save</strong>.</li>
