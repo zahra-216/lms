@@ -126,6 +126,7 @@ class ZoomService
             'start_time' => $start->copy()->setTimezone($timezone)->format('Y-m-d\TH:i:s'),
             'timezone' => $timezone,
             'duration' => $durationMinutes,
+            'settings' => ['auto_recording' => 'cloud'],   // every LMS class is recorded to the Zoom cloud
         ]);
 
         $this->check($response, 'create the meeting');
@@ -276,6 +277,62 @@ class ZoomService
             'leave_time' => ! empty($p['leave_time']) ? Carbon::parse($p['leave_time'])->setTimezone(config('app.timezone')) : null,
             'duration' => (int) ($p['duration'] ?? 0),
         ];
+    }
+
+    /**
+     * The recording files Zoom has for a class: ['uuid' => ..., 'recording_files' => [...]], or null when Zoom has
+     * no recording for it (not finished processing yet, or the class was not recorded to the cloud).
+     */
+    public function meetingRecordings(string $meetingId, ?string $uuid = null): ?array
+    {
+        if ($this->isFake()) {
+            $file = storage_path("app/zoom-fake/{$meetingId}.recordings.json");
+
+            return File::exists($file) ? json_decode(File::get($file), true) : null;
+        }
+
+        $key = $meetingId;
+        if ($uuid) {
+            $key = (str_starts_with($uuid, '/') || str_contains($uuid, '//')) ? rawurlencode(rawurlencode($uuid)) : rawurlencode($uuid);
+        }
+
+        $response = $this->api()->get(self::API."/meetings/{$key}/recordings");
+
+        if ($response->status() === 404) {
+            return null;
+        }
+
+        $this->check($response, 'read the recording');
+
+        return $response->json();
+    }
+
+    /** Download one recording file into $path (the Zoom key goes in the header, as Zoom documents). */
+    public function downloadRecording(string $url, string $path): void
+    {
+        if ($url === '') {
+            throw new RuntimeException('Zoom gave no download address for this recording.');
+        }
+
+        if ($this->isFake()) {
+            // "fake://video?size=300000" writes that many bytes
+            parse_str((string) parse_url($url, PHP_URL_QUERY), $q);
+            File::put($path, str_repeat('V', max(1, (int) ($q['size'] ?? 1000))));
+
+            return;
+        }
+
+        $response = Http::withToken($this->token())->timeout(7200)->withOptions(['sink' => $path])->get($url);
+
+        if (! $response->successful()) {
+            @unlink($path);
+
+            if ($response->status() === 401) {
+                Cache::forget(\App\Support\ZoomSettings::tokenCacheKey());
+            }
+
+            throw new RuntimeException("Zoom would not let the LMS download the recording (error {$response->status()}). Check that the Zoom app has the recording permissions.");
+        }
     }
 
     private function api()

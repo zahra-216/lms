@@ -104,7 +104,7 @@ Zoom Connection
             <li>Click <strong>Develop</strong>, then <strong>Build App</strong>, choose <strong>Server-to-Server OAuth App</strong> and click <strong>Create</strong>. Name it "TTMC LMS".</li>
             <li>On the <strong>App Credentials</strong> page copy the <strong>Account ID</strong>, <strong>Client ID</strong> and <strong>Client Secret</strong> into the boxes above.</li>
             <li>On the <strong>Feature</strong> page copy the <strong>Secret Token</strong> into the box above. Type the Zoom host email, then press <strong>Save</strong> here first.</li>
-            <li>Still on the <strong>Feature</strong> page, turn on <strong>Event Subscriptions</strong>, click <strong>Add new event subscription</strong>, paste the address from the box above, and add the event <strong>Meeting - End Meeting</strong>. Click <strong>Validate</strong>, then <strong>Save</strong>.</li>
+            <li>Still on the <strong>Feature</strong> page, turn on <strong>Event Subscriptions</strong>, click <strong>Add new event subscription</strong>, paste the address from the box above, and add two events: <strong>Meeting - End Meeting</strong> (for attendance) and <strong>Recording - All Recordings have completed</strong> (for class recordings). Click <strong>Validate</strong>, then <strong>Save</strong>.</li>
             <li>On the <strong>Scopes</strong> page add these permissions (Zoom shows them in its own wording):
                 <div class="zc-scopes mt-2">
                     <code>meeting:write:meeting:admin</code>
@@ -113,6 +113,7 @@ Zoom Connection
                     <code>meeting:read:meeting:admin</code>
                     <code>meeting:read:past_meeting:admin</code>
                     <code>report:read:list_meeting_participants:admin</code>
+                    <code>cloud_recording:read:...</code> <span class="text-muted small">(for class recordings: in the Scopes search box type <strong>recording</strong> and tick every permission that reads or views recordings, including the one that lets the app download them)</span>
                     <code>user:read:user:admin</code> <span class="text-muted small">(optional: lets the test check the host email)</span>
                 </div>
             </li>

@@ -74,6 +74,24 @@ class ZoomWebhookController extends Controller
             }
         }
 
+        // The class recording is ready in the Zoom cloud: queue its video for YouTube (the server's cron job moves it).
+        if ($event === 'recording.completed') {
+            $object = $request->input('payload.object', []);
+            $meeting = ZoomMeeting::where('zoom_meeting_id', (string) ($object['id'] ?? ''))->first();
+
+            if ($meeting) {
+                try {
+                    if (! $meeting->zoom_uuid && ! empty($object['uuid'])) {
+                        $meeting->update(['zoom_uuid' => $object['uuid']]);
+                    }
+
+                    app(\App\Services\ZoomRecordings::class)->ingest($meeting, (array) ($object['recording_files'] ?? []));
+                } catch (Throwable $e) {
+                    Log::error("Zoom recording message for class {$meeting->id} failed: {$e->getMessage()}");
+                }
+            }
+        }
+
         return response()->json(['ok' => true]);
     }
 

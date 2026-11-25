@@ -588,6 +588,8 @@ Route::prefix('admin')->middleware(['auth:admin'])->name('admin.')->group(functi
     Route::get('/zoom-classes/{id}/edit', [App\Http\Controllers\Admin\ZoomClassController::class, 'edit'])->name('zoom.edit');
     Route::put('/zoom-classes/{id}', [App\Http\Controllers\Admin\ZoomClassController::class, 'update'])->name('zoom.update');
     Route::post('/zoom-classes/{id}/fetch', [App\Http\Controllers\Admin\ZoomClassController::class, 'fetch'])->name('zoom.fetch');
+    Route::post('/zoom-classes/{id}/recordings/check', [App\Http\Controllers\Admin\ZoomClassController::class, 'checkRecordings'])->middleware('throttle:10,1')->name('zoom.recordings.check');
+    Route::post('/zoom-classes/{id}/recordings/{recordingId}/retry', [App\Http\Controllers\Admin\ZoomClassController::class, 'retryRecording'])->name('zoom.recordings.retry');
     Route::post('/zoom-classes/{id}/participants/{participantId}/assign', [App\Http\Controllers\Admin\ZoomClassController::class, 'assign'])->name('zoom.assign');
     Route::delete('/zoom-classes/{id}', [App\Http\Controllers\Admin\ZoomClassController::class, 'destroy'])->name('zoom.destroy');
 

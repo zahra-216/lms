@@ -94,6 +94,60 @@ details > summary { cursor:pointer; font-weight:600; color:#012147; }
         </div>
     </div>
 
+    @if($started || $recordings->count())
+        <div class="card-box mb-3">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                <h5 class="fw-bold mb-0"><i class="bi bi-camera-video"></i> Class recording</h5>
+                <form method="POST" action="{{ route('admin.zoom.recordings.check', $meeting->id) }}">
+                    @csrf
+                    <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-arrow-repeat"></i> Check Zoom for the recording</button>
+                </form>
+            </div>
+
+            @if($recordings->isEmpty())
+                <p class="text-muted small mb-0">No recording found yet. If the class was recorded to the Zoom cloud, it appears here within about an hour after the class, and is then uploaded to YouTube by itself and shown to the students on the module page. You can also press the button to ask Zoom now.</p>
+            @else
+                <p class="text-muted small">The video is moved from Zoom to YouTube (Unlisted), added to the programme's playlist, and shown on the Recordings page of {{ $meeting->subjects->count() > 1 ? 'each ticked module' : 'the module' }}.</p>
+                @foreach($recordings as $r)
+                    <div class="border rounded-3 p-3 mb-2">
+                        <div class="d-flex justify-content-between flex-wrap gap-2">
+                            <div class="fw-semibold">{{ $recordings->count() > 1 ? 'Part '.$r->part : 'Recording' }}
+                                <span class="text-muted fw-normal small">({{ $r->file_size ? round($r->file_size / 1048576, 1).' MB' : 'size unknown' }}{{ $r->recorded_from ? ', '.$r->recorded_from->format('h:i A') : '' }})</span>
+                            </div>
+                            <div>
+                                @if($r->status === 'done')<span class="badge bg-success">{{ $r->statusLabel() }}</span>
+                                @elseif($r->status === 'failed')<span class="badge bg-danger">{{ $r->statusLabel() }}</span>
+                                @elseif($r->status === 'working')<span class="badge bg-primary">{{ $r->statusLabel() }}</span>
+                                @else<span class="badge bg-secondary">{{ $r->statusLabel() }}</span>@endif
+                            </div>
+                        </div>
+
+                        @if($r->status === 'done')
+                            <div class="small mt-2">
+                                <a href="{{ $r->youtubeUrl() }}" target="_blank" rel="noopener"><i class="bi bi-youtube"></i> {{ $r->youtubeUrl() }}</a>
+                                @if($r->playlists)<div class="text-muted">Playlist: {{ $r->playlists }}</div>@endif
+                                <div class="text-muted">Shown to students in: {{ $meeting->subjects->pluck('name')->implode(', ') }}</div>
+                                @if($r->last_error)<div class="text-warning-emphasis mt-1"><i class="bi bi-exclamation-triangle"></i> {{ $r->last_error }}</div>@endif
+                            </div>
+                        @elseif($r->status === 'failed')
+                            <div class="small text-danger mt-2">{{ $r->last_error }}</div>
+                            <form method="POST" action="{{ route('admin.zoom.recordings.retry', [$meeting->id, $r->id]) }}" class="mt-2">
+                                @csrf
+                                <button type="submit" class="btn btn-sm btn-outline-primary"><i class="bi bi-arrow-repeat"></i> Try again</button>
+                            </form>
+                        @else
+                            <div class="small text-muted mt-2">
+                                @if($r->last_error)<span class="text-danger">Last problem: {{ $r->last_error }}</span><br>@endif
+                                @if($r->status === 'waiting' && $r->next_try_at && $r->next_try_at->isFuture())Next try {{ $r->next_try_at->diffForHumans() }}.
+                                @else A big video takes a while. Nothing to do, the LMS does it by itself.@endif
+                            </div>
+                        @endif
+                    </div>
+                @endforeach
+            @endif
+        </div>
+    @endif
+
     @if($meeting->status === 'processed')
         <div class="card-box mb-3">
             <h5 class="fw-bold mb-3">Attendance saved</h5>

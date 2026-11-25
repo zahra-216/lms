@@ -287,6 +287,7 @@ class ZoomClassController extends Controller
                 ->groupBy(fn ($p) => ZoomAttendance::normalize($p->name))->map->first()->values(),
             'matched' => $matched,
             'suggestions' => $this->suggestions($summary, $participants),
+            'recordings' => $meeting->recordings()->get(),
             'outside' => $matched->filter(fn ($p) => ! $classIds->has($p->student_id))->values(),
             'fake' => $this->zoom->isFake(),
         ]);
@@ -324,6 +325,42 @@ class ZoomClassController extends Controller
         }
 
         return $out;
+    }
+
+    /** "Check Zoom for the recording": the admin does not have to wait for the automatic check. */
+    public function checkRecordings($id)
+    {
+        $meeting = ZoomMeeting::findOrFail($id);
+
+        if ($meeting->start_time->isFuture()) {
+            return back()->with('error', 'This class has not started yet.');
+        }
+
+        try {
+            $found = app(\App\Services\ZoomRecordings::class)->check($meeting);
+        } catch (Throwable $e) {
+            return back()->with('error', 'Zoom could not be asked for the recording: '.$e->getMessage());
+        }
+
+        if ($found === null) {
+            return back()->with('error', 'Zoom has no recording for this class yet. It can take up to an hour after the class ends, and only classes recorded to the cloud have one.');
+        }
+
+        return back()->with('success', $found > 0
+            ? "{$found} recording part(s) found. They will be uploaded to YouTube in the next few minutes."
+            : 'The recording is already known. Nothing new was found.');
+    }
+
+    /** Try a failed recording again. */
+    public function retryRecording($id, $recordingId)
+    {
+        $recording = \App\Models\ZoomRecording::where('zoom_meeting_id', $id)->findOrFail($recordingId);
+
+        if ($recording->status === 'failed') {
+            $recording->update(['status' => 'waiting', 'attempts' => 0, 'next_try_at' => null, 'last_error' => null]);
+        }
+
+        return back()->with('success', 'The recording was put back in the queue.');
     }
 
     /** "Fetch attendance now" - the admin does not have to wait for the automatic try. */

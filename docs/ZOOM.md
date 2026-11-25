@@ -17,7 +17,8 @@ When the class ends, the LMS reads who joined from Zoom and saves attendance by 
 In the Zoom App Marketplace create a **Server-to-Server OAuth** app for the campus account:
 
 - Scopes: `meeting:write:meeting:admin` (create), `meeting:update:meeting:admin` (edit a class that has not started), `meeting:delete:meeting:admin` (cancel), `report:read:list_meeting_participants:admin` (read who joined; needs a Pro or higher plan), and, for **Link a Zoom meeting**, `meeting:read:meeting:admin` ("View a meeting") and `meeting:read:past_meeting:admin` ("View past meeting details") so the LMS can read a meeting's title, date, time and length. Exact scope names are shown in the Marketplace screen.
-- Event subscription: **Meeting - End Meeting**, address `https://lms.ttmetrocampus.com/zoom/webhook`. Copy its **Secret Token**.
+- Event subscription: **Meeting - End Meeting** and **Recording - All Recordings have completed**, address `https://lms.ttmetrocampus.com/zoom/webhook`. Copy its **Secret Token**.
+- For class recordings also add the recording read scopes (search "recording" in the Scopes box and tick every permission that reads or views recordings, including the one that allows downloading them).
 - Activate the app.
 
 **Easiest: the admin page.** Sidebar **Zoom Connection** (`/admin/zoom-connection`) takes the five values below, saves them encrypted in the database (table `app_settings`, keys `zoom.*`), and has a **Test connection** button and the click-by-click steps for a new Zoom account. Values saved there win over the `.env` ones; boxes left empty fall back to `.env`. Changing the Zoom account therefore needs no developer. Classes made under an old account cannot be read after the switch (Zoom shows a class only to the account that made it), so let them finish first. The cached Zoom access token is keyed by account and client ID, so a new account never reuses the old token.
@@ -55,3 +56,19 @@ Update routine: `git pull`, `php artisan migrate --force` (new tables `zoom_meet
 - A linked meeting is never changed or cancelled in Zoom by the LMS: editing it only changes the LMS record, and deleting it only removes the LMS record. If it already took place, its attendance is fetched as soon as it is linked. One Zoom meeting ID can be linked once, so a recurring meeting that reuses one ID cannot be linked again for each class.
 - If a meeting is rescheduled in the Zoom app, the attendance still lands on the day it really started.
 - Two classes at the same time need two different Zoom hosts (a Zoom plan limit).
+
+
+## Class recordings: Zoom cloud to YouTube
+
+Every class the LMS creates asks Zoom to record to the cloud automatically (`auto_recording = cloud`). Classes made in the Zoom app and linked rely on the Zoom account setting (Settings, Recording, Automatic recording, cloud).
+
+1. When Zoom has prepared the video it sends **recording completed** to `/zoom/webhook`. The LMS queues the video of each recording part (the best MP4: speaker view with shared screen first; audio, chat, transcript and tiny files are skipped). A class paused and restarted has several parts.
+2. `php artisan zoom:recordings` (scheduled **every minute**, needs the Hostinger cron job for `schedule:run`) does the rest, one recording at a time:
+   - it also asks Zoom for the recording of any class that ended (safety net, every 15 minutes, up to 14 times, for 7 days) and the **Check Zoom for the recording** button on the class page does the same at once;
+   - downloads the video to `storage/app/zoom-recordings` (needs free disk space of about the size of the video), uploads it to YouTube as **Unlisted** in pieces (an interrupted upload carries on), then deletes the file;
+   - makes a **Recording** for every module of the class (students see it on the module's Recordings page at once), titled "Module - date - Part n";
+   - adds the video to the playlist of each programme (course + level), see **YouTube Playlists**.
+3. A problem is retried later (YouTube's daily limit: 3 hours; others: 5 to 60 minutes) up to 6 times, then the class page shows **Needs attention** with a **Try again** button. If only the playlist step fails, the video still counts as done after 3 tries, with a note.
+4. Zoom's recordings are never deleted by the LMS.
+
+Needed once: YouTube connected (YouTube Connection page), Zoom app with the recording event and scopes (above), and the cron job running every minute. Tables: `zoom_recordings`, plus two columns on `zoom_meetings`.

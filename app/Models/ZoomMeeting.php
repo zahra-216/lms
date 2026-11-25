@@ -9,6 +9,7 @@ class ZoomMeeting extends Model
     protected $fillable = [
         'zoom_meeting_id', 'zoom_uuid', 'topic', 'start_time', 'duration_minutes', 'join_url', 'passcode', 'linked',
         'status', 'attempts', 'held_at', 'ended_at', 'next_try_at', 'processed_at', 'last_error', 'created_by',
+        'recordings_checked_at', 'recordings_checks',
     ];
 
     protected $casts = [
@@ -18,6 +19,7 @@ class ZoomMeeting extends Model
         'ended_at' => 'datetime',
         'next_try_at' => 'datetime',
         'processed_at' => 'datetime',
+        'recordings_checked_at' => 'datetime',
     ];
 
     public function subjects()
@@ -28,6 +30,11 @@ class ZoomMeeting extends Model
     public function participants()
     {
         return $this->hasMany(ZoomParticipant::class);
+    }
+
+    public function recordings()
+    {
+        return $this->hasMany(ZoomRecording::class)->orderBy('part');
     }
 
     /** A class can be edited until it starts (the modules and date drive the attendance). */
