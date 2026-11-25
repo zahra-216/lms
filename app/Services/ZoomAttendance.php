@@ -6,6 +6,7 @@ use App\Models\Attendance;
 use App\Models\Student;
 use App\Models\ZoomMeeting;
 use App\Models\ZoomParticipant;
+use App\Support\RegistrationMatcher;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use InvalidArgumentException;
@@ -17,6 +18,7 @@ use Throwable;
  * Rules (agreed with the campus):
  *  - A name counts as a student when it contains a registration number that exists in the LMS,
  *    in any spelling of capitals, spaces, dashes or slashes ("ttmc ml dip hrm-o 24 02 Kamal" works).
+ *    A last number written without its leading zeros ("26/ 13" for "26/013") or with the letter O for a zero also works.
  *  - Each ticked module marks the students of that module's course, level and CURRENT semester
  *    (the same group the Attendance page shows). Joined = present, everyone else = absent.
  *  - A mark made by hand is never overwritten. Only marks that came from Zoom are updated.
@@ -31,7 +33,7 @@ class ZoomAttendance
     /** Capitals and digits only, so spaces, dashes, slashes and dots do not matter. */
     public static function normalize(string $text): string
     {
-        return strtoupper(preg_replace('/[^A-Za-z0-9]/', '', $text));
+        return RegistrationMatcher::normalize($text);
     }
 
     /**
@@ -105,7 +107,7 @@ class ZoomAttendance
 
         $meeting->participants()->delete();
 
-        $students = $this->studentIndex();
+        $matcher = $this->matcher();
 
         foreach ($rows as $row) {
             $key = self::normalize($row['name']);
@@ -113,7 +115,7 @@ class ZoomAttendance
             $how = $studentId ? 'manual' : null;
 
             if (! $studentId) {
-                $studentId = $this->matchName($row['name'], $students);
+                $studentId = $matcher->match($row['name']);
                 $how = $studentId ? 'auto' : null;
             }
 
@@ -129,47 +131,10 @@ class ZoomAttendance
         }
     }
 
-    /** normalized registration number => student id, longest numbers first (so ...02 never wins over ...021). */
-    private function studentIndex(): array
+    /** Finds a registration number inside the name someone joined with (see RegistrationMatcher). */
+    public function matcher(): RegistrationMatcher
     {
-        $map = [];
-
-        foreach (Student::select('id', 'registration_no')->get() as $s) {
-            $key = self::normalize((string) $s->registration_no);
-            if (strlen($key) >= 6) {
-                $map[$key] = $s->id;
-            }
-        }
-
-        uksort($map, fn ($a, $b) => strlen($b) <=> strlen($a));
-
-        return $map;
-    }
-
-    private function matchName(string $name, array $index): ?int
-    {
-        $text = self::normalize($name);
-
-        if ($text === '') {
-            return null;
-        }
-
-        foreach ($index as $reg => $id) {
-            $at = strpos($text, $reg);
-
-            while ($at !== false) {
-                $next = $text[$at + strlen($reg)] ?? '';
-
-                // "...2402" inside "...24021" is a different (longer) number, not a match.
-                if (! (ctype_digit(substr($reg, -1)) && ctype_digit($next))) {
-                    return $id;
-                }
-
-                $at = strpos($text, $reg, $at + 1);
-            }
-        }
-
-        return null;
+        return new RegistrationMatcher(Student::select('id', 'registration_no')->get());
     }
 
     /**
@@ -219,10 +184,9 @@ class ZoomAttendance
      */
     public function assign(ZoomMeeting $meeting, ZoomParticipant $participant, string $registrationNo): void
     {
-        $key = self::normalize($registrationNo);
+        $id = $this->matcher()->match($registrationNo);
 
-        $student = $key === '' ? null : Student::select('id', 'registration_no', 'course_id', 'level_id', 'semester_id')->get()
-            ->first(fn ($s) => self::normalize((string) $s->registration_no) === $key);
+        $student = $id ? Student::select('id', 'registration_no', 'course_id', 'level_id', 'semester_id')->find($id) : null;
 
         if (! $student) {
             throw new InvalidArgumentException('No student has that registration number.');

@@ -153,6 +153,18 @@ details > summary { cursor:pointer; font-weight:600; color:#012147; }
                                             <input type="text" name="registration_no" class="form-control form-control-sm" placeholder="e.g. TTMC/ML/DIP/HRM-O/24/02" required maxlength="100">
                                             <button type="submit" class="btn btn-sm btn-primary">Match</button>
                                         </form>
+                                        @if(! empty($suggestions[$p->id]))
+                                            <div class="small text-muted mt-2">Could it be:</div>
+                                            <div class="d-flex flex-wrap gap-2 mt-1">
+                                                @foreach($suggestions[$p->id] as $sg)
+                                                    <form method="POST" action="{{ route('admin.zoom.assign', [$meeting->id, $p->id]) }}">
+                                                        @csrf
+                                                        <input type="hidden" name="registration_no" value="{{ $sg->registration_no }}">
+                                                        <button type="submit" class="btn btn-sm btn-outline-secondary" title="Match {{ $p->name }} to this student">{{ $sg->name }} <span class="text-muted">({{ $sg->registration_no }})</span></button>
+                                                    </form>
+                                                @endforeach
+                                            </div>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

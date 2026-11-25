@@ -286,9 +286,44 @@ class ZoomClassController extends Controller
             'unmatched' => $participants->whereNull('student_id')
                 ->groupBy(fn ($p) => ZoomAttendance::normalize($p->name))->map->first()->values(),
             'matched' => $matched,
+            'suggestions' => $this->suggestions($summary, $participants),
             'outside' => $matched->filter(fn ($p) => ! $classIds->has($p->student_id))->values(),
             'fake' => $this->zoom->isFake(),
         ]);
+    }
+
+    /**
+     * For a name that matched no student: students of this class who have not been matched yet and whose
+     * name shares a word with it ("PRAVEEN IVTC/TP/334" -> "Kanagaraj Praveen"). The admin confirms with one click.
+     *
+     * @return array<int, array<int, object>> participant id => up to 3 students
+     */
+    private function suggestions(array $summary, $participants): array
+    {
+        $words = fn (string $text) => collect(preg_split('/[^a-z]+/', strtolower($text), -1, PREG_SPLIT_NO_EMPTY))
+            ->filter(fn ($w) => strlen($w) >= 4)->unique()->values()->all();
+
+        $matchedIds = $participants->whereNotNull('student_id')->pluck('student_id')->unique()->flip();
+        $free = collect($summary)->flatMap(fn ($m) => $m['students'])->unique('id')
+            ->reject(fn ($s) => $matchedIds->has($s->id))
+            ->map(fn ($s) => ['student' => $s, 'words' => $words((string) $s->name)]);
+
+        $out = [];
+        foreach ($participants->whereNull('student_id') as $p) {
+            $mine = $words($p->name);
+            if (! $mine) {
+                continue;
+            }
+
+            $hits = $free->map(fn ($f) => ['student' => $f['student'], 'score' => count(array_intersect($mine, $f['words']))])
+                ->where('score', '>', 0)->sortByDesc('score')->take(3)->pluck('student')->values()->all();
+
+            if ($hits) {
+                $out[$p->id] = $hits;
+            }
+        }
+
+        return $out;
     }
 
     /** "Fetch attendance now" - the admin does not have to wait for the automatic try. */
