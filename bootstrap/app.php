@@ -63,4 +63,25 @@ return Application::configure(basePath: dirname(__DIR__))
 
             return null;
         });
+
+        // "419 Page Expired" (a form that was open too long, or the session ended): never show the bare page.
+        // Signed in: go back to the page with a clear message. Signed out: go to the right sign-in page.
+        $exceptions->render(function (\Symfony\Component\HttpKernel\Exception\HttpException $e, \Illuminate\Http\Request $request) {
+            if ($e->getStatusCode() !== 419 || $request->expectsJson()) {
+                return null;
+            }
+
+            $admin = $request->is('admin*');
+            $lecturer = $request->is('lecturer*');
+            $signedIn = $admin ? auth('admin')->check() : ($lecturer ? auth('lecturer')->check() : (bool) session('student_id'));
+
+            if ($signedIn) {
+                return redirect()->back()
+                    ->withInput($request->except(['_token', 'password', 'password_confirmation', 'current_password']))
+                    ->with('error', 'This page was open for too long, so your last action was not saved. Please try again (if you chose a file, choose it again).');
+            }
+
+            return redirect($admin ? route('admin.login') : ($lecturer ? route('lecturer.login') : route('login')))
+                ->with('error', 'Your session ended. Please sign in again.');
+        });
     })->create();

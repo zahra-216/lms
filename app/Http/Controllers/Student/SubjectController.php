@@ -37,7 +37,7 @@ class SubjectController extends Controller
         $filePath = storage_path('app/public/' . $note->file_path);
 
         if(!file_exists($filePath)){
-            abort(404, 'File not found');
+            abort(404, 'This file is no longer available. Please tell your lecturer or the campus office.');
         }
 
         return response()->download($filePath);
@@ -70,7 +70,7 @@ public function downloadAssignment($id)
     $filePath = storage_path('app/public/' . $assignment->file_path);
 
     if(!file_exists($filePath)){
-        abort(404, 'File not found');
+        abort(404, 'This file is no longer available. Please tell your lecturer or the campus office.');
     }
 
     return response()->download($filePath);
