@@ -148,7 +148,7 @@ tbody tr:nth-child(even) { background:#f8fafc;
                                             <tr>
                                                 <td><input type="checkbox" class="student-check" value="{{ $student->id }}"></td>
                                                 <td>{{ $student->registration_no }}</td>
-                                                <td>{{ $student->name }}</td>
+                                                <td>{{ $student->name }}@if(($student->status ?? 'active') !== 'active') <span class="badge bg-secondary ms-1">{{ $student->status === 'dropped' ? 'Dropped Out' : 'Inactive' }}</span>@endif</td>
                                                 <td>{{ $student->email }}</td>
                                                 <td>{{ $student->branch }}</td>
                                                 <td>{{ $student->semester->name ?? '-' }}</td>

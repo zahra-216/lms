@@ -108,8 +108,10 @@ Edit Student
                 <label class="form-label">Status</label>
                 <select name="status" class="form-select" required>
                     <option value="active" {{ $student->status == 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="inactive" {{ $student->status == 'inactive' ? 'selected' : '' }}>Inactive</option>
                     <option value="dropped" {{ $student->status == 'dropped' ? 'selected' : '' }}>Dropped Out</option>
                 </select>
+                <div class="form-text">Inactive and Dropped Out students cannot watch class recordings. Everything else in the portal still works for them.</div>
             </div>
 
             <div class="mb-3 password-wrap">

@@ -133,7 +133,7 @@ class StudentController extends Controller
             'level_id' => 'required|integer',
             'semester_id' => 'required|integer',
             'password' => 'nullable|string|min:6|confirmed',
-            'status' => 'required|in:active,dropped',
+            'status' => 'required|in:active,inactive,dropped',
         ]);
 
         $student->registration_no = $request->registration_no;

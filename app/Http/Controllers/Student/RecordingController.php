@@ -15,12 +15,23 @@ class RecordingController extends Controller
         return Student::find(session('student_id'));
     }
 
+    /** The page an inactive student sees instead of the recordings. */
+    private function blocked(Student $student)
+    {
+        return response()->view('student.recordings.blocked', ['status' => $student->status], 403);
+    }
+
     // List recordings within one subject
     public function subject($subjectId)
     {
         $student = $this->currentStudent();
         if (!$student) {
             return redirect()->route('login')->with('error', 'Please log in again');
+        }
+
+        // Inactive (or dropped out) students do not see the recordings at all, only a clear message.
+        if ($student->status !== 'active') {
+            return $this->blocked($student);
         }
 
         $subject = Subject::where('id', $subjectId)
@@ -43,7 +54,7 @@ class RecordingController extends Controller
         }
 
         if ($student->status !== 'active') {
-            abort(403, 'Your access to lecture recordings has been disabled.');
+            return $this->blocked($student);
         }
 
         $recording = Recording::where('id', $id)->firstOrFail();
