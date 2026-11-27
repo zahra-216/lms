@@ -118,7 +118,7 @@ class LecturerLectureRecordController extends Controller
             'lecturer_id' => $lecturerId,
         ]);
 
-        return redirect()->route('lecturer.lecture-records.index')
+        return $this->returnTo(route('lecturer.lecture-records.index'))
             ->with('success', 'Content added successfully.');
     }
 

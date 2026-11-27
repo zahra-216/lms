@@ -194,7 +194,7 @@ class ZoomClassController extends Controller
             $meeting->subjects()->sync(array_unique($data['subject_ids']));
         });
 
-        return redirect()->route('admin.zoom.show', $meeting->id)
+        return $this->returnTo(route('admin.zoom.show', $meeting->id))
             ->with('success', 'Zoom class updated. The join link stays the same.');
     }
 

@@ -102,7 +102,7 @@ class MarkController extends Controller
 
         $assignment = Assignment::findOrFail($request->assignment_id);
 
-        return redirect()->route('lecturer.subject.grades', $assignment->subject_id)
+        return $this->returnTo(route('lecturer.subject.grades', $assignment->subject_id))
             ->with('success', 'Marks saved successfully');
     }
 

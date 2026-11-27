@@ -30,7 +30,8 @@ abstract class Controller
         }
 
         $path = parse_url($previous, PHP_URL_PATH) ?? '';
-        $isFormPage = (bool) preg_match('#/(edit|create)$#', $path);
+        // edit/create forms, "add content" and the admin's mark entry sheet (/admin/marks/12)
+        $isFormPage = (bool) preg_match('#/(edit|create|add-content)$|/admin/marks/\d+$#', $path);
 
         if ($isFormPage) {
             $origin = session('nav.back', [])[md5($previous)] ?? null;

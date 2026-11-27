@@ -463,3 +463,8 @@ main:not(.lms-main):not(.auth-main) { padding-bottom: 64px; }
     .lms-main .tt-card table.tt-wide { display: none; }
     .lms-main .tt-card table.tt-narrow { display: table; }
 }
+
+/* A saved/deleted message when the page opens part-way down (see "Keep the user's place" in lms.js) */
+.lms-main .lms-flash.is-floating { position: fixed; top: 86px; right: 16px; left: auto; z-index: 1080;
+    width: min(460px, calc(100% - 32px)) !important; margin: 0 !important; }
+.lms-main .lms-flash.is-floating .alert { box-shadow: 0 12px 32px rgba(10, 42, 82, 0.22); }
